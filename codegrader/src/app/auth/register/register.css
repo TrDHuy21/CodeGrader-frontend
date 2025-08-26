@@ -1,0 +1,585 @@
+/* Reset mặc định */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Roboto, sans-serif;
+}
+
+body, html {
+    height: 100%;
+    background: #fff;
+    overflow-x: hidden;
+    overflow-y: auto; /* Cho phép scroll dọc khi cần */
+}
+
+/* Blob decorations */
+.stage {
+    position: relative;
+    width: 100%;
+    min-height: 100vh; /* Thay đổi từ height thành min-height */
+    overflow: hidden;
+}
+
+.blob {
+    position: absolute;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #300061 0%, #0A1030 100%);
+    filter: blur(0px);
+    opacity: 1;
+    z-index: -1;
+}
+
+.blob-tl {
+    width: 400px;
+    height: 400px;
+    top: -200px;
+    left: -200px;
+}
+
+.blob-bl {
+    width: 20vw;
+    height: 42vh;
+    bottom: 23vh;
+    right: 38vw;
+}
+
+.container {
+    display: flex;
+    width: 100%;
+    min-height: 100vh; /* Thay đổi từ height thành min-height */
+    position: relative;
+    z-index: 1;
+}
+
+.section1 {
+    flex: 6;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding-left: 80px;
+    position: relative;
+}
+
+.section1 h1 {
+    font-size: 3.5rem !important;
+    font-weight: bold;
+    color: #000;
+    line-height: 1.2;
+    margin-bottom: 40px;
+}
+
+.section1 button {
+    background: white;
+    color: black;
+    border: 2px solid black;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.section1 button:hover {
+    background: #f8f9fa;
+    transform: translateY(-2px);
+}
+
+.section1 .p-2 {
+    position: relative;
+}
+
+.section1 .p-2::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    width: 200px;
+    height: 2px;
+    border-top: 2px dashed #000;
+    margin-left: 20px;
+}
+
+.section2 {
+    flex: 4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+}
+
+.flexcolumn {
+    display: flex;
+    flex-direction: column;
+    background: #f5f5f5;
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 360px; /* Thu nhỏ form mặc định */
+}
+
+.flexcolumn h2 {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #000;
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+.flexcolumn .subtitle {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 18px;
+}
+
+.flexcolumn form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.flexcolumn input[type="text"],
+.flexcolumn input[type="email"],
+.password-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background: #fff;
+    transition: border-color 0.3s ease;
+}
+
+.flexcolumn input[type="text"]:focus,
+.flexcolumn input[type="email"]:focus,
+.password-input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.password-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.toggle-eye {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: #666;
+    padding: 5px;
+}
+
+.toggle-eye:hover {
+    color: #333;
+}
+
+/* Password strength indicator */
+.password-strength {
+    margin-top: 8px;
+}
+
+.strength-bar {
+    width: 100%;
+    height: 6px;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+}
+
+.strength-segment {
+    flex: 1;
+    height: 100%;
+    margin-right: 2px;
+    transition: background-color 0.3s ease;
+}
+
+.strength-segment:last-child {
+    margin-right: 0;
+}
+
+.strength-segment.none {
+    background-color: 0.3s;
+}
+
+.strength-segment.weak {
+    background-color: #ff4444;
+}
+
+.strength-segment.medium {
+    background-color: #ffaa00;
+}
+
+.strength-segment.strong {
+    background-color: #00dd00;
+}
+
+.strength-text {
+    font-size: 0.8rem;
+    margin-top: 5px;
+    font-weight: 500;
+}
+
+.strength-text.none {
+    color: #f5f5f5;
+}
+
+.strength-text.weak {
+    color: #ff4444;
+}
+
+.strength-text.medium {
+    color: #ffaa00;
+}
+
+.strength-text.strong {
+    color: #00dd00;
+}
+
+/* Signup button */
+.btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Or separator */
+.or {
+    display: flex;
+    align-items: center;
+    margin: 14px 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.or span {
+    flex: 1;
+    height: 1px;
+    background: #ddd;
+}
+
+.or em {
+    margin: 0 15px;
+    font-style: normal;
+}
+
+/* Google button */
+.google {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    width: 100%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    gap: 10px;
+}
+
+.google:hover {
+    background: #f9f9f9;
+    border-color: #ccc;
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.google img {
+    width: 20px;
+    height: 20px;
+}
+
+/* Login link */
+.login-link {
+    margin-top: 12px;
+    font-size: 0.9rem;
+    text-align: center;
+    color: #666;
+}
+
+.login-link a {
+    color: #667eea;
+    text-decoration: underline;
+    font-weight: 500;
+}
+
+.login-link a:hover {
+    color: #5a6fd8;
+}
+
+/* Error messages */
+.error-message {
+    color: #dc3545;
+    font-size: 0.8rem;
+    margin-top: 4px;
+    margin-bottom: 8px;
+    padding-left: 4px;
+    animation: fadeIn 0.3s ease-in;
+}
+
+.error-message span {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Invalid input styling */
+.flexcolumn input.ng-invalid.ng-touched {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.flexcolumn input.ng-valid.ng-touched {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+  .section1 h1 {
+    font-size: 3rem;
+  }
+  
+  .section1 {
+    padding-left: 60px;
+  }
+  
+  .section2 {
+    padding: 25px;
+  }
+  
+  .flexcolumn {
+    max-width: 380px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    min-height: 100vh; /* Giữ nguyên min-height */
+  }
+  
+  .section1 {
+    flex: none;
+    padding: 30px 20px;
+    align-items: center;
+    text-align: center;
+    min-height: 35vh;
+  }
+  
+  .section1 h1 {
+    font-size: 2.2rem;
+    margin-bottom: 20px;
+  }
+  
+  .section2 {
+    flex: none;
+    padding: 20px;
+    min-height: 65vh;
+  }
+  
+  .flexcolumn {
+    padding: 25px 20px;
+    max-width: 100%;
+  }
+  
+  .blob-tl {
+    width: 300px;
+    height: 300px;
+    top: -150px;
+    left: -150px;
+  }
+  
+  .blob-bl {
+    width: 20vw;
+    height: 25vh;
+    bottom: 10vh;
+    right: 30vw;
+  }
+}
+
+@media (max-width: 480px) {
+  .section1 {
+    padding: 20px 15px;
+    min-height: 30vh;
+  }
+  
+  .section1 h1 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+  }
+  
+  .section2 {
+    padding: 15px;
+    min-height: 70vh;
+  }
+  
+  .flexcolumn {
+    padding: 20px 15px;
+    border-radius: 15px;
+  }
+  
+  .flexcolumn h2 {
+    font-size: 1.4rem;
+    margin-bottom: 8px;
+  }
+  
+  .flexcolumn .subtitle {
+    font-size: 0.85rem;
+    margin-bottom: 15px;
+  }
+  
+  .flexcolumn input[type="text"],
+  .flexcolumn input[type="email"],
+  .password-input {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+  
+  .btn {
+    padding: 10px;
+    font-size: 0.95rem;
+  }
+  
+  .google {
+    padding: 8px;
+  }
+  
+  .google img {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .blob-tl {
+    width: 250px;
+    height: 250px;
+    top: -125px;
+    left: -125px;
+  }
+  
+  .blob-bl {
+    width: 25vw;
+    height: 20vh;
+    bottom: 5vh;
+    right: 25vw;
+  }
+}
+
+@media (max-width: 360px) {
+  .section1 h1 {
+    font-size: 1.6rem;
+  }
+  
+  .flexcolumn {
+    padding: 18px 12px;
+  }
+  
+  .flexcolumn h2 {
+    font-size: 1.2rem;
+  }
+  
+  .flexcolumn input[type="text"],
+  .flexcolumn input[type="email"],
+  .password-input {
+    padding: 8px;
+    font-size: 0.85rem;
+  }
+  
+  .btn {
+    padding: 8px;
+    font-size: 0.9rem;
+  }
+  
+  .google {
+    padding: 6px;
+  }
+  
+  .google img {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .strength-bar {
+    height: 4px;
+  }
+  
+  .strength-text {
+    font-size: 0.75rem;
+  }
+}
+
+/* Landscape orientation for mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+  .container {
+    min-height: 100vh; /* Giữ nguyên min-height */
+  }
+  
+  .section1 {
+    min-height: 25vh;
+    padding: 10px 20px;
+  }
+  
+  .section1 h1 {
+    font-size: 1.6rem;
+    margin-bottom: 8px;
+  }
+  
+  .section2 {
+    min-height: 75vh;
+    padding: 10px;
+  }
+  
+  .flexcolumn {
+    padding: 15px;
+  }
+  
+  .flexcolumn form {
+    gap: 8px;
+  }
+  
+  .flexcolumn input[type="text"],
+  .flexcolumn input[type="email"],
+  .password-input {
+    padding: 8px;
+  }
+  
+  .btn {
+    padding: 8px;
+  }
+}

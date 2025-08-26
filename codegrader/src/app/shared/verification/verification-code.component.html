@@ -1,0 +1,74 @@
+<div class="otp-overlay" (click)="onCancel()"></div>
+
+<div class="otp-panel" role="dialog" aria-modal="true">
+  <div class="otp-header">
+    <h3>{{ title }}</h3>
+    <button type="button" class="close-btn" (click)="onCancel()">×</button>
+  </div>
+
+  <div class="otp-body">
+    <p>{{ message }}</p>
+    <p class="email">{{ email }}</p>
+
+    <form (ngSubmit)="onSubmit()" [formGroup]="form" class="otp-form">
+      <input
+        type="text"
+        inputmode="numeric"
+        autocomplete="one-time-code"
+        maxlength="{{ length }}"
+        placeholder="{{ length }} digits"
+        formControlName="code"
+        [class.error]="form.get('code')?.invalid && form.get('code')?.touched"
+        (input)="onInputChange($event)"
+      />
+      
+      <!-- Error messages -->
+      @if(form.get('code')?.invalid && form.get('code')?.touched) {
+        <div class="error-messages">
+          @if(form.get('code')?.errors?.['required']) {
+            <div class="error-message">
+              Vui lòng nhập mã xác thực
+            </div>
+          }
+          @if(form.get('code')?.errors?.['pattern']) {
+            <div class="error-message">
+              Mã xác thực chỉ được chứa số
+            </div>
+          }
+          @if(form.get('code')?.errors?.['exactLength']) {
+            <div class="error-message">
+              Mã xác thực phải có đúng {{ length }} số
+            </div>
+          }
+        </div>
+      }
+      
+       <!-- OTP Error Message -->
+       @if(showOtpError) {
+         <div class="otp-error">
+           Mã xác thực không đúng, vui lòng thử lại
+         </div>
+       }
+       
+       <!-- Resend Success Message -->
+       @if(showResendSuccess) {
+         <div class="resend-success">
+           Đã gửi lại mã xác thực thành công
+         </div>
+       }
+       
+       <div class="hint">
+         @if(secondsToExpire)
+         {
+             {{ remaining > 0 ? ('Mã hết hạn sau ' + remaining + 's') : 'Mã đã hết hạn, hãy gửi lại' }}
+         }
+       </div>
+
+      <div class="actions">
+        <button type="button" (click)="onResend()">Gửi lại mã</button>
+        <button type="button" class="secondary" (click)="onCancel()">Hủy</button>
+        <button type="submit" class="primary" [disabled]="form.invalid">Xác nhận</button>
+      </div>
+    </form>
+  </div>
+</div>

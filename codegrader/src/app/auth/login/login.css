@@ -1,0 +1,477 @@
+/* Reset mặc định */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Roboto, sans-serif;
+}
+
+body, html {
+  height: 100%;
+  background: #fff;
+  overflow-x: hidden;
+  overflow-y: auto; /* Cho phép scroll dọc khi cần */
+}
+
+/* Blob decorations */
+.stage {
+  position: relative;
+  width: 100%;
+  min-height: 100vh; /* Thay đổi từ height thành min-height */
+  overflow: hidden;
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #300061 0%, #0A1030 100%);
+  filter: blur(0px);
+  opacity: 1;
+  z-index: -1;
+}
+
+.blob-tl {
+  width: 400px;
+  height: 400px;
+  top: -200px;
+  left: -200px;
+}
+
+.blob-bl {
+  width: 15vw;
+  height: 33vh;
+  bottom: 23vh;
+  right: 43vw;
+}
+
+.container {
+  display: flex;
+  width: 100%;
+  min-height: 100vh; /* Thay đổi từ height thành min-height */
+  position: relative;
+  z-index: 1;
+}
+
+.section1 {
+  flex: 6;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding-left: 80px;
+  position: relative;
+}
+
+.section1 h1 {
+  font-size: 3.5rem;
+  font-weight: bold;
+  color: #000;
+  line-height: 1.2;
+  margin-bottom: 40px;
+}
+
+.section1 button {
+  background: white;
+  color: black;
+  border: 2px solid black;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 20px;
+}
+
+.section1 button:hover {
+  background: #f8f9fa;
+  transform: translateY(-2px);
+}
+
+.section1 .p-2 {
+  position: relative;
+}
+
+.section1 .p-2::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  width: 200px;
+  height: 2px;
+  border-top: 2px dashed #000;
+  margin-left: 20px;
+}
+
+.section2 {
+  flex: 4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.flexcolumn {
+  display: flex;
+  flex-direction: column;
+  background: #f5f5f5;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+.flexcolumn h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #000;
+  margin-bottom: 30px;
+  text-align: left;
+}
+
+.flexcolumn form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.flexcolumn input[type="email"],
+.password-input {
+  width: 100%;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: #fff;
+  transition: border-color 0.3s ease;
+}
+
+.flexcolumn input[type="email"]:focus,
+.password-input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.toggle-eye {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #666;
+  padding: 5px;
+}
+
+.toggle-eye:hover {
+  color: #333;
+}
+
+/* Remember me checkbox */
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.remember-me input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #667eea;
+}
+
+/* Login button */
+.btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 15px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Forgot password link */
+.flexcolumn a {
+  color: #000;
+  text-decoration: none;
+  text-align: center;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+}
+
+.flexcolumn a:hover {
+  color: #667eea;
+}
+
+/* Or separator */
+.or {
+  display: flex;
+  align-items: center;
+  margin: 20px 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.or span {
+  flex: 1;
+  height: 1px;
+  background: #ddd;
+}
+
+.or em {
+  margin: 0 15px;
+  font-style: normal;
+}
+
+/* Google button */
+.google {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px;
+  width: 100%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  gap: 10px;
+}
+
+.google:hover {
+  background: #f9f9f9;
+  border-color: #ccc;
+  transform: translateY(-2px);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.google img {
+  width: 20px;
+  height: 20px;
+}
+
+/* Sign up */
+.signup {
+  margin-top: 20px;
+  font-size: 0.9rem;
+  text-align: center;
+  color: #666;
+}
+
+.signup a {
+  color: #667eea;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.signup a:hover {
+  color: #5a6fd8;
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+  .section1 h1 {
+    font-size: 3rem;
+  }
+  
+  .section1 {
+    padding-left: 60px;
+  }
+  
+  .section2 {
+    padding: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    min-height: 100vh; /* Giữ nguyên min-height */
+  }
+  
+  .section1 {
+    flex: none;
+    padding: 30px 20px;
+    align-items: center;
+    text-align: center;
+    min-height: 40vh;
+  }
+  
+  .section1 h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+  }
+  
+  .section2 {
+    flex: none;
+    padding: 20px;
+    min-height: 60vh;
+  }
+  
+  .flexcolumn {
+    padding: 30px 20px;
+    max-width: 100%;
+  }
+  
+  .blob-tl {
+    width: 300px;
+    height: 300px;
+    top: -150px;
+    left: -150px;
+  }
+  
+  .blob-bl {
+    width: 20vw;
+    height: 25vh;
+    bottom: 10vh;
+    right: 30vw;
+  }
+}
+
+@media (max-width: 480px) {
+  .section1 {
+    padding: 20px 15px;
+    min-height: 35vh;
+  }
+  
+  .section1 h1 {
+    font-size: 2rem;
+    margin-bottom: 15px;
+  }
+  
+  .section2 {
+    padding: 15px;
+    min-height: 65vh;
+  }
+  
+  .flexcolumn {
+    padding: 25px 15px;
+    border-radius: 15px;
+  }
+  
+  .flexcolumn h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+  
+  .flexcolumn input[type="email"],
+  .password-input {
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+  
+  .btn {
+    padding: 12px;
+    font-size: 1rem;
+  }
+  
+  .google {
+    padding: 10px;
+  }
+  
+  .google img {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .blob-tl {
+    width: 250px;
+    height: 250px;
+    top: -125px;
+    left: -125px;
+  }
+  
+  .blob-bl {
+    width: 25vw;
+    height: 20vh;
+    bottom: 5vh;
+    right: 25vw;
+  }
+}
+
+@media (max-width: 360px) {
+  .section1 h1 {
+    font-size: 1.8rem;
+  }
+  
+  .flexcolumn {
+    padding: 20px 12px;
+  }
+  
+  .flexcolumn h2 {
+    font-size: 1.3rem;
+  }
+  
+  .flexcolumn input[type="email"],
+  .password-input {
+    padding: 10px;
+    font-size: 0.85rem;
+  }
+  
+  .btn {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+  
+  .google {
+    padding: 8px;
+  }
+  
+  .google img {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Landscape orientation for mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+  .container {
+    min-height: 100vh; /* Giữ nguyên min-height */
+  }
+  
+  .section1 {
+    min-height: 30vh;
+    padding: 15px 20px;
+  }
+  
+  .section1 h1 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+  }
+  
+  .section2 {
+    min-height: 70vh;
+    padding: 15px;
+  }
+  
+  .flexcolumn {
+    padding: 20px 15px;
+  }
+}
+
+
+
+

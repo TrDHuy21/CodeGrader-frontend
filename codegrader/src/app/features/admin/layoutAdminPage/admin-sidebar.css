@@ -1,0 +1,169 @@
+/* Section 1 - Sidebar */
+.section1 {
+  min-height: 100vh;
+  flex: 1.5;
+  background-color: #e5e5e5;
+  color: black;
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+}
+
+.sidebar-header {
+  padding: 10% 5%;
+}
+
+.sidebar-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sidebar-header .fa-code {
+  color: #06b6d4;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 20px 0;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: 11% 5%;
+  color: black;
+  text-decoration: none;
+  transition: all 0.2s;
+  border-left: 3px solid transparent;
+  border-radius: 15px;
+}
+
+.nav-item:hover {
+  background-color: #00000040;
+  color: black;
+}
+
+.nav-item.active {
+  background-color: #00000040;
+  color: black;
+  border-left-color: #00c7be;
+}
+
+.nav-item i {
+  width: 20px;
+  margin-right: 12px;
+  font-size: 16px;
+}
+
+/* Responsive design for sidebar */
+@media (max-width: 1200px) {
+  .section1 {
+    flex: none;
+    height: auto;
+    min-height: auto;
+    border-radius: 0;
+  }
+  
+  .sidebar-header {
+    padding: 20px;
+  }
+  
+  .sidebar-nav {
+    padding: 10px 0;
+  }
+  
+  .nav-item {
+    padding: 15px 20px;
+    margin: 5px 10px;
+    border-radius: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .section1 {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: #e5e5e5;
+    border-radius: 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  
+  .sidebar-header {
+    padding: 15px 20px;
+  }
+  
+  .sidebar-header h2 {
+    font-size: 16px;
+  }
+  
+  .nav-item {
+    padding: 12px 15px;
+    margin: 3px 8px;
+    font-size: 14px;
+  }
+  
+  .nav-item i {
+    font-size: 14px;
+    width: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar-header {
+    padding: 12px 15px;
+  }
+  
+  .sidebar-header h2 {
+    font-size: 14px;
+  }
+  
+  .nav-item {
+    padding: 10px 12px;
+    margin: 2px 6px;
+    font-size: 13px;
+  }
+  
+  .nav-item i {
+    font-size: 13px;
+    width: 16px;
+    margin-right: 8px;
+  }
+}
+
+@media (max-width: 360px) {
+  .sidebar-header {
+    padding: 10px 12px;
+  }
+  
+  .nav-item {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+  
+  .nav-item i {
+    font-size: 12px;
+    width: 14px;
+    margin-right: 6px;
+  }
+}
+
+/* Landscape orientation for mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+  .section1 {
+    position: relative;
+    height: auto;
+  }
+  
+  .sidebar-header {
+    padding: 10px 15px;
+  }
+  
+  .nav-item {
+    padding: 8px 12px;
+    margin: 2px 5px;
+  }
+}

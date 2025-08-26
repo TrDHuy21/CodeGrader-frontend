@@ -1,0 +1,71 @@
+<link
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+  rel="stylesheet"
+/>
+
+<div class="container">
+  <admin-sidebar 
+    [activeRoute]="'/manageuser'"
+    (navItemClick)="onNavItemClick($event)"
+  ></admin-sidebar>
+
+  <div class="section2">
+    <admin-navbar
+      searchPlaceholder="Search users..."
+      [notificationCount]="notificationCount"
+      [isDropdownActive]="isDropdownActive"
+      (searchChange)="onSearchInput($event)"
+      (notificationClick)="onNotificationClick()"
+      (dropdownToggle)="toggleDropdown()"
+    ></admin-navbar>
+
+    <div class="main-content">
+      <div class="content-header">
+        <h1 class="content-title">Users Management</h1>
+      </div>
+
+      <div class="users-table">
+        <div class="table-header">
+          <div>Avatar</div>
+          <div>Full name</div>
+          <div>Email</div>
+          <div>Username</div>
+          <div>Date register</div>
+          <div>Status</div>
+          <div>Project Numbers</div>
+          <div>Point</div>
+          <div>Actions</div>
+        </div>
+
+        <div class="table-row">
+          @for (user of filteredUsers; track user.username) {
+          <div [class]="getUserAvatarClass(user.gender)">
+            {{ user.avatar }}
+          </div>
+          <div>{{ user.fullName }}</div>
+          <div>{{ user.email }}</div>
+          <div>{{ user.username }}</div>
+          <div>{{ user.dateRegister }}</div>
+          <div>
+            <span [class]="getStatusBadgeClass(user.status)">
+              {{ getStatusText(user.status) }}
+            </span>
+          </div>
+          <div>{{ user.projectNumbers }}</div>
+          <div>{{ user.point }}</div>
+          <div class="action-buttons">
+            <button class="action-btn view-btn" (click)="onViewUser(user)">
+              <i class="fas fa-eye"></i>
+            </button>
+            <button [class]="getColorIconLock(user.status)" class="action-btn" (click)="onToggleUserStatus(user)">
+              <i [class]="getLockIcon(user.status)"></i>
+            </button>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="copyright">©Copyright By CodeGrader 2025</div>
+  </div>
+</div>

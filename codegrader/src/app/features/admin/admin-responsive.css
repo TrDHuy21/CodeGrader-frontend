@@ -1,0 +1,421 @@
+/* Shared Responsive Design for Admin Pages */
+
+/* Large screens and tablets */
+@media (max-width: 1200px) {
+  .container {
+    flex-direction: column;
+  }
+  
+  .section1 {
+    flex: none;
+    height: auto;
+    min-height: auto;
+    border-radius: 0;
+  }
+  
+  .section2 {
+    flex: none;
+    width: 100%;
+  }
+  
+  .sidebar-header {
+    padding: 20px;
+  }
+  
+  .sidebar-nav {
+    padding: 10px 0;
+  }
+  
+  .nav-item {
+    padding: 15px 20px;
+    margin: 5px 10px;
+    border-radius: 10px;
+  }
+  
+  .content-title {
+    font-size: 2.5rem;
+  }
+}
+
+/* Tablets and small laptops */
+@media (max-width: 768px) {
+  .container {
+    height: auto;
+    min-height: 100vh;
+  }
+  
+  .section1 {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: #e5e5e5;
+    border-radius: 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  
+  .sidebar-header {
+    padding: 15px 20px;
+  }
+  
+  .sidebar-header h2 {
+    font-size: 16px;
+  }
+  
+  .nav-item {
+    padding: 12px 15px;
+    margin: 3px 8px;
+    font-size: 14px;
+  }
+  
+  .nav-item i {
+    font-size: 14px;
+    width: 18px;
+  }
+  
+  .section2 {
+    padding: 0;
+  }
+  
+  nav {
+    padding: 12px 16px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .nav-left {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .search-container {
+    min-width: 200px;
+    max-width: 100%;
+  }
+  
+  .nav-right {
+    gap: 10px;
+  }
+  
+  .notification-btn {
+    padding: 8px;
+    min-width: 36px;
+    min-height: 36px;
+  }
+  
+  .notification-btn i {
+    font-size: 16px;
+  }
+  
+  .admin-profile {
+    padding: 6px 8px;
+  }
+  
+  .admin-avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+  
+  .content-title {
+    font-size: 2rem;
+    margin-bottom: 15px;
+  }
+  
+  .main-content {
+    padding: 16px;
+  }
+  
+  .users-table {
+    border-radius: 8px;
+    overflow-x: auto;
+  }
+  
+  .table-header,
+  .table-row {
+    gap: 8px;
+    padding: 12px 15px;
+    font-size: 12px;
+  }
+  
+  .user-avatar {
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+  }
+  
+  .status-badge {
+    padding: 2px 8px;
+    font-size: 10px;
+  }
+  
+  .action-buttons {
+    gap: 4px;
+  }
+  
+  .action-btn {
+    padding: 4px 6px;
+    font-size: 12px;
+  }
+}
+
+/* Mobile phones */
+@media (max-width: 480px) {
+  .sidebar-header {
+    padding: 12px 15px;
+  }
+  
+  .sidebar-header h2 {
+    font-size: 14px;
+  }
+  
+  .nav-item {
+    padding: 10px 12px;
+    margin: 2px 6px;
+    font-size: 13px;
+  }
+  
+  .nav-item i {
+    font-size: 13px;
+    width: 16px;
+    margin-right: 8px;
+  }
+  
+  nav {
+    padding: 10px 12px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .nav-left {
+    order: 2;
+  }
+  
+  .nav-right {
+    order: 1;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  
+  .search-container {
+    min-width: 100%;
+  }
+  
+  .breadcrumb {
+    font-size: 12px;
+  }
+  
+  .content-title {
+    font-size: 1.5rem;
+    margin-bottom: 12px;
+  }
+  
+  .main-content {
+    padding: 12px;
+  }
+  
+  .table-header,
+  .table-row {
+    gap: 6px;
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+  
+  .user-avatar {
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+  }
+  
+  .status-badge {
+    padding: 1px 6px;
+    font-size: 9px;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: 2px;
+  }
+  
+  .action-btn {
+    padding: 3px 4px;
+    font-size: 10px;
+  }
+  
+  .dropdown-menu {
+    min-width: 150px;
+  }
+  
+  .dropdown-item {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+}
+
+/* Small mobile phones */
+@media (max-width: 360px) {
+  .sidebar-header {
+    padding: 10px 12px;
+  }
+  
+  .nav-item {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+  
+  .nav-item i {
+    font-size: 12px;
+    width: 14px;
+    margin-right: 6px;
+  }
+  
+  .content-title {
+    font-size: 1.3rem;
+  }
+  
+  .table-header,
+  .table-row {
+    gap: 4px;
+    padding: 6px 8px;
+    font-size: 10px;
+  }
+  
+  .user-avatar {
+    width: 18px;
+    height: 18px;
+    font-size: 9px;
+  }
+  
+  .status-badge {
+    padding: 1px 4px;
+    font-size: 8px;
+  }
+  
+  .action-btn {
+    padding: 2px 3px;
+    font-size: 9px;
+  }
+}
+
+/* Landscape orientation for mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+  .section1 {
+    position: relative;
+    height: auto;
+  }
+  
+  .sidebar-header {
+    padding: 10px 15px;
+  }
+  
+  .nav-item {
+    padding: 8px 12px;
+    margin: 2px 5px;
+  }
+  
+  .main-content {
+    padding: 10px;
+  }
+  
+  .content-title {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+  }
+}
+
+/* Print styles */
+@media print {
+  .section1,
+  nav,
+  .action-buttons {
+    display: none;
+  }
+  
+  .section2 {
+    width: 100%;
+  }
+  
+  .users-table {
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+  
+  .table-header,
+  .table-row {
+    border-bottom: 1px solid #000;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .nav-item:hover,
+  .nav-item.active {
+    background-color: #000;
+    color: #fff;
+  }
+  
+  .action-btn {
+    border: 2px solid currentColor;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .section1 {
+    background-color: #2d3748;
+    color: #e2e8f0;
+  }
+  
+  .nav-item {
+    color: #e2e8f0;
+  }
+  
+  .nav-item:hover,
+  .nav-item.active {
+    background-color: #4a5568;
+    color: #fff;
+  }
+  
+  nav {
+    background-color: #1a202c;
+    border-bottom-color: #4a5568;
+  }
+  
+  .search-container {
+    background-color: #2d3748;
+    border-color: #4a5568;
+  }
+  
+  .search-input {
+    color: #e2e8f0;
+  }
+  
+  .search-input::placeholder {
+    color: #a0aec0;
+  }
+  
+  .users-table {
+    background-color: #1a202c;
+  }
+  
+  .table-header {
+    background-color: #2d3748;
+    color: #a0aec0;
+  }
+  
+  .table-row {
+    border-bottom-color: #4a5568;
+  }
+  
+  .table-row:hover {
+    background-color: #2d3748;
+  }
+}
