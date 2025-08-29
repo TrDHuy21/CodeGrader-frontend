@@ -34,12 +34,22 @@ import { RouterModule } from '@angular/router';
                 Change Password
               </a>
             </li>
+            <li>
+              <a
+                [routerLink]="['./update-avatar']"
+                [routerLinkActiveOptions]="{ exact: true }"
+                routerLinkActive="bg-blue-600 text-white"
+                class="block w-full px-4 py-2 rounded-full transition
+                   text-gray-600 hover:bg-gray-200 hover:text-gray-900"
+              >
+                Update Avatar
+              </a>
+            </li>
           </ul>
         </nav>
 
         <!-- Content -->
         <section class="flex-1 min-w-0 p-4 bg-white rounded-xl shadow-sm">
-          <!-- Nếu dùng PrimeNG form: thêm p-fluid để input full width -->
           <div class="p-fluid">
             <router-outlet></router-outlet>
           </div>

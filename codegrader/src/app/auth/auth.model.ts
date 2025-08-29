@@ -10,7 +10,7 @@ export interface LoginResponse {
     userDto: UserDto;
     tokenDto: TokenDto;
   };
-  errorDetail: any; 
+  errorDetail: any;
 }
 
 export interface UserDto {
@@ -25,12 +25,13 @@ export interface UserDto {
 
 export interface TokenDto {
   accessToken: string;
+  refreshToken: string;
 }
 
 export interface RegisterRequest {
   username: string;
   password: string;
-  email: string;  
+  email: string;
   fullName: string;
 }
 
@@ -50,15 +51,16 @@ export interface FieldError {
   errorMessage: string;
 }
 
-export interface ConfirmEmailRequest 
-{
+export interface ConfirmEmailRequest {
   email: string;
   otp: string;
 }
 
-export interface RequestUpdateNewPassword
-{
+export interface RequestUpdateNewPassword {
   email: string;
   otp: string;
   newPassword: string;
+}
+export interface RefreshTokenDto {
+  token: string;
 }

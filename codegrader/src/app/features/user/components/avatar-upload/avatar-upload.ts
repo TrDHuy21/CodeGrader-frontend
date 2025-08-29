@@ -1,20 +1,11 @@
-import {
-  Component,
-  Input,
-  EventEmitter,
-  Output,
-  ViewChild,
-  ElementRef,
-  signal,
-} from '@angular/core';
+import { Component, Input, ElementRef, signal } from '@angular/core';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
-import { read } from 'node:fs';
 @Component({
   selector: `avatar-component`,
   imports: [ReactiveFormsModule],
   template: ` <div class="flex gap-4">
     <div class="aspect-square border rounded-full h-20">
-      <img alt="Avatar" class="w-full h-full object-cover" />
+      <img alt="Avatar" class="w-full h-full object-cover rounded-full" [id]="'img'" src="#" />
     </div>
     <div class="flex flex-col gap-2 items-start">
       <input
@@ -22,7 +13,6 @@ import { read } from 'node:fs';
         name="avatar"
         accept="image/png,image/jpeg,image/gif"
         class="custom-file-input"
-        [formControl]="control"
         (change)="onFileChange($event)"
       />
       <span class="text-gray-500 text-sm"> JPG, PNG hoặc GIF, tối đa 2MB. </span>
@@ -32,10 +22,15 @@ import { read } from 'node:fs';
   styleUrls: ['./upload-file.css'],
 })
 export class AvatarUpload {
-  @Input({ required: true }) control!: FormControl<File | null>;
+  @Input() control!: FormControl<File | null>;
   file = signal<File | null>(null);
   previewUrl = signal<string>('');
   uploadUrl = signal<string>('');
+  constructor(private el: ElementRef) {}
+  ngAfterViewInit() {
+    const imgElement = this.el.nativeElement.querySelector('#img');
+    console.log(imgElement); // Output: "myElement"
+  }
 
   onFileChange(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -50,5 +45,8 @@ export class AvatarUpload {
     reader.onload = () => this.previewUrl.set(reader.result as string);
     reader.readAsDataURL(f);
     console.log('File selected:', f);
+    const imgElement = this.el.nativeElement.querySelector('#img');
+    imgElement.src = URL.createObjectURL(f);
+    this.control.setValue(f);
   }
 }

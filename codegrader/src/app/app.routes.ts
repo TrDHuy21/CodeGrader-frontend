@@ -13,10 +13,12 @@ import { RegisterApp } from './auth/register/register';
 import { UserManage } from './features/admin/userManage/userManage';
 import { TagManage } from './features/admin/tagManage/tagManage';
 import { ForgotPassword } from './auth/forgotPassword/forgotPassword';
+import { UpdateAvatarComponent } from './features/user/pages/profile-updates/update-avatar';
+import { identity } from 'rxjs';
 export const routes: Routes = [
   {
     path: '',
-    component: ProblemDetailComponent,
+    component: Container,
     children: [
       { path: '', redirectTo: 'description', pathMatch: 'full' }, //default route
       { path: 'description', component: ProblemDescriptionComponent },
@@ -29,14 +31,28 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'update-profile', pathMatch: 'full' },
       { path: 'update-profile', component: ProfileUpdate },
-      { path: 'change-password', component: ChangePasswordComponent }, //default route
+      { path: 'change-password', component: ChangePasswordComponent },
+      { path: 'update-avatar', component: UpdateAvatarComponent }, //default route
+    ],
+  },
+  {
+    path: 'problem',
+    component: ProblemHomepage,
+  },
+  {
+    path: 'problem/:id',
+    component: ProblemDetailComponent,
+    children: [
+      { path: '', redirectTo: 'description', pathMatch: 'full' }, // default route
+      { path: 'description', component: ProblemDescriptionComponent },
+      { path: 'submissions', component: ProblemSubmissionComponent },
     ],
   },
   { path: 'home', component: Container },
   { path: 'problem', component: ProblemHomepage },
-   {path: "login", component: LoginApp }, 
-    {path: "signup", component: RegisterApp},
-    {path: "manageuser", component: UserManage},
-    {path: "managetag", component: TagManage},
-    {path: "forgotpassword", component: ForgotPassword}
+  { path: 'login', component: LoginApp },
+  { path: 'signup', component: RegisterApp },
+  { path: 'manageuser', component: UserManage },
+  { path: 'managetag', component: TagManage },
+  { path: 'forgotpassword', component: ForgotPassword },
 ];

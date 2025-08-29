@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 @Component({
   selector: `topic-component`,
   template: `
-    <div class="container w-full max-w-2xl mx-auto">
+    <div class=" w-full w-[1400px] mx-auto">
       <div class="topic-hastag flex  w-full overflow-hidden relative">
         <div class="topic-item flex items-center gap-2 py-2">
           <span class="text-gray-700 font-medium">Array</span>
@@ -69,11 +69,14 @@ import { Component } from '@angular/core';
           </span>
         </div>
         <div
-          class="absolute bottom-0 left-0 w-full h-10 
-              bg-gradient-to-l from-white via-white/80 to-transparent"
+          class="pointer-events-none absolute inset-0 z-10
+           bg-gradient-to-r from-transparent via-transparent via-[95%] to-gray-200 to-[100%]"
         ></div>
+
+        <!-- Nút nổi lên trên overlay -->
         <button
-          class="absolute top-2/4 right-0 -translate-y-2/4 text-sm text-blue-600 font-medium px-2 bg-white hover:underline"
+          class="absolute right-4 top-1/2 -translate-y-1/2 z-20
+           text-sm text-blue-600 font-medium px-2 bg-white/90 hover:underline rounded"
         >
           Read more
         </button>

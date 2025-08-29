@@ -20,16 +20,14 @@ import { ProblemSignalStore } from '../services/problem-signal-store';
     EditorModule,
   ],
   standalone: true,
-  template: `
-      
-      <section class="content p-4 bg-white shadow rounded-lg mb-4">
+  template: ` <section class="content p-4 bg-white shadow rounded-lg mb-4">
       <h3 class="text-lg font-semibold mb-4">{{ problemData()?.prompt }}</h3>
       <p>
         Here is where the full problem statement, examples, and any other relevant information will
         be displayed.
       </p>
       <div class="mt-4">
-        @for (item of problemData()?.inOutExamples; track item.id) {
+        @for (item of problemData()?.inOutExamples; track item.id;) {
         <div class="example mb-4">
           <h4 class="text-md font-semibold mb-2">Example {{ item.id }}:</h4>
           <div class="example-content p-4 bg-white shadow rounded-lg">

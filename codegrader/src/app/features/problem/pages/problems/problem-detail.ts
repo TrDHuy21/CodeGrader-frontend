@@ -5,12 +5,15 @@ import { TextareaModule } from 'primeng/textarea';
 import { FloatLabel } from 'primeng/floatlabel';
 import { CommonModule } from '@angular/common';
 import { ProblemDescriptionComponent } from '../../components/problem-description';
-import { RouterModule } from '@angular/router';
+import { NavigationEnd, RouterModule } from '@angular/router';
 import { RouterOutlet } from '@angular/router';
 import { SelectModule } from 'primeng/select';
 import { ProblemService } from '../../services/problem-service';
 import { Problem, ProblemLevelEnum } from '../../models/ProblemModel';
 import { ProblemSignalStore } from '../../services/problem-signal-store';
+import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
+import { filter } from 'rxjs/operators';
 @Component({
   selector: `problem-detail-component`,
   imports: [
@@ -76,6 +79,7 @@ import { ProblemSignalStore } from '../../services/problem-signal-store';
   `,
 })
 export class ProblemDetailComponent {
+  id!: number;
   activeTab = 'description';
   setActive(tab: string) {
     this.activeTab = tab;
@@ -83,10 +87,19 @@ export class ProblemDetailComponent {
   }
   readonly LevelEnum = ProblemLevelEnum;
   problemData = signal<Problem | null>(null);
-  constructor(private problemService: ProblemService, private store: ProblemSignalStore) {}
-  private problem = inject(ProblemService);
+
+  constructor(
+    private problemService: ProblemService,
+    private store: ProblemSignalStore,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
   ngOnInit() {
-    this.problem.getProblemById(1).subscribe((res) => {
+    this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
+      this.id = Number(this.route.snapshot.paramMap.get('id') ?? 0);
+    });
+    this.id = Number(this.route.snapshot.paramMap.get('id') ?? 0);
+    this.problemService.getProblemById(this.id).subscribe((res) => {
       console.log('h2h2' + res);
       this.problemData.set(res.data);
       this.store.setProblem(res.data);
