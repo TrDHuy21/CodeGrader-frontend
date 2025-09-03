@@ -4,8 +4,13 @@ import { ReactiveFormsModule, FormControl } from '@angular/forms';
   selector: `avatar-component`,
   imports: [ReactiveFormsModule],
   template: ` <div class="flex gap-4">
-    <div class="aspect-square border rounded-full h-20">
-      <img alt="Avatar" class="w-full h-full object-cover rounded-full" [id]="'img'" src="#" />
+    <div class="aspect-square  rounded-full h-20">
+      <img
+        alt="Avatar"
+        class="w-full h-full object-cover rounded-full  "
+        [id]="'img'"
+        [src]="imgSrc() ?? '#'"
+      />
     </div>
     <div class="flex flex-col gap-2 items-start">
       <input
@@ -26,11 +31,18 @@ export class AvatarUpload {
   file = signal<File | null>(null);
   previewUrl = signal<string>('');
   uploadUrl = signal<string>('');
-  constructor(private el: ElementRef) {}
-  ngAfterViewInit() {
-    const imgElement = this.el.nativeElement.querySelector('#img');
-    console.log(imgElement); // Output: "myElement"
+  imgSrc = signal<string | null>(localStorage.getItem('avatar'));
+
+  constructor(private el: ElementRef) {
   }
+  // ngAfterViewInit() {
+  //   const imgElement = this.el.nativeElement.querySelector('#img');
+  //   console.log(imgElement); // Output: "myElement"
+  // }
+  // ngOnInit() {
+  //   const imgElement = this.el.nativeElement.querySelector('#img');
+  //   imgElement.src = localStorage.getItem('avatar');
+  // }
 
   onFileChange(event: Event) {
     const input = event.target as HTMLInputElement;

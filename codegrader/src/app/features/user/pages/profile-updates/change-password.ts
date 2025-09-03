@@ -24,14 +24,21 @@ import { ApiResponse } from '../../models/api-respone';
             inputId="cpw"
             formControlName="currentPassword"
             [feedback]="false"
-            class="w-full"
+            class="w-full  select-none "
             fluid="true"
+            [toggleMask]="true"
           />
           <label for="cpw">Current Password</label>
         </p-floatlabel>
 
         <p-floatlabel variant="on">
-          <p-password inputId="npw" formControlName="newPassword" class="w-full" fluid="true" />
+          <p-password
+            inputId="npw"
+            formControlName="newPassword"
+            class="w-full  select-none "
+            fluid="true"
+            [toggleMask]="true"
+          />
           <label for="npw">New Password</label>
         </p-floatlabel>
 
@@ -40,8 +47,9 @@ import { ApiResponse } from '../../models/api-respone';
             inputId="cfpw"
             formControlName="confirmPassword"
             [feedback]="false"
-            class="w-full"
+            class="w-full  select-none "
             fluid="true"
+            [toggleMask]="true"
           />
           <label for="cfpw">Confirm New Password</label>
         </p-floatlabel>
@@ -50,7 +58,7 @@ import { ApiResponse } from '../../models/api-respone';
           <button
             type="reset"
             class="px-5 py-2 rounded border text-sm font-medium bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200 hover:text-gray-800 mx-2
-            cursor-pointer"
+              select-none  cursor-pointer"
           >
             Cancel
           </button>

@@ -38,33 +38,32 @@ import { filter } from 'rxjs/operators';
           <p class="text-gray-600 mb-4">Problem description and details go here.</p>
           <section class="problem-tabs">
             <ul class="flex gap-2 px-2 py-3  bg-gray-100 rounded-full w-fit font-medium text-sm">
-              <li
-                class="px-4 py-2 rounded-full cursor-pointer transition"
+              <a
+                [routerLink]="['./description']"
+                routerLinkActive=""
+                [routerLinkActiveOptions]="{ exact: true }"
+                class="px-4 py-2 rounded-full cursor-pointer transition select-none"
                 [ngClass]="{
                   'bg-blue-600 text-white': activeTab === 'description',
                   'text-gray-600 hover:bg-gray-200 hover:text-gray-900': activeTab !== 'description'
                 }"
                 (click)="setActive('description')"
               >
-                <a
-                  [routerLink]="['./description']"
-                  routerLinkActive=""
-                  [routerLinkActiveOptions]="{ exact: true }"
-                >
-                  Description
-                </a>
-              </li>
+                <li>Description</li>
+              </a>
 
-              <li
-                class="px-4 py-2 rounded-full cursor-pointer transition"
+              <a
+                [routerLink]="['./submissions']"
+                routerLinkActive=""
+                class="px-4 py-2 rounded-full cursor-pointer transition select-none"
                 [ngClass]="{
-                  'bg-blue-600 text-white': activeTab === 'submissions',
-                  'text-gray-600 hover:bg-gray-200 hover:text-gray-900': activeTab !== 'submissions'
+                  'bg-blue-600 text-white': activeTab === 'submission',
+                  'text-gray-600 hover:bg-gray-200 hover:text-gray-900': activeTab !== 'submission'
                 }"
-                (click)="setActive('submissions')"
+                (click)="setActive('submission')"
               >
-                <a [routerLink]="['./submissions']" routerLinkActive=""> Submission </a>
-              </li>
+                <li>Submission</li>
+              </a>
             </ul>
           </section>
         </div>

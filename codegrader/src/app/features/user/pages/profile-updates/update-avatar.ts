@@ -1,12 +1,8 @@
-import { Component, inject, ViewChild, viewChild } from '@angular/core';
-import { FloatLabel } from 'primeng/floatlabel';
+import { Component, inject } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { UserProfileService } from '../../services/user-profile-serive';
 import { CommonModule } from '@angular/common';
-import { Password } from 'primeng/password';
-import { finalize } from 'rxjs';
-import { ApiResponse } from '../../models/api-respone';
 import { AvatarUpload } from '../../components/avatar-upload/avatar-upload';
 @Component({
   selector: `avatar-update`,
@@ -43,10 +39,12 @@ import { AvatarUpload } from '../../components/avatar-upload/avatar-upload';
 })
 export class UpdateAvatarComponent {
   private fb = inject(FormBuilder);
+  private userProfileService = inject(UserProfileService);
   formChangeAvatar = this.fb.group({
     avatar: [null as File | null],
   });
-  constructor(private userProfileService: UserProfileService) {}
+  constructor() {}
+  
   handleSubmit(e: Event) {
     e.preventDefault();
     const file = this.formChangeAvatar.value.avatar;
@@ -54,11 +52,9 @@ export class UpdateAvatarComponent {
       alert('Please select a file');
       return;
     }
-
     this.userProfileService.updateAvatar(file).subscribe({
       next: (res) => console.log('OK', res),
       error: (err) => {
-        // hiện lỗi validation từ ASP.NET
         const msg = err?.error?.errors?.Avatar?.[0] || err?.error?.title || 'Upload failed';
         alert(msg);
         console.error(err);

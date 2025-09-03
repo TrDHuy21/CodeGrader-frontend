@@ -4,6 +4,7 @@ import { ProblemTableComponent } from '../../components/problem-table';
 import { SideBarProblem } from '../../components/sidebar';
 import { TrendingComponent } from '../../components/trending';
 import { ProblemFilter, SearchComponent } from '../../components/probem-search';
+
 @Component({
   selector: `problem-home-component`,
   imports: [

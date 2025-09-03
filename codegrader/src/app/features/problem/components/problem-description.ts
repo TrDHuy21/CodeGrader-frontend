@@ -7,6 +7,7 @@ import { TextareaModule } from 'primeng/textarea';
 import { SelectModule } from 'primeng/select';
 import { EditorModule } from 'primeng/editor';
 import { ProblemSignalStore } from '../services/problem-signal-store';
+import { CommentListComponent } from './comment-list';
 
 @Component({
   selector: `problem-description-component`,
@@ -18,6 +19,7 @@ import { ProblemSignalStore } from '../services/problem-signal-store';
     TextareaModule,
     SelectModule,
     EditorModule,
+    CommentListComponent,
   ],
   standalone: true,
   template: ` <section class="content p-4 bg-white shadow rounded-lg mb-4">
@@ -44,13 +46,13 @@ import { ProblemSignalStore } from '../services/problem-signal-store';
         </div>
         }
 
-        <div class="constraint-content mb-4">
+        <!-- <div class="constraint-content mb-4">
           <h4 class="text-md font-semibold mb-2">Constraints:</h4>
           <ul class="list-disc list-inside p-4 bg-white shadow rounded-lg">
             <li>1 <= nums.length <= 10^4</li>
             <li>-10^4 <= nums[i] <= 10^4</li>
           </ul>
-        </div>
+        </div> -->
       </div>
     </section>
     <section class="content p-4 bg-white shadow rounded-lg">
@@ -82,14 +84,12 @@ import { ProblemSignalStore } from '../services/problem-signal-store';
       <button pButton severity="secondary" type="submit" class="w-full mt-4">
         <span pButtonLabel>Submit</span>
       </button>
-      <div class="comment-list mt-4 space-y-4">
-        <!-- Comment item -->
+      <!-- <div class="comment-list mt-4 space-y-4">
         <p-floatlabel class="w-full md:w-56" variant="on">
           <p-select inputId="on_label" optionLabel="name" class="w-full" />
           <label for="on_label">Sort</label>
         </p-floatlabel>
-        <div class="comment-item flex items-start gap-4 p-4 bg-white shadow rounded-lg">
-          <!-- Avatar -->
+        <div class="comment-item flex items-start gap-4 p-4 bg-white shadow rounded-lg relative">
           <img
             src="https://i.pravatar.cc/40"
             alt="User Avatar"
@@ -97,18 +97,15 @@ import { ProblemSignalStore } from '../services/problem-signal-store';
           />
 
           <div class="flex-1">
-            <!-- User + date -->
             <div class="flex items-center justify-between mb-1">
               <p class="font-semibold text-gray-800">User123</p>
               <p class="text-sm text-gray-400">August 29, 2025</p>
             </div>
 
-            <!-- Text -->
             <p class="text-gray-700 mb-3">
               This is a sample comment on the problem. Great problem!
             </p>
 
-            <!-- Actions -->
             <div class="flex gap-3">
               <button
                 pButton
@@ -116,7 +113,9 @@ import { ProblemSignalStore } from '../services/problem-signal-store';
                 label="Like"
                 icon="pi pi-thumbs-up"
                 class="p-button-sm p-button-text"
-              ></button>
+              >
+                <span>(3)</span>
+              </button>
               <button
                 pButton
                 type="button"
@@ -125,9 +124,11 @@ import { ProblemSignalStore } from '../services/problem-signal-store';
                 class="p-button-sm p-button-text"
               ></button>
             </div>
+            
           </div>
         </div>
-      </div>
+      </div> -->
+      <comment-list-component [data]="comments"></comment-list-component>
     </section>`,
 })
 export class ProblemDescriptionComponent {
@@ -137,4 +138,36 @@ export class ProblemDescriptionComponent {
   constructor() {
     console.log(this.problemData());
   }
+  comments = [
+    {
+      id: 1,
+      user: 'Author',
+      // role: 'Author',
+      avatar: 'https://i.pravatar.cc/40?u=1',
+      text: 'Đã lỡ thích cậu mất rồi\nYoshida trước khi nổ được sensei về cho đẹp trai tóc không bết. Công lý cho Yoshida. 🌟🙌',
+      likes: 184,
+      reactions: '😂😮👍',
+      createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000),
+      replies: [
+        {
+          id: 11,
+          user: 'Top fan',
+          // role: 'Top fan',
+          avatar: 'https://i.pravatar.cc/40?u=2',
+          text: 'Tưởng Lan\nĐã lỡ thích cậu mất rồi Mấy chục chap tóc bết, mới gội đầu thì bị nổ🥲 Tội anh',
+          likes: 0,
+          createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000),
+        },
+        {
+          id: 12,
+          user: 'Alex Nghĩa',
+          avatar: 'https://i.pravatar.cc/40?u=3',
+          text: 'Đã lỡ thích cậu mất rồi',
+          attachments: [{ type: 'image', url: 'https://picsum.photos/220/280?random=10' }],
+          likes: 0,
+          createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
+        },
+      ],
+    },
+  ];
 }

@@ -66,21 +66,18 @@ import { ApiResponse } from '../../models/api-respone';
         ></input-component>
         <div [classList]="'col-span-2 align-self-center justify-self-center'">
           <button
-            type="button"
-            (click)="handleClick()"
-            class="px-5 py-2 rounded border text-sm font-medium transition
+            type="reset"
+            class="px-5 py-2 rounded border text-sm font-medium transition cursor-pointer select-none
            bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200 hover:text-gray-800 mx-2"
           >
             Cancel
           </button>
-
           <button
             type="submit"
-            (click)="handleClick()"
-            class="px-5 py-2.5 rounded border text-sm font-medium transition
+            class="px-5 py-2.5 rounded border text-sm font-medium transition cursor-pointer  select-none
            bg-blue-500 text-white border-blue-500 hover:bg-blue-600 hover:border-blue-600"
           >
-            Save Changes
+            Update Profile
           </button>
         </div>
       </div>
@@ -146,19 +143,18 @@ export class ProfileUpdate implements OnInit {
     const d = this.form.get('birthday')?.value;
     const iso = this.common.convertDateObjToISO(d as Date);
 
-    const { birthday, ...rest } = this.form.getRawValue(); 
+    const { birthday, ...rest } = this.form.getRawValue();
     const submitValue = { ...rest, birthday: iso, id: 2 };
     console.log(submitValue);
     this.userProfileService.updateUserProfile(submitValue).subscribe({
       next: (res) => {
         if (res?.isSuccess) {
-          alert('Change password successfully!');
-          this.form.reset();
+          alert('Update profile successfully');
         } else {
           const msg =
             (res?.errorDetail?.errors ?? []).map((e) => `• ${e.errorMessage}`).join('\n') ||
             res?.message ||
-            'Change password failed!';
+            'Update profile failed!';
           alert(msg);
         }
         console.log(res);
@@ -168,7 +164,7 @@ export class ProfileUpdate implements OnInit {
         const msg =
           (body?.errorDetail?.errors ?? []).map((e) => `• ${e.errorMessage}`).join('\n') ||
           body?.message ||
-          'Change password failed! Please try again.';
+          'Update profile failed! Please try again.';
         alert(msg);
         console.error(err);
       },

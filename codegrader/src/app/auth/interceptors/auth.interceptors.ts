@@ -12,7 +12,7 @@ import { AuthService } from '../auth.service';
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
   private isRefreshing = false;
-  private refreshTokenSubject = new BehaviorSubject<string | null>(null);
+  private refreshTokenSubject = new BehaviorSubject<string | null>(null); //một Subject/BehaviorSubject phát ra access token mới cho các request khác đang chờ (đã bị 401) để retry
   constructor(private authService: AuthService) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {

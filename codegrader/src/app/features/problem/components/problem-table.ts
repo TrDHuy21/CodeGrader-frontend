@@ -8,49 +8,75 @@ import { Problem } from '../models/ProblemModel';
 import { ProblemFilter } from './probem-search';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { ToastComponent } from '../../../shared/components/toast';
+import { Toast } from 'primeng/toast';
+import { ToastMessageOptions } from 'primeng/api';
 @Component({
   selector: `problem-table-component`,
-  imports: [InputTextModule, TableModule, CommonModule, RouterModule],
+  imports: [InputTextModule, TableModule, CommonModule, RouterModule, ToastComponent],
   standalone: true,
   template: `
     <div>
-      <div class="rounded-xl bg-white">
+      <toast-component [message]="this.message()"></toast-component>
+      <div class="rounded-xl bg-white ">
         <!-- Row -->
         @if (problems().length > 0) { @for (p of problems(); track $index) {
-        <a
-          [routerLink]="['/problem', p.id]"
-          rel="noopener"
+        <div
           class="flex items-center gap-4 px-4 py-3 rounded-lg
-             hover:bg-gray-50 transition even:bg-gray-50/60"
+             hover:bg-gray-50 transition even:bg-gray-50/60 relative"
         >
-          <!-- Left: status + index + title -->
-          <div class="flex items-center gap-3 min-w-0 flex-1">
-            <span class="text-emerald-500">✓</span>
+          <a [routerLink]="['/problem', p.id]" rel="noopener" class="w-full">
+            <!-- Left: status + index + title -->
+            <div class="flex items-center gap-3 min-w-0 flex-1">
+              <span class="text-emerald-500">✓</span>
 
-            <span class="truncate font-semibold text-gray-900">
-              {{ p.content }}
-            </span>
-          </div>
+              <span class="truncate font-semibold text-gray-900">
+                {{ p.content }}
+              </span>
+            </div>
 
-          <!-- Acceptance -->
-          <!-- <div class="w-24 text-right text-gray-600 font-medium">
+            <!-- Acceptance -->
+            <!-- <div class="w-24 text-right text-gray-600 font-medium">
             {{ p.level | number : '1.0-1' }}%
           </div> -->
 
-          <!-- Difficulty -->
-          <!-- <div class="w-20 text-right">
+            <!-- Difficulty -->
+            <!-- <div class="w-20 text-right">
             <span class="font-semibold" [ngClass]="diffTextClass(p.level)">
               {{ shortDiff(p.level) }}
             </span>
           </div> -->
 
-          <!-- Right bars -->
-          <div class="hidden sm:flex w-28 justify-end gap-1">
-            @for (_ of bars; track $index) {
+            <!-- Right bars -->
+            <div class="hidden sm:flex w-28 justify-end gap-1">
+              <!-- @for (_ of bars; track $index) {
             <span class="h-2 w-2 rounded-full bg-gray-300/80"></span>
+            } -->
+            </div>
+          </a>
+          <div class="absolute top-0 right-1/9 translate-2/4">
+            @if (isBookmarked) {
+            <button (click)="toogleTemp()" class="cursor-pointer">
+              <i
+                class="pi pi-bookmark-fill text-blue-400
+               transition-all duration-300 ease-in-out
+               transform hover:scale-110"
+                style="font-size: 1rem"
+              ></i>
+            </button>
+            } @else {
+            <button class="cursor-pointer " (click)="toogleTemp()">
+              <i
+                class="pi pi-bookmark
+               transition-all duration-300 ease-in-out
+               transform hover:scale-110 hover:text-blue-400"
+                style="font-size: 1rem"
+              ></i>
+            </button>
             }
           </div>
-        </a>
+        </div>
+
         } } @else {
         <div class="px-4 py-6 text-gray-500">No problems found.</div>
         }
@@ -61,15 +87,10 @@ import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 export class ProblemTableComponent {
   filters = input.required<ProblemFilter>();
   problems = signal<Problem[]>([]);
+  isBookmarked = true;
+  message = signal<ToastMessageOptions | ToastMessageOptions[] | null>(null);
+
   constructor(private problemService: ProblemService) {
-    // toObservable(this.filters)
-    //   .pipe(
-    //     debounceTime(300),
-    //     distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b)),
-    //     switchMap((f) => this.problemService.getProblems(f))
-    //   )
-    //   .subscribe((res) => this.problems.set(res.data ?? []));
-    // console.log(this.problems());
     effect(() => {
       const f = this.filters(); // lấy giá trị mới
       console.log('Filters thay đổi:', f);
@@ -92,6 +113,15 @@ export class ProblemTableComponent {
       error: (err) => {
         console.error(err);
       },
+    });
+  }
+  showInfo() {
+    this.message.set({
+      severity: 'success',
+      summary: 'Info Message',
+      detail: 'Bookmarked!',
+      key: 'tr',
+      life: 3000,
     });
   }
 
@@ -117,6 +147,25 @@ export class ProblemTableComponent {
         return 'text-rose-500';
       default:
         return 'text-gray-500';
+    }
+  }
+  toogleBookmark(event: Event, problemId: number, isBookmarked: boolean) {
+    if (isBookmarked) {
+      // remove book mark
+    } else {
+      // add book mark
+    }
+  }
+  toogleTemp() {
+    if (this.isBookmarked) {
+      this.isBookmarked = false;
+      console.log(this.message());
+      this.showInfo();
+    } else {
+      this.isBookmarked = true;
+      console.log(this.message());
+
+      this.showInfo();
     }
   }
 }
