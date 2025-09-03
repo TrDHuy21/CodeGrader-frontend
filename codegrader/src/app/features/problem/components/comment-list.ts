@@ -2,37 +2,46 @@ import { Component, computed, Input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CommentComponent } from './comment';
 import { SelectModule } from 'primeng/select';
-import { FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
-
+import { CommentModel } from '../models/comment-model';
+import { TextareaModule } from 'primeng/textarea';
+import { ToastComponent } from '../../../shared/components/toast';
+import { ToastMessageOptions } from 'primeng/api';
+import { EditorModule } from 'primeng/editor';
+import { text } from 'stream/consumers';
 type SortMode = 'relevant' | 'newest' | 'top';
 
-interface CommentItem {
-  id: number;
-  user: string;
-  avatar: string;
-  role?: 'Author' | 'Top fan';
-  text?: string;
-  attachments?: { type: 'image'; url: string; w?: number; h?: number }[];
-  likes: number;
-  reactions?: string; // ví dụ: "😂😮👍"
-  createdAt: Date;
-  replies?: CommentItem[];
-  // UI state
-  showReply?: boolean;
-  draft?: string;
-  liked?: boolean;
-}
-interface ThreadItem {
-  id: number;
-  replies?: ThreadItem[];
-}
 @Component({
   selector: 'comment-list-component',
-  imports: [CommonModule, CommentComponent, SelectModule, ButtonModule],
+  imports: [
+    CommonModule,
+    CommentComponent,
+    SelectModule,
+    ButtonModule,
+    ReactiveFormsModule,
+    TextareaModule,
+    ToastComponent,
+    EditorModule,
+  ],
   standalone: true,
   template: `<!-- Sort bar -->
-    <div class="flex items-center gap-2 my-3">
+    <toast-component [message]="this.message()"></toast-component>
+    <h3 class="text-lg font-semibold mb-4">Discussion (3)</h3>
+    <form (submit)="submitComment($event)" [formGroup]="commentFrom">
+      <div class="flex flex-col gap-1">
+        <p-editor formControlName="content" [style]="{ height: '320px' }" />
+        <!-- @if (isInvalid('text')) {
+            [invalid]="isInvalid('text')"
+        <p-message severity="error" size="small" variant="simple">Content is required.</p-message>
+        } -->
+      </div>
+      <button pButton severity="secondary" type="submit" class="w-full mt-4">
+        <span pButtonLabel>Comment</span>
+      </button>
+    </form>
+
+    <div class="flex items-center gap-2 my-3 ">
       <span class="text-gray-500">Sort:</span>
       <p-select
         [options]="[{ name: 'Most views' }, { name: 'Newest' }]"
@@ -42,38 +51,56 @@ interface ThreadItem {
         class="w-full md:w-56"
       />
     </div>
-    <ul class="space-y-3">
-      @for (it of items; track $index) {
+    <ul class="space-y-3  shadow rounded-lg">
+      @for (it of items(); track $index) {
       <li class="relative" [class.has-children]="it.replies?.length">
         <div class="pl-4 grid grid-cols-[3rem_3rem_1fr] gap-x-2 comment">
           <!-- Comment cấp 1 -->
           <div class="col-span-full relative comment">
-            <comment-component></comment-component>
+            <comment-component
+              (replyClicked)="onReplyFromChild($event)"
+              [comment]="it"
+              [rootId]="it.id"
+            ></comment-component>
           </div>
           <!-- Replies: từ cột 2 đến cột cuối -->
-          @if(it.replies?.length) {
+
           <div class="replies relative col-start-2 col-end-[4] pl-4">
             <ul class="space-y-3">
               @for(reps of it.replies; track $index) {
               <li class="relative reply">
-                <comment-component></comment-component>
+                <comment-component
+                  [comment]="reps"
+                  [rootId]="it.id"
+                  (replyClicked)="onReplyFromChild($event)"
+                ></comment-component>
               </li>
-              }
+              } @if(replyForId === it.id && isReply) {
               <li class="relative reply">
-                <form class="flex flex-col gap-4">
+                <form class="flex flex-col gap-4" (submit)="submit($event)" [formGroup]="form">
                   <div class="flex flex-col gap-1">
-                    <textarea rows="5" cols="30" pTextarea formControlName="adress" -->
-                    ></textarea
+                    <textarea
+                      rows="5"
+                      cols="30"
+                      class="border rounded-lg bg-gray-200 z-2"
+                      formControlName="comment"
+                      pTextarea
                     >
+                    </textarea>
                   </div>
-                  <button pButton severity="secondary" type="submit">
-                    <span pButtonLabel>Submit</span>
-                  </button>
+                  <div class="flex">
+                    <button pButton severity="secondary" type="submit">
+                      <span pButtonLabel>Submit</span>
+                    </button>
+                    <button pButton severity="danger" type="button" (click)="cancel()">
+                      <span pButtonLabel>Cancel</span>
+                    </button>
+                  </div>
                 </form>
               </li>
+              }
             </ul>
           </div>
-          }
         </div>
       </li>
       }
@@ -151,53 +178,101 @@ interface ThreadItem {
   ],
 })
 export class CommentListComponent {
-  items: ThreadItem[] = [{ id: 1, replies: [{ id: 11 }, { id: 12 }] }, { id: 2 }];
-  @Input() data: CommentItem[] = [];
+  message = signal<ToastMessageOptions | ToastMessageOptions[] | null>(null);
+  showInfo() {
+    this.message.set({
+      severity: 'success',
+      summary: 'Info Comment',
+      detail: 'Reply success',
+      key: 'tr',
+      life: 3000,
+    });
+  }
+  form: FormGroup;
+  commentFrom: FormGroup;
 
-  sort = signal<SortMode>('relevant');
-  sorted = computed(() => {
-    const list = [...this.data];
-    if (this.sort() === 'newest') {
-      return list.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-    }
-    if (this.sort() === 'top') {
-      return list.sort(
-        (a, b) => b.likes - a.likes || b.createdAt.getTime() - a.createdAt.getTime()
-      );
-    }
-    // relevant (giả lập)
-    return list;
-  });
-
-  // actions
-  toggleLike(c: CommentItem, $event?: Event) {
-    $event?.stopPropagation();
-    c.liked = !c.liked;
-    c.likes = Math.max(0, c.likes + (c.liked ? 1 : -1));
+  constructor(private fb: FormBuilder, private fbc: FormBuilder) {
+    this.form = this.fb.group({
+      comment: [''],
+      replyToId: [null as number | null], // để submit biết đang reply ai
+    });
+    this.commentFrom = this.fbc.group({
+      id: [1],
+      author: ['User1'],
+      content: [''],
+      replies: [[] as CommentModel[]],
+    });
+  }
+  submitComment(event: Event) {
+    event.preventDefault();
+    const newItem: CommentModel = this.commentFrom.getRawValue();
+    this.items()?.push(newItem);
+    this.showInfo();
   }
 
-  startReply(c: CommentItem, $event?: Event) {
-    $event?.stopPropagation();
-    c.showReply = true;
+  isReply = false;
+  replyForId: number | null = null;
+  onReplyFromChild(e: { username: string; rootId: number }) {
+    this.isReply = true;
+    this.replyForId = e.rootId;
+    const control = this.form.get('comment');
+    const current = (control?.value as string) ?? '';
+    const mention = `@${e.username} `;
+
+    // Nếu chưa có prefix mention, thêm vào đầu; nếu đã có, giữ nguyên
+    const next = current.startsWith(mention) ? current : mention + current.replace(/^\s+/, '');
+
+    console.log(this.form.getRawValue());
+    this.form.patchValue({
+      comment: current?.toString().startsWith(mention) ? current : mention + current,
+    });
   }
 
-  cancelReply(c: CommentItem) {
-    c.showReply = false;
+  items = signal<CommentModel[] | null>([
+    {
+      id: 1,
+      author: 'Alice',
+      content: 'Mọi người thấy bài viết này thế nào?',
+      replies: [
+        {
+          id: 11,
+          author: 'Bob',
+          content: 'Theo mình thì khá hay đó!',
+        },
+        {
+          id: 12,
+          author: 'Charlie',
+          content: 'Mình nghĩ có thể bổ sung thêm ví dụ.',
+        },
+      ],
+    },
+    {
+      id: 2,
+      author: 'David',
+      content: 'Có ai biết deadline dự án là khi nào không?',
+      replies: [
+        {
+          id: 21,
+          author: 'Eva',
+          content: 'Theo mình nhớ là cuối tuần này.',
+        },
+      ],
+    },
+    {
+      id: 3,
+      author: 'Frank',
+      content: 'Mình mới tham gia nhóm, rất mong được học hỏi thêm!',
+      // chưa có replies
+    },
+  ]);
+  submit(event: Event) {
+    event.preventDefault();
+    this.showInfo();
+    this.form.reset(); // reset nội dung form
+    this.isReply = false;
   }
-
-  submitReply(parent: CommentItem) {
-    const text = (parent.draft ?? '').trim();
-    if (!text) return;
-    const reply: CommentItem = {
-      id: Date.now(),
-      user: 'You',
-      avatar: 'https://i.pravatar.cc/40?u=me',
-      text,
-      likes: 0,
-      createdAt: new Date(),
-    };
-    parent.replies = [...(parent.replies ?? []), reply];
-    parent.draft = '';
-    parent.showReply = false;
+  cancel() {
+    this.form.reset();
+    this.isReply = false;
   }
 }

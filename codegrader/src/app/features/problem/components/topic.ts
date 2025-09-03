@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 @Component({
   selector: `topic-component`,
   template: `
-    <div class=" w-full w-[1400px] mx-auto">
+    <div class=" w-[1400px] mx-auto">
       <div class="topic-hastag flex  w-full overflow-hidden relative">
         <div class="topic-item flex items-center gap-2 py-2">
           <span class="text-gray-700 font-medium">Array</span>
@@ -111,24 +111,6 @@ import { Component } from '@angular/core';
            hover:bg-gray-300 transition whitespace-nowrap"
         >
           SQL
-        </button>
-        <button
-          class="px-4 py-2 font-semibold rounded-full  bg-gray-200 text-gray-700 
-           hover:bg-gray-300 transition whitespace-nowrap"
-        >
-          C#
-        </button>
-        <button
-          class="px-4 py-2 font-semibold rounded-full  bg-gray-200 text-gray-700 
-           hover:bg-gray-300 transition whitespace-nowrap"
-        >
-          C#
-        </button>
-        <button
-          class="px-4 py-2 font-semibold rounded-full  bg-gray-200 text-gray-700 
-           hover:bg-gray-300 transition whitespace-nowrap"
-        >
-          C#
         </button>
         <button
           class="px-4 py-2 font-semibold rounded-full  bg-gray-200 text-gray-700 

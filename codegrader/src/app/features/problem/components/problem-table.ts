@@ -1,4 +1,4 @@
-import { Component, effect, input, signal } from '@angular/core';
+import { Component, effect, inject, input, output, Output, signal } from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -11,6 +11,9 @@ import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { ToastComponent } from '../../../shared/components/toast';
 import { Toast } from 'primeng/toast';
 import { ToastMessageOptions } from 'primeng/api';
+import { EventEmitter } from 'stream';
+import { BookmarkModel } from '../models/bookmark-model';
+import { ShareBookmarkService } from '../../../shared/services/share-bookmark-service';
 @Component({
   selector: `problem-table-component`,
   imports: [InputTextModule, TableModule, CommonModule, RouterModule, ToastComponent],
@@ -55,8 +58,8 @@ import { ToastMessageOptions } from 'primeng/api';
             </div>
           </a>
           <div class="absolute top-0 right-1/9 translate-2/4">
-            @if (isBookmarked) {
-            <button (click)="toogleTemp()" class="cursor-pointer">
+            @if (isBookmarked(p.id)) {
+            <button (click)="toggleBookmark($event, p.id, p.content)" class="cursor-pointer">
               <i
                 class="pi pi-bookmark-fill text-blue-400
                transition-all duration-300 ease-in-out
@@ -65,7 +68,7 @@ import { ToastMessageOptions } from 'primeng/api';
               ></i>
             </button>
             } @else {
-            <button class="cursor-pointer " (click)="toogleTemp()">
+            <button class="cursor-pointer " (click)="toggleBookmark($event, p.id, p.content)">
               <i
                 class="pi pi-bookmark
                transition-all duration-300 ease-in-out
@@ -85,9 +88,39 @@ import { ToastMessageOptions } from 'primeng/api';
   `,
 })
 export class ProblemTableComponent {
+  sharedBookmark = inject(ShareBookmarkService);
   filters = input.required<ProblemFilter>();
   problems = signal<Problem[]>([]);
-  isBookmarked = true;
+
+  bookmarkedIds = signal<Set<number>>(new Set<number>());
+  isBookmarked(id: number) {
+    return this.bookmarkedIds().has(id);
+  }
+
+  toggleBookmark(ev: MouseEvent, id: number, content: string) {
+    ev.preventDefault();
+    ev.stopPropagation();
+
+    const prev = this.bookmarkedIds();
+    const wasBookmarked = prev.has(id); // trạng thái trước khi đổi
+    const next = new Set(prev);
+
+    if (wasBookmarked) {
+      // BỎ đánh dấu: chỉ đổi UI, KHÔNG xóa khỏi danh sách lưu trữ
+      next.delete(id);
+      this.sharedBookmark.delete({ ProblemId: id, ProblemName: content });
+    } else {
+      // ĐÁNH DẤU lần đầu: thêm vào UI + đảm bảo thêm vào list nếu chưa có
+      next.add(id);
+      this.sharedBookmark.add({ ProblemId: id, ProblemName: content });
+    }
+
+    this.bookmarkedIds.set(next);
+    // (tuỳ chọn) persist Set:
+    // localStorage.setItem('bookmarks', JSON.stringify([...next]));
+  }
+
+  // isBookmarked = false;
   message = signal<ToastMessageOptions | ToastMessageOptions[] | null>(null);
 
   constructor(private problemService: ProblemService) {
@@ -154,18 +187,6 @@ export class ProblemTableComponent {
       // remove book mark
     } else {
       // add book mark
-    }
-  }
-  toogleTemp() {
-    if (this.isBookmarked) {
-      this.isBookmarked = false;
-      console.log(this.message());
-      this.showInfo();
-    } else {
-      this.isBookmarked = true;
-      console.log(this.message());
-
-      this.showInfo();
     }
   }
 }

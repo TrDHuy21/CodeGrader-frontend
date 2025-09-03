@@ -13,7 +13,6 @@ import { CommentListComponent } from './comment-list';
   selector: `problem-description-component`,
   imports: [
     CommonModule,
-    FloatLabel,
     FileUploadModule,
     ButtonModule,
     TextareaModule,
@@ -73,17 +72,7 @@ import { CommentListComponent } from './comment-list';
       </div>
     </section>
     <section class="comment p-4 bg-white shadow rounded-lg my-6">
-      <h3 class="text-lg font-semibold mb-4">Discussion (3)</h3>
-      <div class="flex flex-col gap-1">
-        <p-editor formControlName="text" [style]="{ height: '320px' }" />
-        <!-- @if (isInvalid('text')) {
-            [invalid]="isInvalid('text')"
-        <p-message severity="error" size="small" variant="simple">Content is required.</p-message>
-        } -->
-      </div>
-      <button pButton severity="secondary" type="submit" class="w-full mt-4">
-        <span pButtonLabel>Submit</span>
-      </button>
+      
       <!-- <div class="comment-list mt-4 space-y-4">
         <p-floatlabel class="w-full md:w-56" variant="on">
           <p-select inputId="on_label" optionLabel="name" class="w-full" />
@@ -128,46 +117,13 @@ import { CommentListComponent } from './comment-list';
           </div>
         </div>
       </div> -->
-      <comment-list-component [data]="comments"></comment-list-component>
+      <comment-list-component></comment-list-component>
     </section>`,
 })
 export class ProblemDescriptionComponent {
   private store = inject(ProblemSignalStore);
   problemData = this.store.problem;
-
   constructor() {
     console.log(this.problemData());
   }
-  comments = [
-    {
-      id: 1,
-      user: 'Author',
-      // role: 'Author',
-      avatar: 'https://i.pravatar.cc/40?u=1',
-      text: 'Đã lỡ thích cậu mất rồi\nYoshida trước khi nổ được sensei về cho đẹp trai tóc không bết. Công lý cho Yoshida. 🌟🙌',
-      likes: 184,
-      reactions: '😂😮👍',
-      createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000),
-      replies: [
-        {
-          id: 11,
-          user: 'Top fan',
-          // role: 'Top fan',
-          avatar: 'https://i.pravatar.cc/40?u=2',
-          text: 'Tưởng Lan\nĐã lỡ thích cậu mất rồi Mấy chục chap tóc bết, mới gội đầu thì bị nổ🥲 Tội anh',
-          likes: 0,
-          createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000),
-        },
-        {
-          id: 12,
-          user: 'Alex Nghĩa',
-          avatar: 'https://i.pravatar.cc/40?u=3',
-          text: 'Đã lỡ thích cậu mất rồi',
-          attachments: [{ type: 'image', url: 'https://picsum.photos/220/280?random=10' }],
-          likes: 0,
-          createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
-        },
-      ],
-    },
-  ];
 }

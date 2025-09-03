@@ -10,13 +10,12 @@ import { ProblemFilter, SearchComponent } from '../../components/probem-search';
   imports: [
     TopicComponent,
     ProblemTableComponent,
-    SideBarProblem,
     SearchComponent,
     TrendingComponent,
     SearchComponent,
   ],
   template: `
-    <main class="mx-auto max-w-[1600px] px-4 mt-6">
+    <main class="mx-auto  max-w-[1600px] px-4 mt-6">
       <div class="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8">
         <section class="0">
           <topic-component></topic-component>
@@ -25,6 +24,7 @@ import { ProblemFilter, SearchComponent } from '../../components/probem-search';
         </section>
         <aside class="hidden lg:block sticky top-24 h-fit">
           <!-- <trending-component></trending-component> -->
+          <!-- <bookmark-component></bookmark-component> -->
         </aside>
       </div>
     </main>
