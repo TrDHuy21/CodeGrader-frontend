@@ -4,12 +4,6 @@ import {
   Observable,
   tap,
   BehaviorSubject,
-  switchMap,
-  throwError,
-  catchError,
-  finalize,
-  filter,
-  take,
   map,
 } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
