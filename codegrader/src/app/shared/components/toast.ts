@@ -15,6 +15,13 @@ import { ToastMessageOptions } from 'primeng/api';
     key="tr"
   /> `,
   providers: [MessageService],
+  styles: [
+    `
+      .p-toast-message {
+        font-size: 14px;
+      }
+    `,
+  ],
 })
 export class ToastComponent {
   constructor(private messageService: MessageService) {}

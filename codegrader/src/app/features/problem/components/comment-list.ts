@@ -222,7 +222,6 @@ export class CommentListComponent {
     // Nếu chưa có prefix mention, thêm vào đầu; nếu đã có, giữ nguyên
     const next = current.startsWith(mention) ? current : mention + current.replace(/^\s+/, '');
 
-    console.log(this.form.getRawValue());
     this.form.patchValue({
       comment: current?.toString().startsWith(mention) ? current : mention + current,
     });

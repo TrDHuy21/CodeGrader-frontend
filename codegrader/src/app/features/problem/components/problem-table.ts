@@ -1,4 +1,4 @@
-import { Component, effect, inject, input, output, Output, signal } from '@angular/core';
+import { Component, effect, inject, input, signal } from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -6,13 +6,8 @@ import { TableModule } from 'primeng/table';
 import { ProblemService } from '../services/problem-service';
 import { Problem } from '../models/ProblemModel';
 import { ProblemFilter } from './probem-search';
-import { toObservable } from '@angular/core/rxjs-interop';
-import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { ToastComponent } from '../../../shared/components/toast';
-import { Toast } from 'primeng/toast';
 import { ToastMessageOptions } from 'primeng/api';
-import { EventEmitter } from 'stream';
-import { BookmarkModel } from '../models/bookmark-model';
 import { ShareBookmarkService } from '../../../shared/services/share-bookmark-service';
 @Component({
   selector: `problem-table-component`,
@@ -21,67 +16,60 @@ import { ShareBookmarkService } from '../../../shared/services/share-bookmark-se
   template: `
     <div>
       <toast-component [message]="this.message()"></toast-component>
-      <div class="rounded-xl bg-white ">
-        <!-- Row -->
+
+      <div class="rounded-xl bg-white">
         @if (problems().length > 0) { @for (p of problems(); track $index) {
         <div
-          class="flex items-center gap-4 px-4 py-3 rounded-lg
-             hover:bg-gray-50 transition even:bg-gray-50/60 relative"
+          class="group relative flex items-center gap-3 px-3 py-2 rounded-lg
+                 hover:bg-gray-50 transition even:bg-gray-50/60"
         >
-          <a [routerLink]="['/problem', p.id]" rel="noopener" class="w-full">
-            <!-- Left: status + index + title -->
-            <div class="flex items-center gap-3 min-w-0 flex-1">
-              <span class="text-emerald-500">✓</span>
+          <a [routerLink]="['/problem', p.id]" rel="noopener" class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 min-w-0">
+              <span class="text-emerald-500 text-sm leading-none">✓</span>
 
-              <span class="truncate font-semibold text-gray-900">
+              <span class="truncate font-medium text-gray-900 text-sm">
                 {{ p.content }}
               </span>
             </div>
 
-            <!-- Acceptance -->
-            <!-- <div class="w-24 text-right text-gray-600 font-medium">
-            {{ p.level | number : '1.0-1' }}%
-          </div> -->
-
-            <!-- Difficulty -->
-            <!-- <div class="w-20 text-right">
-            <span class="font-semibold" [ngClass]="diffTextClass(p.level)">
-              {{ shortDiff(p.level) }}
-            </span>
-          </div> -->
-
-            <!-- Right bars -->
-            <div class="hidden sm:flex w-28 justify-end gap-1">
-              <!-- @for (_ of bars; track $index) {
-            <span class="h-2 w-2 rounded-full bg-gray-300/80"></span>
-            } -->
+            <div class="hidden sm:flex w-24 justify-end gap-1 mt-1">
+              <!-- ví dụ chấm trạng thái -->
+              <!-- <span class="h-1.5 w-1.5 rounded-full bg-gray-300/80"></span> -->
             </div>
           </a>
-          <div class="absolute top-0 right-1/9 translate-2/4">
+
+          <div class="absolute right-2 top-1/2 -translate-y-1/2">
             @if (isBookmarked(p.id)) {
-            <button (click)="toggleBookmark($event, p.id, p.content)" class="cursor-pointer">
+            <button
+              (click)="toggleBookmark($event, p.id, p.content)"
+              class="cursor-pointer opacity-90 group-hover:opacity-100 transition"
+              aria-label="Remove bookmark"
+            >
               <i
-                class="pi pi-bookmark-fill text-blue-400
-               transition-all duration-300 ease-in-out
-               transform hover:scale-110"
-                style="font-size: 1rem"
+                class="pi pi-bookmark-fill text-blue-500
+                     transition-transform duration-200 ease-in-out
+                     group-hover:scale-110"
+                style="font-size: 0.95rem"
               ></i>
             </button>
             } @else {
-            <button class="cursor-pointer " (click)="toggleBookmark($event, p.id, p.content)">
+            <button
+              (click)="toggleBookmark($event, p.id, p.content)"
+              class="cursor-pointer opacity-70 hover:opacity-100 transition"
+              aria-label="Add bookmark"
+            >
               <i
                 class="pi pi-bookmark
-               transition-all duration-300 ease-in-out
-               transform hover:scale-110 hover:text-blue-400"
-                style="font-size: 1rem"
+                     transition-transform duration-200 ease-in-out
+                     hover:scale-110 hover:text-blue-500"
+                style="font-size: 0.95rem"
               ></i>
             </button>
             }
           </div>
         </div>
-
         } } @else {
-        <div class="px-4 py-6 text-gray-500">No problems found.</div>
+        <div class="px-4 py-6 text-gray-500 text-sm">No problems found.</div>
         }
       </div>
     </div>
@@ -91,8 +79,8 @@ export class ProblemTableComponent {
   sharedBookmark = inject(ShareBookmarkService);
   filters = input.required<ProblemFilter>();
   problems = signal<Problem[]>([]);
-
   bookmarkedIds = signal<Set<number>>(new Set<number>());
+
   isBookmarked(id: number) {
     return this.bookmarkedIds().has(id);
   }
@@ -109,24 +97,24 @@ export class ProblemTableComponent {
       // BỎ đánh dấu: chỉ đổi UI, KHÔNG xóa khỏi danh sách lưu trữ
       next.delete(id);
       this.sharedBookmark.delete({ ProblemId: id, ProblemName: content });
+      this.showInfo('Deleted');
     } else {
       // ĐÁNH DẤU lần đầu: thêm vào UI + đảm bảo thêm vào list nếu chưa có
       next.add(id);
       this.sharedBookmark.add({ ProblemId: id, ProblemName: content });
+      this.showInfo('Added');
     }
 
     this.bookmarkedIds.set(next);
-    // (tuỳ chọn) persist Set:
+    // persist Set:
     // localStorage.setItem('bookmarks', JSON.stringify([...next]));
   }
 
-  // isBookmarked = false;
   message = signal<ToastMessageOptions | ToastMessageOptions[] | null>(null);
 
   constructor(private problemService: ProblemService) {
     effect(() => {
       const f = this.filters(); // lấy giá trị mới
-      console.log('Filters thay đổi:', f);
 
       // Gọi API mỗi khi filters đổi
       this.problemService.getProblems(f).subscribe({
@@ -140,7 +128,6 @@ export class ProblemTableComponent {
   ngOnInit() {
     this.problemService.getProblems({ PageSize: 3 }).subscribe({
       next: (res) => {
-        console.log(res);
         this.problems.set(res.data ?? []); // fallback mảng rỗng
       },
       error: (err) => {
@@ -148,11 +135,11 @@ export class ProblemTableComponent {
       },
     });
   }
-  showInfo() {
+  showInfo(detail: string) {
     this.message.set({
       severity: 'success',
       summary: 'Info Message',
-      detail: 'Bookmarked!',
+      detail: detail,
       key: 'tr',
       life: 3000,
     });
@@ -180,13 +167,6 @@ export class ProblemTableComponent {
         return 'text-rose-500';
       default:
         return 'text-gray-500';
-    }
-  }
-  toogleBookmark(event: Event, problemId: number, isBookmarked: boolean) {
-    if (isBookmarked) {
-      // remove book mark
-    } else {
-      // add book mark
     }
   }
 }

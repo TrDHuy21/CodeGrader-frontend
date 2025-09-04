@@ -124,6 +124,5 @@ export class ProblemDescriptionComponent {
   private store = inject(ProblemSignalStore);
   problemData = this.store.problem;
   constructor() {
-    console.log(this.problemData());
   }
 }

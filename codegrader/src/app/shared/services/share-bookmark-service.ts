@@ -6,11 +6,9 @@ export class ShareBookmarkService {
 
   add(item: BookMarkProblemModel) {
     this.bookmarkList()?.push(item);
-    console.log(this.bookmarkList());
   }
   delete(item: BookMarkProblemModel) {
     this.bookmarkList.set(this.bookmarkList()?.filter((bm) => bm.ProblemId !== item.ProblemId));
-    console.log(this.bookmarkList());
   }
   getAll() {
     return this.bookmarkList();

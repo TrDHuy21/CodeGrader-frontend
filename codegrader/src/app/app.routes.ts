@@ -15,6 +15,8 @@ import { TagManage } from './features/admin/tagManage/tagManage';
 import { ForgotPassword } from './auth/forgotPassword/forgotPassword';
 import { UpdateAvatarComponent } from './features/user/pages/profile-updates/update-avatar';
 import { identity } from 'rxjs';
+import { NgModule } from '@angular/core';
+
 export const routes: Routes = [
   {
     path: '',
@@ -27,17 +29,24 @@ export const routes: Routes = [
   },
   {
     path: 'profile',
-    component: ProfileHomepageComponent,
-    children: [
-      { path: '', redirectTo: 'update-profile', pathMatch: 'full' },
-      { path: 'update-profile', component: ProfileUpdate },
-      { path: 'change-password', component: ChangePasswordComponent },
-      { path: 'update-avatar', component: UpdateAvatarComponent }, //default route
-    ],
+    //with out lazy loading
+    // component: ProfileHomepageComponent,
+    // children: [
+    //   { path: '', redirectTo: 'update-profile', pathMatch: 'full' }, //default route
+    //   { path: 'update-profile', component: ProfileUpdate },
+    //   { path: 'change-password', component: ChangePasswordComponent },
+    //   { path: 'update-avatar', component: UpdateAvatarComponent },
+    // ],
+
+    //with lazy loading
+    loadChildren: () => import('./features/user/user-profile-routes').then((m) => m.routes),
   },
   {
     path: 'problem',
     component: ProblemHomepage,
+    // loadComponent: () =>
+    //   import('./features/problem/pages/problems/problem-homepage').then((m) => m.ProblemHomepage),
+    // loadChildren: () => import('./features/problem/problem-routes').then((m) => m.routes),
   },
   {
     path: 'problem/:id',
@@ -49,10 +58,30 @@ export const routes: Routes = [
     ],
   },
   { path: 'home', component: Container },
-  { path: 'problem', component: ProblemHomepage },
-  { path: 'login', component: LoginApp },
-  { path: 'signup', component: RegisterApp },
-  { path: 'manageuser', component: UserManage },
-  { path: 'managetag', component: TagManage },
-  { path: 'forgotpassword', component: ForgotPassword },
+  {
+    path: 'login',
+    // component: LoginApp,
+    loadComponent: () => import('./auth/login/login').then((m) => m.LoginApp),
+  },
+  {
+    path: 'signup',
+    // component: RegisterApp,
+    loadComponent: () => import('./auth/register/register').then((m) => m.RegisterApp),
+  },
+  {
+    path: 'manageuser',
+    // component: UserManage,
+    loadComponent: () => import('./features/admin/userManage/userManage').then((m) => m.UserManage),
+  },
+  {
+    path: 'managetag',
+    // component: TagManage,
+    loadComponent: () => import('./features/admin/tagManage/tagManage').then((m) => m.TagManage),
+  },
+  {
+    path: 'forgotpassword',
+    loadComponent: () =>
+      import('./auth/forgotPassword/forgotPassword').then((m) => m.ForgotPassword),
+    // component: ForgotPassword,
+  },
 ];
