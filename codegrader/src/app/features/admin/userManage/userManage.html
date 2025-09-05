@@ -1,23 +1,13 @@
-<link
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-  rel="stylesheet"
-/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
 
 <div class="container">
-  <admin-sidebar 
-    [activeRoute]="'/manageuser'"
-    (navItemClick)="onNavItemClick($event)"
-  ></admin-sidebar>
+  <admin-sidebar [activeRoute]="'/manageuser'" (navItemClick)="onNavItemClick($event)"></admin-sidebar>
 
   <div class="section2">
-    <admin-navbar
-      searchPlaceholder="Search users..."
-      [notificationCount]="notificationCount"
-      [isDropdownActive]="isDropdownActive"
-      (searchChange)="onSearchInput($event)"
-      (notificationClick)="onNotificationClick()"
-      (dropdownToggle)="toggleDropdown()"
-    ></admin-navbar>
+    <admin-navbar searchPlaceholder="Search users..." [notificationCount]="notificationCount"
+      [isDropdownActive]="isDropdownActive" (searchChange)="onSearchInput($event)"
+      (notificationClick)="onNotificationClick()" (dropdownToggle)="toggleDropdown()"
+      [searchTerm]="searchTerm || ''"></admin-navbar>
 
     <div class="main-content">
       <div class="content-header">

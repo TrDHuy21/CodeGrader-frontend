@@ -1,0 +1,146 @@
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+
+
+
+<div class="container">
+    <admin-sidebar [activeRoute]="'/manageproblem'" (navItemClick)="onNavItemClick($event)"></admin-sidebar>
+
+    <!-- Content -->
+    <div class="section2">
+        <!-- Top navbar -->
+        <admin-navbar searchPlaceholder="Search problem..." [notificationCount]="notificationCount"
+            [isDropdownActive]="isDropdownActive" (searchChange)="onSearchInput($event)"
+            (notificationClick)="onNotificationClick()" (dropdownToggle)="toggleDropdown()"
+            [searchTerm]="filterForm.value.name || ''"></admin-navbar>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="content-header">
+                <h1 class="content-title">Problem Management</h1>
+            </div>
+            <form [formGroup]="filterForm" (ngSubmit)="onSubmit($event)" class="filter-form">
+                <div class="filter-row">
+                    <div class="filter-group levels-group">
+                        <label>Độ khó</label>
+                        <div class="checkbox-group">
+                            <label *ngFor="let level of levelOptions">
+                                <input type="checkbox" [value]="level" (change)="onLevelChange($event)"
+                                    [checked]="filterForm.value.level?.includes(level)" />
+                                {{ level | titlecase }}
+                            </label>
+                        </div>
+                    </div>
+
+
+                    <div class="filter-group">
+                        <label for="sortBy">Sắp xếp theo</label>
+                        <select id="sortBy" formControlName="sortBy" class="form-control">
+                            <option value="">Mặc định</option>
+                            <option value="name">Name</option>
+                            <option value="level">Level</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="isDescending">Thứ tự</label>
+                        <select id="isDescending" formControlName="isDescending" class="form-control">
+                            <option value="">Mặc định</option>
+                            <option value="asc">Tăng dần</option>
+                            <option value="desc">Giảm dần</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="pageSize">Số sản phẩm trên trang</label>
+                        <input type="number" id="pageSize" min="1" [max]="totalElement()" formControlName="pageSize"
+                            class="form-control" placeholder="Nhập số">
+                    </div>
+                </div>
+
+                <div class="filter-group tags-group">
+                    <label>Chủ đề</label>
+                    <div class="checkbox-group">
+                        <label *ngFor="let tag of listTag">
+                            <input type="checkbox" [value]="tag" (change)="onTagChange($event)"
+                                [checked]="filterForm.value.tagName?.includes(tag)" />
+                            {{ tag }}
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="filter-button">Lọc</button>
+            </form>
+
+
+
+            <!-- Tag Table -->
+            <!-- "id": 1,
+                "name": "problem 1(update)",
+                "content": "content",
+                "level": 2,
+                "promt": "promt example", -->
+            <div class="tags-table">
+                <div class="table-header">
+                    <div>ID</div>
+                    <div>Problem Name</div>
+                    <div>Level</div>
+                    <div>Status</div>
+                    <div>Actions</div>
+                </div>
+
+                <div class="table-row">
+                    @for (problem of filteredProblems(); track problem.id) {
+                    <div>{{ problem.id }}</div>
+                    <div>{{ problem.name }}</div>
+                    <div>{{ problem.level }}</div>
+                    <div>
+                        <span [class]="getStatusBadgeClass(problem.isDelete)">
+                            {{ getStatusText(problem.isDelete) }}
+                        </span>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn edit-btn" (click)="onEditProblem(problem)">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="action-btn delete-btn" (click)="onDeleteProblem(problem)">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                        <button [class]="getColorIconLock(problem.isDelete)" class="action-btn"
+                            (click)="onToggleProblemStatus(problem)">
+                            <i [class]="getLockIcon(problem.isDelete)"></i>
+                        </button>
+                    </div>
+                    }
+                </div>
+            </div>
+            @if(totalPage() !== 0){
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    <li class="page-item" [class.disabled]="currentPage() === 1">
+                        <button class="page-link" (click)="onPageChange(currentPage() - 1)"
+                            [disabled]="currentPage() === 1">
+                            Previous
+                        </button>
+                    </li>
+
+                    <li class="page-item" *ngFor="let page of pageNumbers" [class.active]="currentPage() === page">
+                        <button class="page-link" (click)="onPageChange(page)">
+                            {{ page }}
+                        </button>
+                    </li>
+
+                    <li class="page-item" [class.disabled]="currentPage() === totalPage()">
+                        <button class="page-link" (click)="onPageChange(currentPage() + 1)"
+                            [disabled]="currentPage() === totalPage()">
+                            Next
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+            }
+
+        </div>
+
+        <div class="copyright">©Copyright By CodeGrader 2025</div>
+    </div>
+</div>

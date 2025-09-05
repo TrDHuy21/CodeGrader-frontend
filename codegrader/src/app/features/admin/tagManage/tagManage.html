@@ -1,25 +1,15 @@
-<link
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-  rel="stylesheet"
-/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
 
 <div class="container">
-  <admin-sidebar 
-    [activeRoute]="'/managetag'"
-    (navItemClick)="onNavItemClick($event)"
-  ></admin-sidebar>
+  <admin-sidebar [activeRoute]="'/managetag'" (navItemClick)="onNavItemClick($event)"></admin-sidebar>
 
   <!-- Content -->
   <div class="section2">
     <!-- Top navbar -->
-    <admin-navbar
-      searchPlaceholder="Search tags..."
-      [notificationCount]="notificationCount"
-      [isDropdownActive]="isDropdownActive"
-      (searchChange)="onSearchInput($event)"
-      (notificationClick)="onNotificationClick()"
-      (dropdownToggle)="toggleDropdown()"
-    ></admin-navbar>
+    <admin-navbar searchPlaceholder="Search tags..." [notificationCount]="notificationCount"
+      [isDropdownActive]="isDropdownActive" (searchChange)="onSearchInput($event)"
+      (notificationClick)="onNotificationClick()" (dropdownToggle)="toggleDropdown()"
+      [searchTerm]="searchTerm || ''"></admin-navbar>
 
     <!-- Main Content -->
     <div class="main-content">
@@ -32,25 +22,19 @@
         <div class="table-header">
           <div>ID</div>
           <div>Tag Name</div>
-          <div>Created By</div>
-          <div>Created Date</div>
           <div>Status</div>
-          <div>Questions</div>
           <div>Actions</div>
         </div>
 
         <div class="table-row">
           @for (tag of filteredTags; track tag.id) {
           <div>{{ tag.id }}</div>
-          <div>{{ tag.tagName }}</div>
-          <div>{{ tag.createdBy }}</div>
-          <div>{{ tag.createdDate }}</div>
+          <div>{{ tag.name }}</div>
           <div>
-            <span [class]="getStatusBadgeClass(tag.status)">
-              {{ getStatusText(tag.status) }}
+            <span [class]="getStatusBadgeClass(tag.isDelete)">
+              {{ getStatusText(tag.isDelete) }}
             </span>
           </div>
-          <div>{{ tag.questionCount }}</div>
           <div class="action-buttons">
             <button class="action-btn edit-btn" (click)="onEditTag(tag)">
               <i class="fas fa-edit"></i>
@@ -58,11 +42,11 @@
             <button class="action-btn delete-btn" (click)="onDeleteTag(tag)">
               <i class="fas fa-trash-alt"></i>
             </button>
-              <button [class]="getColorIconLock(tag.status)" class="action-btn" (click)="onToggleTagStatus(tag)">
-              <i [class]="getLockIcon(tag.status)"></i>
+            <button [class]="getColorIconLock(tag.isDelete)" class="action-btn" (click)="onToggleTagStatus(tag)">
+              <i [class]="getLockIcon(tag.isDelete)"></i>
             </button>
           </div>
-        }
+          }
         </div>
       </div>
     </div>

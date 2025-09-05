@@ -29,10 +29,10 @@ import { Router } from '@angular/router';
 })
 export class App {
   protected readonly title = signal('codegrader');
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 
   isAuthPage(): boolean {
-    const authPages = ['/login', '/signup', '/forgotpassword', '/manageuser', '/managetag']; 
+    const authPages = ['/login', '/signup', '/forgotpassword', '/manageuser', '/managetag'];
     return authPages.includes(this.router.url);
   }
 }

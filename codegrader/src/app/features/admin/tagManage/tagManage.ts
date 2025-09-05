@@ -1,13 +1,10 @@
 import { Component } from "@angular/core";
 import { Router } from "@angular/router";
 import { AdminNavbar, AdminSidebar } from "../layoutAdminPage";
-interface TagItem {
-  id: number;
-  tagName: string;
-  createdBy: string;
-  createdDate: string;
-  status: "active" | "inactive";
-  questionCount: number;
+export interface TagItem {
+    id: number,
+    name: string,
+    isDelete: boolean
 }
 
 @Component({
@@ -19,19 +16,19 @@ interface TagItem {
 })
 export class TagManage {
 
-     constructor(private router: Router) {}
+    constructor(private router: Router) { }
     isDropdownActive = false;
     searchTerm = '';
     notificationCount = 2;
 
     tagData: TagItem[] = [
-        { id: 1, tagName: 'Java', createdBy: 'Admin', createdDate: '2025-01-05', status: 'active', questionCount: 124 },
-        { id: 2, tagName: 'Python', createdBy: 'Admin', createdDate: '2025-01-10', status: 'active', questionCount: 210 },
-        { id: 3, tagName: 'Angular', createdBy: 'ModA', createdDate: '2025-02-01', status: 'inactive', questionCount: 48 },
-        { id: 4, tagName: 'SQL', createdBy: 'ModB', createdDate: '2025-02-12', status: 'active', questionCount: 76 }
+        { id: 1, name: 'Java', isDelete: true },
+        { id: 2, name: 'Python', isDelete: false },
+        { id: 3, name: 'Angular', isDelete: false },
+        { id: 4, name: 'SQL', isDelete: false }
     ];
 
-   // Navigation methods
+    // Navigation methods
     onNavItemClick(path: string) {
         this.router.navigate([path]);
     }
@@ -59,46 +56,45 @@ export class TagManage {
             return this.tagData;
         }
         return this.tagData.filter(tag =>
-            tag.tagName.toLowerCase().includes(this.searchTerm) ||
-            tag.createdBy.toLowerCase().includes(this.searchTerm)
+            tag.name.toLowerCase().includes(this.searchTerm)
         );
     }
 
-    getStatusBadgeClass(status: TagItem["status"]): string {
-        return status === 'active' ? 'status-badge status-active' : 'status-badge status-banned';
+    getStatusBadgeClass(status: TagItem["isDelete"]): string {
+        return status === true ? 'status-badge status-active' : 'status-badge status-banned';
     }
 
-    getStatusText(status: TagItem["status"]): string {
-        return status === 'active' ? 'Active' : 'Inactive';
+    getStatusText(status: TagItem["isDelete"]): string {
+        return status === true ? 'Active' : 'Inactive';
     }
 
     onEditTag(tag: TagItem) {
-        alert(`Edit tag: ${tag.tagName}`);
+        alert(`Edit tag: ${tag.name}`);
     }
 
     onDeleteTag(tag: TagItem) {
-        if (confirm(`Delete tag \"${tag.tagName}\"?`)) {
+        if (confirm(`Delete tag \"${tag.name}\"?`)) {
             this.tagData = this.tagData.filter(t => t.id !== tag.id);
         }
     }
 
     onToggleTagStatus(tag: any) {
-        const action = tag.status === 'inactive' ? 'active' : 'unactive';
-        const message = tag.status === 'inactive' ? 'ACtive Tag' : 'Unactive Tag';
-        
-        if (confirm(`Are you sure you want to ${action} ${tag.tagName}?`)) {
+        const action = tag.isDelete === true ? 'active' : 'unactive';
+        const message = tag.isDelete === true ? 'Active Tag' : 'Unactive Tag';
+
+        if (confirm(`Are you sure you want to ${action} ${tag.name}?`)) {
             alert(message);
             // Toggle status
-            tag.status = tag.status === 'unactive' ? 'active' : 'unactive';
+            tag.isDelete = tag.isDelete === false ? true : false;
         }
     }
 
-     // Get lock/unlock icon
-    getLockIcon(status: string): string {
-        return status === 'inactive' ? 'fas fa-unlock' : 'fas fa-lock';
+    // Get lock/unlock icon
+    getLockIcon(isDelete: boolean): string {
+        return isDelete === false ? 'fas fa-unlock' : 'fas fa-lock';
     }
 
-    getColorIconLock(status: string): string{
-        return status === 'inactive' ? 'unlockcolor' : 'lockcolor';
+    getColorIconLock(isDelete: boolean): string {
+        return isDelete === false ? 'unlockcolor' : 'lockcolor';
     }
 }

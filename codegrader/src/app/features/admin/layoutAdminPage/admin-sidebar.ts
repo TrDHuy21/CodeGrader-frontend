@@ -22,9 +22,9 @@ import { Component, Input, Output, EventEmitter } from "@angular/core";
           <i class="fas fa-users"></i>
           Users Management
         </a>
-        <a href="#" class="nav-item" [class.active]="activeRoute === '/questionmanage'" (click)="onNavItemClick($event, '/questionmanage')">
+        <a href="#" class="nav-item" [class.active]="activeRoute === '/manageproblem'" (click)="onNavItemClick($event, '/manageproblem')">
           <i class="fas fa-question-circle"></i>
-          Question Management
+          Problem Management
         </a>
         <a href="#" class="nav-item" [class.active]="activeRoute === '/commentmanage'" (click)="onNavItemClick($event, '/commentmanage')">
           <i class="fas fa-comment"></i>

@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter } from "@angular/core";
 import { AuthService } from "../../../auth/auth.service";
 import { Router } from "@angular/router";
 import Swal from "sweetalert2";
-import { Console } from "console";
+import { FormsModule } from "@angular/forms";
 @Component({
   selector: "admin-navbar",
   standalone: true,
@@ -16,6 +16,7 @@ import { Console } from "console";
             [placeholder]="searchPlaceholder"
             class="search-input"
             (input)="onSearchInput($event)"
+            [(ngModel)]="searchTerm"
           />
         </div>
       </div>
@@ -54,9 +55,11 @@ import { Console } from "console";
       </div>
     </nav>
   `,
-  styleUrl: "admin-navbar.css"
+  styleUrl: "admin-navbar.css",
+  imports: [FormsModule]
 })
 export class AdminNavbar {
+  @Input() searchTerm: string = '';
   @Input() searchPlaceholder: string = "Search...";
   @Input() notificationCount: number = 0;
   @Input() isDropdownActive: boolean = false;
@@ -65,10 +68,9 @@ export class AdminNavbar {
   @Output() notificationClick = new EventEmitter<void>();
   @Output() dropdownToggle = new EventEmitter<void>();
   @Output() dropdownItemClick = new EventEmitter<string>();
-   constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) { }
   onSearchInput(event: Event) {
-    const target = event.target as HTMLInputElement;
-    this.searchChange.emit(target.value.toLowerCase());
+    this.searchChange.emit(this.searchTerm.toLowerCase());
   }
 
   onNotificationClick() {
@@ -79,11 +81,11 @@ export class AdminNavbar {
     this.dropdownToggle.emit();
   }
 
-    async onDropdownItemClick(event: Event, action: string) {
+  async onDropdownItemClick(event: Event, action: string) {
     // Ngăn chặn default behavior của link
     event.preventDefault();
     event.stopPropagation();
-    
+
     if (action === "logout") {
       const result = await Swal.fire({
         title: "Are you sure you want to log out?",
@@ -104,7 +106,7 @@ export class AdminNavbar {
         this.router.navigate(["/login"]);
       }
     } else {
-        console.log("Not Logout !");
+      console.log("Not Logout !");
     }
   }
 

@@ -15,6 +15,7 @@ import { TagManage } from './features/admin/tagManage/tagManage';
 import { ForgotPassword } from './auth/forgotPassword/forgotPassword';
 import { UpdateAvatarComponent } from './features/user/pages/profile-updates/update-avatar';
 import { identity } from 'rxjs';
+import { ProblemManage } from './features/admin/problemManage/problemManage';
 export const routes: Routes = [
   {
     path: '',
@@ -54,5 +55,7 @@ export const routes: Routes = [
   { path: 'signup', component: RegisterApp },
   { path: 'manageuser', component: UserManage },
   { path: 'managetag', component: TagManage },
+  { path: 'manageproblem', component: ProblemManage },
   { path: 'forgotpassword', component: ForgotPassword },
+
 ];

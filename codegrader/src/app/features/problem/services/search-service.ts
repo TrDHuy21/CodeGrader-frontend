@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { ApiResponse } from '../../user/models/api-respone';
 import { HttpParams } from '@angular/common/http';
 
-interface SearchQuery {
+export interface SearchQuery {
   NameSearch: string;
   Levels: number[];
   Tagnames: string[];
@@ -16,7 +16,7 @@ interface SearchQuery {
 @Injectable({ providedIn: 'root' })
 export class SearchService {
   private apiUrl = 'http://localhost:5000/problem';
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
   header = new HttpParams();
   getTagname(): Observable<ApiResponse> {
     return this.http.get<ApiResponse>(`${this.apiUrl}/Tag`);
