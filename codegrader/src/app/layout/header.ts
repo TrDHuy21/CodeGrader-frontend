@@ -7,7 +7,7 @@ import { isPlatformBrowser } from '@angular/common';
 @Component({
   selector: 'header-component',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, SideBarProblem],
+  imports: [RouterLink, SideBarProblem],
   template: `
     <header class="flex items-center justify-between px-6 py-4 bg-gray-100 shadow">
       <!-- Logo -->
@@ -39,8 +39,7 @@ import { isPlatformBrowser } from '@angular/common';
         >
           Sign Up
         </span>
-        } 
-        @else{
+        } @else{
         <div (click)="toggleDropdown()" class="flex items-center gap-2">
           <div class="aspect-square rounded-full h-8 w-8">
             <img [src]="avatar" alt="Avatar" class="w-8 h-8 rounded-full" />
@@ -69,15 +68,12 @@ export class Header implements OnInit, OnDestroy {
   avatar = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
   dropdownOpen = false;
   private authSubscription?: Subscription;
-  
-  constructor(
-    private authService: AuthService,
-    @Inject(PLATFORM_ID) private platformId: Object
-  ) { }
+
+  constructor(private authService: AuthService, @Inject(PLATFORM_ID) private platformId: Object) {}
 
   ngOnInit(): void {
     this.updateAuthState();
-    
+
     // Lắng nghe thay đổi trạng thái đăng nhập
     this.authSubscription = this.authService.getAuthState().subscribe(() => {
       this.updateAuthState();

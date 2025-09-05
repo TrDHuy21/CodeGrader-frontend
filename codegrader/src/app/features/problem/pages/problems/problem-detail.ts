@@ -20,16 +20,14 @@ import { filter } from 'rxjs/operators';
     FileUploadModule,
     ButtonModule,
     TextareaModule,
-    FloatLabel,
     CommonModule,
-    ProblemDescriptionComponent,
     RouterOutlet,
     RouterModule,
     SelectModule,
   ],
   standalone: true,
   template: `
-    <div class="container w-full w-[1400px] mx-auto">
+    <div class="container w-[1400px] mx-auto">
       <section
         class="header flex items-center justify-between mb-6 p-4 bg-white shadow rounded-lg mt-6"
       >

@@ -6,3 +6,8 @@ html {
   scrollbar-gutter: stable; /* luôn chừa chỗ cho thanh cuộn dọc */
   /* hoặc: scrollbar-gutter: stable both-edges; */
 }
+
+/* Toàn bộ Toast */
+.p-toast {
+  font-size: 0.875rem; /* text-sm (14px) */
+}

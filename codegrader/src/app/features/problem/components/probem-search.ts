@@ -49,88 +49,75 @@ export interface ProblemFilter {
     TableModule,
     TagModule,
   ],
-  template: `<div class="p-4 space-y-4">
-    <form class="flex gap-5" [formGroup]="form" (submit)="handleSubmit($event)">
-      <div>
-        <label class="block text-sm font-medium mb-2">Search</label>
-        <input pInputText autocomplete="off" [formControl]="form.controls.NameSearch" />
+  template: `
+    <form
+      class="flex flex-wrap items-end gap-3 text-sm mb-3"
+      [formGroup]="form"
+      (submit)="handleSubmit($event)"
+    >
+      <!-- Search -->
+      <div class="flex flex-col">
+        <label class="mb-1 font-medium text-xs">Search</label>
+        <input
+          pInputText
+          class="w-32 aspect-auto"
+          autocomplete="off"
+          [formControl]="form.controls.NameSearch"
+        />
       </div>
 
       <!-- Levels -->
-      <div>
-        <label class="block text-sm font-medium mb-2">Levels</label>
-        <!-- <p-multiSelect
-          [options]="levelsOptions"
-          optionLabel="label"
-          optionValue="value"
-          placeholder="Select levels"
-          display="chip"
-          [formControl]="form.controls.Levels"
-        >
-        </p-multiSelect> -->
+      <div class="flex flex-col">
+        <label class="mb-1 font-medium text-xs">Levels</label>
         <p-multiselect
           [filter]="true"
-          optionLabel="name"
           [options]="levels"
           optionLabel="name"
           optionValue="value"
-          placeholder="Select levels"
-          [maxSelectedLabels]="3"
-          class="w-50"
+          placeholder="Levels"
+          [maxSelectedLabels]="2"
+          class="w-32"
           [formControl]="form.controls.Levels"
         ></p-multiselect>
       </div>
 
-      <!-- Tagnames -->
-      <div>
-        <label class="block text-sm font-medium mb-2">Tags</label>
+      <!-- Tags -->
+      <div class="flex flex-col">
+        <label class="mb-1 font-medium text-xs">Tags</label>
         <p-multiselect
           [filter]="true"
-          optionLabel="name"
           [options]="tagnames()"
           optionLabel="name"
           optionValue="name"
-          placeholder="Select tags"
+          placeholder="Tags"
           display="chip"
-          [maxSelectedLabels]="3"
-          class="w-50"
+          [maxSelectedLabels]="2"
+          class="w-32"
           [formControl]="form.controls.Tagnames"
-        />
+        ></p-multiselect>
       </div>
 
-      <!-- Sort -->
-      <!-- <div class="md:col-span-1">
-        <label class="block text-sm font-medium mb-2">Sort By</label>
-        <p-dropdown
-          optionLabel="label"
-          optionValue="value"
-          [formControl]="form.controls.SortBy"
-          (onChange)="applySort()"
-          placeholder="Choose field"
-        >
-        </p-dropdown>
-
-        <div class="flex items-center gap-2 mt-3">
-          <p-inputSwitch
-            [formControl]="form.controls.IsDecending"
-            (onChange)="applySort()"
-          ></p-inputSwitch>
-          <span>Descending</span>
-        </div>
-      </div> -->
+      <!-- Buttons -->
       <div class="flex gap-2">
-        <button pButton type="submit" label="Search" icon="pi pi-search"></button>
+        <button
+          pButton
+          type="submit"
+          label="Search"
+          icon="pi pi-search"
+          class="p-button-sm"
+        ></button>
         <button
           pButton
           type="reset"
           label="Reset"
           icon="pi pi-refresh"
-          class="p-button-secondary"
+          class="p-button-sm p-button-secondary"
         ></button>
       </div>
     </form>
+
     <!-- <router-outlet></router-outlet> -->
-  </div> `,
+  `,
 })
 export class SearchComponent implements OnInit {
   private fb = inject(FormBuilder);
@@ -155,11 +142,9 @@ export class SearchComponent implements OnInit {
       { id: 2, name: 'Medium', value: 2 },
       { id: 3, name: 'Hard', value: 3 },
     ];
-    // console.log(
     this.searchService.getTagname().subscribe({
       next: (res) => {
         this.tagnames.set(res?.data || []);
-        // console.log(this.tagnames());
       },
       error: (err) => console.log(err),
     });

@@ -7,10 +7,10 @@ import { TableModule } from 'primeng/table';
 import { CommonModule } from '@angular/common';
 @Component({
   selector: `problem-detail-submission-component`,
-  imports: [FileUploadModule, ButtonModule, TextareaModule, FloatLabel, TableModule, CommonModule],
+  imports: [FileUploadModule, ButtonModule, TextareaModule, TableModule, CommonModule],
   standalone: true,
   template: `
-    <div class="container w-full w-[1400px] mx-auto">
+    <div class="container  w-[1400px] mx-auto">
       <section
         class="header flex items-center justify-between mb-6 p-4 bg-white shadow rounded-lg mt-6"
       >
