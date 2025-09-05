@@ -29,7 +29,7 @@ export interface ProblemItem {
     standalone: true
 })
 export class ProblemManage {
-    private problemUrl = 'https://localhost:7210/api/Problem';
+    private problemUrl = 'https://localhost:5000/problem';
     constructor(private router: Router, private http: HttpClient) { }
     isDropdownActive = false;
     searchTerm = '';

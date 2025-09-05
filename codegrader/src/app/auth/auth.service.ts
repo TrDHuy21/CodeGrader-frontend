@@ -27,6 +27,10 @@ interface RefreshResponse {
 export class AuthService {
   private apiUrl = 'http://localhost:5000/auth'; // base URL
   private tokenKey = 'access_token';
+  private refreshTokenKey = 'refresh_token';
+  private usernameKey = 'username';
+  private fullnameKey = 'fullname';
+  private avatarKey = 'avatar';
   private isRefreshingToken = false;
   private authStateSubject = new BehaviorSubject<boolean>(false);
   private refreshToken = new BehaviorSubject<string | null>(null);
@@ -36,6 +40,47 @@ export class AuthService {
     if (isPlatformBrowser(this.platformId)) {
       this.authStateSubject.next(this.isLoggedIn());
     }
+  }
+
+  // Cookie helper methods
+  private setCookie(name: string, value: string, days: number = 7): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    const expires = new Date();
+    expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+    
+    const secure = window.location.protocol === 'https:';
+    const cookieString = `${name}=${encodeURIComponent(value)}; expires=${expires.toUTCString()}; path=/; samesite=strict${secure ? '; secure' : ''}`;
+    
+    document.cookie = cookieString;
+  }
+
+  private getCookie(name: string): string | null {
+    if (!isPlatformBrowser(this.platformId)) {
+      return null;
+    }
+
+    const nameEQ = name + "=";
+    const ca = document.cookie.split(';');
+    
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+      if (c.indexOf(nameEQ) === 0) {
+        return decodeURIComponent(c.substring(nameEQ.length, c.length));
+      }
+    }
+    return null;
+  }
+
+  private removeCookie(name: string): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
   }
 
   // Đăng nhập
@@ -48,17 +93,18 @@ export class AuthService {
         tap((res) => {
           if (res.isSuccess && res.data) {
             console.log(res.data);
-            // Chỉ lưu vào localStorage nếu đang ở browser
+            // Lưu vào cookie thay vì localStorage
             if (isPlatformBrowser(this.platformId)) {
-              // Lưu token
-              localStorage.setItem(this.tokenKey, res.data.tokenDto.accessToken);
-
-              //refresh token
-              localStorage.setItem('refresh_token', res.data.tokenDto.refreshToken);
-              // Lưu thông tin user
-              localStorage.setItem('username', res.data.userDto.userName);
-              localStorage.setItem('fullname', res.data.userDto.fullName);
-              localStorage.setItem('avatar', res.data.userDto.avatar ?? '');
+              // Lưu access token (15 phút)
+              this.setCookie(this.tokenKey, res.data.tokenDto.accessToken, 0.01); // 15 phút
+              
+              // Lưu refresh token (7 ngày)
+              this.setCookie(this.refreshTokenKey, res.data.tokenDto.refreshToken, 7);
+              
+              // Lưu thông tin user (7 ngày)
+              this.setCookie(this.usernameKey, res.data.userDto.userName, 7);
+              this.setCookie(this.fullnameKey, res.data.userDto.fullName, 7);
+              this.setCookie(this.avatarKey, res.data.userDto.avatar ?? '', 7);
             }
 
             // Cập nhật trạng thái đăng nhập
@@ -114,11 +160,11 @@ export class AuthService {
   // Đăng xuất
   logout() {
     if (isPlatformBrowser(this.platformId)) {
-      localStorage.removeItem(this.tokenKey);
-      // localStorage.removeItem('refresh_token');
-      localStorage.removeItem('username');
-      localStorage.removeItem('fullname');
-      localStorage.removeItem('avatar');
+      this.removeCookie(this.tokenKey);
+      this.removeCookie(this.refreshTokenKey);
+      this.removeCookie(this.usernameKey);
+      this.removeCookie(this.fullnameKey);
+      this.removeCookie(this.avatarKey);
     }
     this.authStateSubject.next(false);
   }
@@ -126,7 +172,7 @@ export class AuthService {
   // Lấy token
   getToken(): string | null {
     if (isPlatformBrowser(this.platformId)) {
-      return localStorage.getItem(this.tokenKey);
+      return this.getCookie(this.tokenKey);
     }
     return null;
   }
@@ -147,18 +193,33 @@ export class AuthService {
   }
 
   getRefreshToken(): string | null {
-    return localStorage.getItem('refresh_token');
+    return this.getCookie(this.refreshTokenKey);
   }
+  
   setAccessToken(accessToken: string) {
-    localStorage.setItem(this.tokenKey, accessToken);
+    this.setCookie(this.tokenKey, accessToken, 0.01); // 15 phút
   }
+  
   setRefreshToken(refreshToken: string) {
-    localStorage.setItem('refresh_token', refreshToken);
+    this.setCookie(this.refreshTokenKey, refreshToken, 7); // 7 ngày
   }
 
   // Kiểm tra đăng nhập
   isLoggedIn(): boolean {
     return !!this.getToken();
+  }
+
+  // Lấy thông tin user từ cookie
+  getUsername(): string | null {
+    return this.getCookie(this.usernameKey);
+  }
+
+  getFullname(): string | null {
+    return this.getCookie(this.fullnameKey);
+  }
+
+  getAvatar(): string | null {
+    return this.getCookie(this.avatarKey);
   }
 
   // Lấy trạng thái đăng nhập

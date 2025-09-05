@@ -88,11 +88,11 @@ export class Header implements OnInit, OnDestroy {
       return;
     }
 
-    const token = localStorage.getItem('access_token');
+    const token = this.authService.getToken();
     if (token) {
       this.isLoggedIn = true;
-      this.username = localStorage.getItem('username') || 'User';
-      this.avatar = localStorage.getItem('avatar') || this.avatar;
+      this.username = this.authService.getUsername() || 'User';
+      this.avatar = this.authService.getAvatar() || this.avatar;
     } else {
       this.isLoggedIn = false;
       this.username = '';

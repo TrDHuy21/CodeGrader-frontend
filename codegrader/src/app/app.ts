@@ -32,7 +32,7 @@ export class App {
   constructor(private router: Router) { }
 
   isAuthPage(): boolean {
-    const authPages = ['/login', '/signup', '/forgotpassword', '/manageuser', '/managetag'];
+    const authPages = ['/login', '/signup', '/forgotpassword', '/manageuser', '/managetag','/manageproblem'];
     return authPages.includes(this.router.url);
   }
 }

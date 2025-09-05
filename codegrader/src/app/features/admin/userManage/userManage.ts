@@ -141,33 +141,49 @@ export class UserManage implements OnInit, OnDestroy {
     }
 
     // Action button methods
-    onViewUser(user: UserForAdminGet) {
-        Swal.fire({
-            title: 'User Details',
-            html: `
-                <div style="text-align: left;">
-                    <p><strong>Full Name:</strong> ${user.fullName}</p>
-                    <p><strong>Username:</strong> ${user.username}</p>
-                    <p><strong>Email:</strong> ${user.email}</p>
-                    <p><strong>Birthday:</strong> ${this.formatBirthday(user.birthday)}</p>
-                    <p><strong>Status:</strong> <span class="badge ${user.isActive ? 'badge-success' : 'badge-danger'}">${user.isActive ? 'Active' : 'Banned'}</span></p>
-                    <p><strong>Email Confirmed:</strong> <span class="badge ${user.isEmailConfirmed ? 'badge-success' : 'badge-warning'}">${user.isEmailConfirmed ? 'Confirmed' : 'Pending'}</span></p>
-                    <p><strong>Created:</strong> ${this.formatDate(user.createdAt)}</p>
-                    ${user.bio ? `<p><strong>Bio:</strong> ${user.bio}</p>` : ''}
-                    ${user.githubLink ? `<p><strong>GitHub:</strong> <a href="${user.githubLink}" target="_blank">${user.githubLink}</a></p>` : ''}
-                    ${user.linkedinLink ? `<p><strong>LinkedIn:</strong> <a href="${user.linkedinLink}" target="_blank">${user.linkedinLink}</a></p>` : ''}
-                </div>
-            `,
-            icon: 'info',
-            confirmButtonText: 'Close',
-            confirmButtonColor: '#667eea',
-            background: '#ffffff',
-            backdrop: 'rgba(0,0,0,0.4)',
-            customClass: {
-                popup: 'swal-wide'
-            }
-        });
+  onViewUser(user: UserForAdminGet) {
+  // Tạo HTML avatar sẵn
+  const avatarHtml = user.avatar
+    ? `<img src="${user.avatar}" class="avatar-img" alt="${user.fullName}" />`
+    : `<div class="${this.getUserAvatarClass()}">${this.getUserAvatarText(user)}</div>`;
+
+  Swal.fire({
+    title: `<i class="fas fa-user-circle text-primary"></i> User Details`,
+    html: `
+      <div class="user-details-container">
+        <div data-bs-toggle="tooltip" title="${user.fullName}">
+          ${avatarHtml}
+        </div>
+        <p><i class="fas fa-id-card"></i> <strong>Full Name:</strong> ${user.fullName}</p>
+        <p><i class="fas fa-user"></i> <strong>Username:</strong> ${user.username}</p>
+        <p><i class="fas fa-envelope"></i> <strong>Email:</strong> ${user.email}</p>
+        <p><i class="fas fa-birthday-cake"></i> <strong>Birthday:</strong> ${this.formatBirthday(user.birthday)}</p>
+        <p><i class="fas fa-toggle-on"></i> <strong>Status:</strong> 
+          <span class="badge ${user.isActive ? 'badge-success' : 'badge-danger'}">
+            ${user.isActive ? 'Active' : 'Banned'}
+          </span>
+        </p>
+        <p><i class="fas fa-check-circle"></i> <strong>Email Confirmed:</strong> 
+          <span class="badge ${user.isEmailConfirmed ? 'badge-success' : 'badge-warning'}">
+            ${user.isEmailConfirmed ? 'Confirmed' : 'Pending'}
+          </span>
+        </p>
+        <p><i class="fas fa-clock"></i> <strong>Created:</strong> ${this.formatDate(user.createdAt)}</p>
+        ${user.bio ? `<p><i class="fas fa-info-circle"></i> <strong>Bio:</strong> ${user.bio}</p>` : ''}
+        ${user.githubLink ? `<p><i class="fab fa-github"></i> <strong>GitHub:</strong> <a href="${user.githubLink}" target="_blank">${user.githubLink}</a></p>` : ''}
+        ${user.linkedinLink ? `<p><i class="fab fa-linkedin text-primary"></i> <strong>LinkedIn:</strong> <a href="${user.linkedinLink}" target="_blank">${user.linkedinLink}</a></p>` : ''}
+      </div>
+    `,
+    confirmButtonText: '<i class="fas fa-times"></i> Close',
+    confirmButtonColor: '#667eea',
+    background: '#ffffff',
+    backdrop: 'rgba(0,0,0,0.4)',
+    customClass: {
+      popup: 'swal-wide'
     }
+  });
+}
+
 
     onToggleUserStatus(user: UserForAdminGet) {
         const action = user.isActive ? 'ban' : 'unban';
