@@ -12,7 +12,7 @@ import { ApiResponse } from '../../models/api-respone';
 
 @Component({
   selector: 'profile-update',
-  imports: [AvatarUpload, InputForm, ReactiveFormsModule, DatePickerComponent, TextareaForm],
+  imports: [InputForm, ReactiveFormsModule, DatePickerComponent, TextareaForm],
   standalone: true,
   template: `
     <form

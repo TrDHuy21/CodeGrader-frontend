@@ -1,16 +1,44 @@
-import { Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { BookmarkModel, BookMarkProblemModel } from '../../features/problem/models/bookmark-model';
+import { BookmarkService } from '../../features/problem/services/bookmark-service';
+import { Problem } from '../../features/problem/models/ProblemModel';
 @Injectable({ providedIn: 'root' })
 export class ShareBookmarkService {
-  bookmarkList = signal<BookMarkProblemModel[]>([]);
+  bookmarkService = inject(BookmarkService);
+  bookmarkList = signal<Problem[]>([]);
 
-  add(item: BookMarkProblemModel) {
-    this.bookmarkList()?.push(item);
+  constructor() {
+    this.getAll();
   }
-  delete(item: BookMarkProblemModel) {
-    this.bookmarkList.set(this.bookmarkList()?.filter((bm) => bm.ProblemId !== item.ProblemId));
+  ngOnInit() {
+    this.getAll();
   }
   getAll() {
-    return this.bookmarkList();
+    this.bookmarkService.get().subscribe({
+      next: (res) => {
+        this.bookmarkList.set(res.data ?? []);
+      },
+      error: (err) => console.log(err),
+    });
+  }
+  add(id: number) {
+    this.bookmarkService.add(id).subscribe({
+      next: (res) => {
+        if (res.isSuccess) {
+          this.getAll();
+        }
+      },
+      error: (err) => console.log(err),
+    });
+  }
+  delete(id: number) {
+    this.bookmarkService.delete(id).subscribe({
+      next: (res) => {
+        if (res.isSuccess) {
+          this.getAll();
+        }
+      },
+      error: (err) => console.log(err),
+    });
   }
 }

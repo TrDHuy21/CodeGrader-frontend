@@ -1,5 +1,5 @@
-import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
-import { HttpClient, HttpHandlerFn, HttpRequest } from '@angular/common/http';
+import { Injectable, Inject, PLATFORM_ID, signal } from '@angular/core';
+import { HttpClient, HttpHandlerFn, HttpParams, HttpRequest } from '@angular/common/http';
 import {
   Observable,
   tap,
@@ -56,6 +56,7 @@ export class AuthService {
             console.log(res.data);
             // Chỉ lưu vào localStorage nếu đang ở browser
             if (isPlatformBrowser(this.platformId)) {
+              console.log(res.data.tokenDto);
               // Lưu token
               localStorage.setItem(this.tokenKey, res.data.tokenDto.accessToken);
 
@@ -116,15 +117,22 @@ export class AuthService {
       headers: { 'Content-Type': 'application/json' },
     });
   }
-
+  private loggedOut = signal(false);
+  hasLoggedOut() {
+    return this.loggedOut();
+  }
   // Đăng xuất
   logout() {
     if (isPlatformBrowser(this.platformId)) {
+      const refreshToken = localStorage.getItem('refresh_token');
+      localStorage.removeItem('refresh_token');
       localStorage.removeItem(this.tokenKey);
       // localStorage.removeItem('refresh_token');
       localStorage.removeItem('username');
       localStorage.removeItem('fullname');
       localStorage.removeItem('avatar');
+      this.revokeRefreshToken(refreshToken);
+      this.loggedOut.set(true);
     }
     this.authStateSubject.next(false);
   }
@@ -160,6 +168,14 @@ export class AuthService {
   }
   setRefreshToken(refreshToken: string) {
     localStorage.setItem('refresh_token', refreshToken);
+  }
+  //revoke refresh token
+  revokeRefreshToken(refreshToken: string | null) {
+    const params = new HttpParams();
+    if (refreshToken) {
+      params.set('refreshToken', refreshToken);
+    }
+    return this.httpClient.put(`${this.apiUrl}/logout`, null, { params });
   }
 
   // Kiểm tra đăng nhập

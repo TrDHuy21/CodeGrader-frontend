@@ -35,6 +35,7 @@ export interface ProblemFilter {
   PageSize: number;
   SortBy: string;
   IsDecending: boolean;
+  
 }
 @Component({
   selector: 'advanced-search',
@@ -150,7 +151,6 @@ export class SearchComponent implements OnInit {
     });
     // );
   }
-
   handleSubmit(event: Event) {
     event.preventDefault();
     const payload: ProblemFilter = this.form.getRawValue();
@@ -162,8 +162,8 @@ export class SearchComponent implements OnInit {
       NameSearch: '',
       Levels: [],
       Tagnames: [],
-      PageNumber: 1,
-      PageSize: 10,
+      PageNumber: 0,
+      PageSize: 1,
       SortBy: 'name',
       IsDecending: false,
     });

@@ -1,0 +1,67 @@
+:host {
+  /* Biến tinh chỉnh nhanh cho rail + elbow */
+  --line-color: #e5e7eb; /* gray-300 */
+  --line-w: 3.5px;
+
+  /* vị trí line dọc trên main comment */
+  --rail-left: 3rem; /* lệch so với mép trái .comment */
+  --rail-top: 3.5rem; /* bắt đầu vẽ dưới avatar 1 chút */
+
+  /* elbow cho reply */
+  --elbow-w: 110px;
+  --elbow-h: 30px;
+  --elbow-top: 12px;
+  --elbow-radius: 20px;
+}
+
+/* Comment có replies → vẽ đường dọc (rail) từ dưới bubble xuống dưới */
+li.has-children > .comment {
+  position: relative;
+}
+li.has-children > .comment::before {
+  content: '';
+  position: absolute;
+  left: var(--rail-left);
+  top: var(--rail-top);
+  bottom: 0;
+  width: var(--line-w);
+  background: var(--line-color);
+  z-index: 1000;
+}
+
+/* Progressive enhancement theo bài: dùng :has(ul) nếu hỗ trợ */
+@supports selector(li:has(ul)) {
+  li:has(> .replies) > .comment {
+    position: relative;
+  }
+  li:has(> .replies) > .comment::before {
+    content: '';
+    position: absolute;
+    left: var(--rail-left);
+    top: var(--rail-top);
+    bottom: 0;
+    width: var(--line-w);
+    background: var(--line-color);
+  }
+}
+
+/* Vẽ elbow + line cho từng reply trong .replies */
+.replies > ul > li {
+  position: relative;
+}
+
+/* elbow (góc cong) nối từ rail sang bubble reply */
+.replies > ul > li::after {
+  content: '';
+  position: absolute;
+  inset-inline-start: calc(var(--rail-left) - var(--elbow-w)); /* logic-friendly */
+  top: var(--elbow-top);
+  width: var(--elbow-w);
+  height: var(--elbow-h);
+  border-inline-start: var(--line-w) solid var(--line-color);
+  border-bottom: var(--line-w) solid var(--line-color);
+  border-end-start-radius: var(--elbow-radius);
+  background: transparent;
+  pointer-events: none;
+  z-index: 1;
+}

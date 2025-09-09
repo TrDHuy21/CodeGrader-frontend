@@ -18,7 +18,7 @@ export class CommonFunc {
     return `${y}-${m}-${day}`;
   }
 
-   public calculateStrength(password: string): number {
+  public calculateStrength(password: string): number {
     let score = 0;
     if (!password) return score;
 
@@ -34,5 +34,14 @@ export class CommonFunc {
     if (strength <= 1) return 'Weak';
     if (strength === 3 || strength === 2) return 'Medium';
     return 'Strong';
+  }
+  //Mon Sep 08 2025 09:33:39 GMT+0700 (Indochina Time) to 08/09/2025
+  toDMY(dateInput: string | Date): string {
+    const d = dateInput instanceof Date ? dateInput : new Date(dateInput);
+    if (isNaN(d.getTime())) return ''; // invalid date
+    const day = d.getDate(); // 1..31
+    const month = d.getMonth() + 1; // 0-based -> +1
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`; // ví dụ: 8/9/2025
   }
 }

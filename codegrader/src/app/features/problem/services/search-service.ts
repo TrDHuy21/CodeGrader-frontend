@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../../user/models/api-respone';
 import { HttpParams } from '@angular/common/http';
@@ -13,11 +13,17 @@ interface SearchQuery {
   SortBy: string;
   IsDecending: boolean;
 }
+const token =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjIiLCJVc2VybmFtZSI6InVzZXIiLCJyb2xlIjoiVXNlciIsIm5iZiI6MTc1Njk5OTMxNSwiZXhwIjoxNzU3MDAyOTE1LCJpYXQiOjE3NTY5OTkzMTUsImlzcyI6Iklzc3VlciIsImF1ZCI6Ik15QXVkaWVuY2UifQ.OeySX3nbyr_U9IfGsCraqmi-IR0Zli5YPY2jJ1Ird9c';
 @Injectable({ providedIn: 'root' })
 export class SearchService {
   private apiUrl = 'http://localhost:5000/problem';
   constructor(private http: HttpClient) {}
   header = new HttpParams();
+  headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  });
   getTagname(): Observable<ApiResponse> {
     return this.http.get<ApiResponse>(`${this.apiUrl}/Tag`);
   }

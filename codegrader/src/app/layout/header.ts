@@ -40,23 +40,37 @@ import { isPlatformBrowser } from '@angular/common';
           Sign Up
         </span>
         } @else{
-        <div (click)="toggleDropdown()" class="flex items-center gap-2">
-          <div class="aspect-square rounded-full h-8 w-8">
-            <img [src]="avatar" alt="Avatar" class="w-8 h-8 rounded-full" />
-          </div>
-          <span class="text-gray-500 text-sm">{{ username }}</span>
+        <div class="relative inline-block" tabindex="0" (blur)="dropdownOpen = false">
+          <!-- Trigger -->
+          <button
+            type="button"
+            (click)="toggleDropdown()"
+            class="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-2.5 py-1.5 shadow-sm hover:bg-slate-50"
+          >
+            <img [src]="avatar" alt="Avatar" class="h-8 w-8 rounded-full object-cover" />
+            <span class="text-sm text-slate-700 truncate">{{ username }}</span>
+            <i class="pi pi-angle-down text-xs text-slate-500"></i>
+          </button>
+
+          <!-- Dropdown -->
+          <ul
+            class="absolute right-0 mt-2 w-48 rounded-md border border-slate-200 bg-white shadow-md"
+            [class.hidden]="!dropdownOpen"
+          >
+            <li>
+              <a routerLink="/profile" class="block px-4 py-2 text-sm hover:bg-slate-50">Profile</a>
+            </li>
+            <li>
+              <button
+                (click)="logout()"
+                class="block w-full text-left px-4 py-2 text-sm hover:bg-slate-50"
+              >
+                Logout
+              </button>
+            </li>
+          </ul>
         </div>
 
-        <!-- Dropdown -->
-        <ul
-          class="dropdown absolute right-0 top-full bg-white shadow-lg rounded-lg mt-2 p-4 w-48"
-          [class.hidden]="!dropdownOpen"
-        >
-          <li class="py-2 px-4 hover:bg-gray-100 cursor-pointer">
-            <a routerLink="/profile">Profile</a>
-          </li>
-          <li class="py-2 px-4 hover:bg-gray-100 cursor-pointer" (click)="logout()">Logout</li>
-        </ul>
         }
       </div>
     </header>

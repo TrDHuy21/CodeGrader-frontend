@@ -8,6 +8,7 @@ export interface UserProfileModel {
   githubLink: string;
   linkedinLink: string;
   createdAt: Date;
+  avatar?: string;
 }
 export interface UserProfileDto {
   id: number;

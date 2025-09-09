@@ -8,22 +8,17 @@ import { ProblemDetailSubmissionComponent } from './features/problem/pages/probl
 import { Router } from '@angular/router';
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Header, Footer, Container, ProfileUpdate, ProblemDetailSubmissionComponent],
+  imports: [RouterOutlet, Header, Footer],
   standalone: true,
   // templateUrl: './app.html',
   template: `
-    @if(!isAuthPage())
-      {
-        <header-component></header-component>
-      }
-    <!-- <container> -->
+    @if(!isAuthPage()) {
+    <header-component></header-component>
+    }
     <router-outlet></router-outlet>
-    <!-- </container> -->
-      @if(!isAuthPage())
-      {
-         <footer-component></footer-component>
-      }
-   
+    @if(!isAuthPage() && !isProblemPage()) {
+    <footer-component></footer-component>
+    }
   `,
   styleUrl: './app.css',
 })
@@ -32,7 +27,23 @@ export class App {
   constructor(private router: Router) {}
 
   isAuthPage(): boolean {
-    const authPages = ['/login', '/signup', '/forgotpassword', '/manageuser', '/managetag']; 
+    const authPages = [
+      '/login',
+      '/signup',
+      '/forgotpassword',
+      '/manageuser',
+      '/managetag',
+      'problem',
+    ];
     return authPages.includes(this.router.url);
+  }
+  isProblemPage(): boolean {
+    const problemPages = [
+      '/problem',
+      '/profile/update-profile',
+      'change-password',
+      'update-avatar',
+    ];
+    return problemPages.includes(this.router.url);
   }
 }

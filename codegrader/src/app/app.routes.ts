@@ -16,6 +16,7 @@ import { ForgotPassword } from './auth/forgotPassword/forgotPassword';
 import { UpdateAvatarComponent } from './features/user/pages/profile-updates/update-avatar';
 import { identity } from 'rxjs';
 import { NgModule } from '@angular/core';
+import { GeneralComponent } from './features/user/pages/profile-updates/general';
 
 export const routes: Routes = [
   {
@@ -30,16 +31,17 @@ export const routes: Routes = [
   {
     path: 'profile',
     //with out lazy loading
-    // component: ProfileHomepageComponent,
-    // children: [
-    //   { path: '', redirectTo: 'update-profile', pathMatch: 'full' }, //default route
-    //   { path: 'update-profile', component: ProfileUpdate },
-    //   { path: 'change-password', component: ChangePasswordComponent },
-    //   { path: 'update-avatar', component: UpdateAvatarComponent },
-    // ],
+    component: ProfileHomepageComponent,
+    children: [
+      { path: '', redirectTo: 'update-profile', pathMatch: 'full' }, //default route
+      { path: 'update-profile', component: ProfileUpdate },
+      { path: 'change-password', component: ChangePasswordComponent },
+      { path: 'update-avatar', component: UpdateAvatarComponent },
+      { path: 'general', component: GeneralComponent },
+    ],
 
     //with lazy loading
-    loadChildren: () => import('./features/user/user-profile-routes').then((m) => m.routes),
+    // loadChildren: () => import('./features/user/user-profile-routes').then((m) => m.routes),
   },
   {
     path: 'problem',
