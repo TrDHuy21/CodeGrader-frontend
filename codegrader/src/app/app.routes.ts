@@ -15,6 +15,7 @@ import { TagManage } from './features/admin/tagManage/tagManage';
 import { ForgotPassword } from './auth/forgotPassword/forgotPassword';
 import { UpdateAvatarComponent } from './features/user/pages/profile-updates/update-avatar';
 import { identity } from 'rxjs';
+import { ProblemManage } from './features/admin/problemManage/problemManage';
 import { NgModule } from '@angular/core';
 import { GeneralComponent } from './features/user/pages/profile-updates/general';
 
@@ -86,4 +87,5 @@ export const routes: Routes = [
       import('./auth/forgotPassword/forgotPassword').then((m) => m.ForgotPassword),
     // component: ForgotPassword,
   },
+  { path: 'manageproblem', component: ProblemManage },
 ];

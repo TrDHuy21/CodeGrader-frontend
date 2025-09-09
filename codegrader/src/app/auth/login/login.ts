@@ -51,7 +51,7 @@ export class LoginApp {
       next: (res) => {
         if (res.isSuccess) {
           console.log('Login success:', res);
-          // localStorage.setItem('token', res.data.tokenDto.accessToken);
+          // Token đã được lưu vào cookie trong AuthService, không cần lưu lại
           if (res.data.userDto.roleName == 'Admin') {
             Swal.fire({
               icon: 'success',
