@@ -1,0 +1,51 @@
+@if (loading) {
+<div class="loading-container">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">Loading problem...</p>
+</div>
+}
+@else if (error) {
+<!-- Error State -->
+<div class="error-container">
+    <div class="error-message">
+        <i class="fas fa-exclamation-triangle"></i>
+        <p>{{ error }}</p>
+    </div>
+</div>
+}
+@else {
+<div class="container">
+    <div class="form-card">
+        <h2>Add Example</h2>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+                <label for="inputExample">Input Example</label>
+                <input id="inputExample" type="text" formControlName="inputExample" />
+                <div class="error" *ngIf="form.get('inputExample')?.invalid && form.get('inputExample')?.touched">
+                    Input Example is required
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="outputExample">Output Example</label>
+                <input id="outputExample" type="text" formControlName="outputExample" />
+                <div class="error" *ngIf="form.get('outputExample')?.invalid && form.get('outputExample')?.touched">
+                    Output Example is required
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="explanation">Explanation (optional)</label>
+                <textarea id="explanation" rows="4" formControlName="explanation"></textarea>
+            </div>
+
+            <div class="btn-group">
+                <button type="submit" [disabled]="form.invalid">Save</button>
+                <button type="button" class="btn-cancel" (click)="cancel()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+}

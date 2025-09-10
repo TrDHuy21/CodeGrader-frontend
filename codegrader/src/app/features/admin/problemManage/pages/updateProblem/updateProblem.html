@@ -1,0 +1,78 @@
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+
+<div class="container">
+    <!-- <admin-sidebar [activeRoute]="'/manageproblem'" (navItemClick)="onNavItemClick($event)"></admin-sidebar> -->
+
+    <!-- Content -->
+    <div class="section2">
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="content-header">
+                <h1 class="content-title" style="color: black;"><i class="fa-solid fa-circle-question"></i> Problem
+                    Management</h1>
+            </div>
+            <!-- Loading State -->
+            @if (loading) {
+            <div class="loading-container">
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading problem...</p>
+                </div>
+            </div>
+            }
+            @else if (error) {
+            <!-- Error State -->
+            <div class="error-container">
+                <div class="error-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>{{ error }}</p>
+                </div>
+            </div>
+            }
+            @else {
+            <form [formGroup]="formUpdateProblem" (ngSubmit)="onSubmit()">
+
+                <label>Tên bài toán</label>
+                <input formControlName="name" />
+
+                <label>Nội dung</label>
+                <textarea formControlName="content"></textarea>
+
+                <label>Level</label>
+                <input type="number" formControlName="level" min="1" max="3" />
+
+                <label>Prompt</label>
+                <textarea formControlName="promt"></textarea>
+
+                <h3>Tags</h3>
+                <div formArrayName="tags">
+                    <div *ngFor="let tagCtrl of tags.controls; let i = index" [formGroupName]="i">
+                        <input formControlName="name" placeholder="Tên tag" />
+                        <button type="button" (click)="removeTag(i)">Xóa tag</button>
+                    </div>
+                </div>
+                <button type="button" (click)="addTag()">Thêm tag</button>
+
+                <h3>Input/Output Examples</h3>
+                <div formArrayName="inOutExamples">
+                    <div *ngFor="let exCtrl of inOutExamples.controls; let i = index" [formGroupName]="i">
+                        <label>Input</label>
+                        <input formControlName="inputExample" />
+                        <label>Output</label>
+                        <input formControlName="outputExample" />
+                        <label>Giải thích</label>
+                        <textarea formControlName="explanation"></textarea>
+                        <button type="button" (click)="addExample()">Xóa ví dụ</button>
+                    </div>
+                </div>
+                <button type="button" (click)="addExample()">Thêm ví dụ</button>
+
+                <button type="submit" [disabled]="formUpdateProblem.invalid">Cập nhật bài toán</button>
+                <button type="button" class="btn-back" (click)="goBack()">Quay lại</button>
+            </form>
+            }
+
+
+            <div class="copyright">©Copyright By CodeGrader 2025</div>
+        </div>
+    </div>

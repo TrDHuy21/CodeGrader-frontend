@@ -1,0 +1,53 @@
+<!-- Loading State -->
+@if (loading) {
+<div class="loading-container">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">Loading problem...</p>
+</div>
+}
+@else if (error) {
+<!-- Error State -->
+<div class="error-container">
+    <div class="error-message">
+        <i class="fas fa-exclamation-triangle"></i>
+        <p>{{ error }}</p>
+    </div>
+</div>
+}
+@else {
+<div class="container ">
+    <div class="tag-form-container">
+        <h2 class="form-title">Thêm Tag cho Problem Id {{problemId() }}</h2>
+
+        <form (submit)="onSubmit($event)" novalidate>
+            <label class="form-label">Chọn các tag có sẵn</label>
+
+            <!-- Tag options -->
+            <div class="available-tags">
+                <span class="tag-option" *ngFor="let tag of availableTags()" [class.active]="isSelected(tag)"
+                    (click)="toggleTag(tag)">
+                    {{ tag.name }}
+                </span>
+            </div>
+
+            <!-- Selected Tags -->
+            <div class="selected-tags-container">
+                <span class="tag-badge d-inline-flex align-items-center" *ngFor="let tag of selectedTags">
+                    {{ tag.name }}
+                    <span class="remove" (click)="removeTag(tag)">
+                        <i class="fas fa-times-circle ms-1"></i>
+                    </span>
+                </span>
+            </div>
+
+            <!-- Submit -->
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn submit-btn text-white">
+                    <span class="loading-spinner" *ngIf="loading"></span>
+                    Lưu Tag
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+}

@@ -49,12 +49,12 @@ export class ForgotPassword {
 
   async onRequestOtp() {
     if (!this.email()) {
-      Swal.fire('Lỗi', 'Vui lòng nhập email', 'error');
+      Swal.fire('Error', 'Please enter a Email !', 'error');
       return;
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email())) {
-      Swal.fire('Lỗi', 'Vui lòng nhập email hợp lệ', 'error');
+      Swal.fire('Error', 'Please enter a valid email !', 'error');
       return;
     }
 
@@ -66,12 +66,12 @@ export class ForgotPassword {
           this.openOtpModal();
         } else {
           // Email không tồn tại hoặc lỗi khác
-          Swal.fire('Lỗi', response.message || 'Email không tồn tại trong hệ thống', 'error');
+          Swal.fire('Error', response.message || 'Email does not exist in the system !', 'error');
         }
       },
       error: (error) => {
         this.isLoading.set(false);
-        Swal.fire('Lỗi', error.error?.message || 'Không thể gửi OTP, vui lòng thử lại', 'error');
+        Swal.fire('Error', error.error?.message || 'Unable to send OTP, please try again !', 'error');
       },
     });
   }

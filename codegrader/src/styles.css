@@ -257,3 +257,5 @@ html {
   transform: translateY(-2px) !important;
   box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4) !important;
 }
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

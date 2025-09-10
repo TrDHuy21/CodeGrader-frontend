@@ -95,18 +95,18 @@ export class LoginApp {
                 await this.verificationUi.open({
                   email: this.email(),
                   title: 'Confirm email',
-                  message: 'Vui lòng nhập mã OTP đã gửi tới email của bạn',
+                  message: 'Please enter the OTP code sent to your email !',
                   length: 6,
                   secondsToExpire: 90,
                   onResend: () => {
                     // Gửi lại OTP
                     this.authService.resendOtp(this.email()).subscribe({
                       next: () => {
-                        console.log('Đã gửi lại mã OTP thành công');
+                        console.log('OTP code resent successfully !');
                       },
                       error: (error) => {
-                        console.error('Lỗi gửi lại OTP:', error);
-                        Swal.fire('Lỗi', 'Không thể gửi lại mã OTP, vui lòng thử lại', 'error');
+                        console.error('OTP resend error:', error);
+                        Swal.fire('Error', 'Unable to resend OTP code, please try again !', 'error');
                       },
                     });
                   },
@@ -167,7 +167,7 @@ export class LoginApp {
       this.authService.verifyEmail(confirmReq).subscribe({
         next: (verifyRes: any) => {
           if (verifyRes.isSuccess) {
-            Swal.fire('Xác thực thành công', 'Bạn có thể đăng nhập ngay', 'success');
+            Swal.fire('Authentication successful', 'You can log in now', 'success');
             this.router.navigate(['/login']);
             resolve(true);
           } else {
@@ -176,7 +176,7 @@ export class LoginApp {
           }
         },
         error: () => {
-          Swal.fire('Lỗi hệ thống', 'Vui lòng thử lại sau', 'error');
+          Swal.fire('System error', 'Please try again later', 'error');
           resolve(false);
         },
       });

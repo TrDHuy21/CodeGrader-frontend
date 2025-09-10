@@ -8,6 +8,8 @@ import { ReactiveFormsModule, FormGroup, FormControl } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { ProblemFilter } from "../../problem/components/probem-search";
 import { HttpClient } from "@angular/common/http";
+import Swal from 'sweetalert2';
+import { forkJoin } from "rxjs";
 import { TagForAdminGet } from "../tagManage/tag.model";
 export interface ProblemItem {
     id: number,
@@ -24,17 +26,21 @@ export interface ProblemItem {
     selector: "problemmanagepage",
     templateUrl: "problemManage.html",
     styleUrl: "problemManage.css",
-    imports: [AdminNavbar, AdminSidebar, ReactiveFormsModule, CommonModule],
+    imports: [AdminNavbar, AdminSidebar, ReactiveFormsModule, CommonModule,],
     standalone: true
 })
 export class ProblemManage {
-    private problemUrl = 'https://localhost:5000/problem';
+    private problemUrl = 'http://localhost:5000/Problem';
     constructor(private router: Router, private http: HttpClient) { }
     isDropdownActive = false;
     searchTerm = '';
     notificationCount = 2;
-    listTag = ['Dynamic Programming', 'Array', 'Graph', 'String', 'Binary Search'];
+    listTag = signal<string[]>([]);
     levelOptions = ['Easy', 'Medium', 'Hard'];
+    loading = false;
+    error = '';
+    isExpanded = signal(false);
+
     filterForm = new FormGroup({
         name: new FormControl(''),
         level: new FormControl([] as string[]),
@@ -60,7 +66,7 @@ export class ProblemManage {
 
         return {
             NameSearch: formValue.name || '',
-            Levels: formValue.level?.map(level => this.levelOptions.indexOf(level)) || [],
+            Levels: formValue.level?.map(level => this.levelOptions.indexOf(level)+1) || [],
             Tagnames: formValue.tagName || [],
             PageNumber: this.currentPage(),
             PageSize: formValue.pageSize || 1,
@@ -73,20 +79,9 @@ export class ProblemManage {
     ngOnInit() {
         // this.filterForm.get('pageSize')?.valueChanges.subscribe(value => {
         //     this.pageSize.set(value || 1);
-        // });
-        this.http.get<ApiResponse<ProblemItem[]>>(`${this.problemUrl}?${this.toQueryParams(this.requestData)}`)
-            .subscribe(res => {
-                if (res.isSuccess) {
-                    this.filteredProblems.set(res.data);
-                }
-            });
-        this.http.get<ApiResponse<number>>(`${this.problemUrl}/total?${this.toQueryParams(this.requestData)}`)
-            .subscribe(res => {
-                if (res.isSuccess) {
-                    this.totalElement.set(res.data);
-                    console.log(this.totalElement())
-                }
-            });
+        // });this.userService.getAllUsers().subscribe({
+
+        this.loadProblem();
     }
 
     get pageNumbers(): number[] {
@@ -118,20 +113,38 @@ export class ProblemManage {
 
     onSearchInput(event: string) {
         this.filterForm.patchValue({ name: event });
-        this.http.get<ApiResponse<ProblemItem[]>>(`${this.problemUrl}?${this.toQueryParams(this.requestData)}`)
-            .subscribe(res => {
-                if (res.isSuccess) {
-                    this.filteredProblems.set(res.data);
-                }
-            });
-        this.http.get<ApiResponse<number>>(`${this.problemUrl}/total?${this.toQueryParams(this.requestData)}`)
-            .subscribe(res => {
-                if (res.isSuccess) {
-                    this.totalElement.set(res.data);
-                    console.log(this.totalElement())
-                }
-            });
+        this.loadProblem()
         this.currentPage.set(1);
+    }
+    loadProblem() {
+        this.loading = true;
+        this.error = '';
+        forkJoin({
+            problems: this.http.get<ApiResponse<ProblemItem[]>>(`${this.problemUrl}?${this.toQueryParams(this.requestData)}`),
+            total: this.http.get<ApiResponse<number>>(`${this.problemUrl}/total?${this.toQueryParams(this.requestData)}`),
+            tags: this.http.get<ApiResponse<TagForAdminGet[]>>(`${this.problemUrl}/Tag`)
+        }).subscribe({
+            next: ({ problems, total, tags }) => {
+                if (problems.isSuccess && problems.data) {
+                    this.filteredProblems.set(problems.data);
+                }
+
+                if (total.isSuccess) {
+                    this.totalElement.set(total.data);
+                }
+
+                if (tags.isSuccess && tags.data) {
+                    this.listTag.set(tags.data.map(t => t.name));
+                }
+
+                this.loading = false;
+            },
+            error: (err) => {
+                this.error = 'Error loading data: ' + err.message;
+                this.loading = false;
+                this.showErrorAlert('Error', this.error);
+            }
+        });
     }
 
     onNotificationClick() {
@@ -153,24 +166,75 @@ export class ProblemManage {
     }
 
     onEditProblem(problem: ProblemItem) {
-        alert(`Edit problem: ${problem.name}`);
+        this.router.navigate(['/updateproblem'], { state: { problem } });
+    }
+    deleteProblem(problem: ProblemItem) {
+        this.http.delete<ApiResponse<ProblemItem>>(`${this.problemUrl}/${problem.id}`)
+            .subscribe({
+                next: (res) => {
+                    if (res.isSuccess && res.data) {
+                        this.currentPage.set(1);
+                        this.filteredProblems.set(this.filteredProblems().filter(t => t.id !== problem.id));
+                        this.totalElement.set(this.totalElement() - 1);
+                        
+                        this.showSuccessAlert('Deleted!', 'The problem has been deleted.');
+                    }
+                },
+                error: (err) => {
+                    this.error = 'Error delete data: ' + err.message;
+                    this.showErrorAlert('Error', this.error);
+                }
+            });
     }
 
     onDeleteProblem(problem: ProblemItem) {
-        if (confirm(`Delete problem \"${problem.name}\"?`)) {
-            this.filteredProblems.set(this.filteredProblems().filter(t => t.id !== problem.id));
-        }
+        Swal.fire({
+            title: `Delete "${problem.name}"?`,
+            text: "This action cannot be undone.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                this.deleteProblem(problem);
+            }
+        });
     }
 
-    onToggleProblemStatus(problem: any) {
+    onToggleProblemStatus(problem: ProblemItem) {
         const action = problem.isDelete === true ? 'active' : 'unactive';
         const message = problem.isDelete === true ? 'Active Problem' : 'Unactive Problem';
-
-        if (confirm(`Are you sure you want to ${action} ${problem.name}?`)) {
-            alert(message);
-            // Toggle status
-            problem.isDelete = problem.isDelete === false ? true : false;
-        }
+        Swal.fire({
+            title: `Are you sure you want to ${action} ${problem.name}?`,
+            text: message,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: `Yes,${action} it!`
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const updatedProblem = {
+                    ...problem,
+                    isDelete: !problem.isDelete
+                };
+                this.http.put<ApiResponse<ProblemItem>>(`${this.problemUrl}`, updatedProblem)
+                    .subscribe({
+                        next: (res) => {
+                            if (res.isSuccess && res.data) {
+                                problem.isDelete = problem.isDelete === false ? true : false;
+                                this.showSuccessAlert('Updated!', 'The problem has been updated.');
+                            }
+                        },
+                        error: (err) => {
+                            this.error = 'Error delete data: ' + err.message;
+                            this.showErrorAlert('Error', this.error);
+                        }
+                    });
+            }
+        });
     }
 
     // Get lock/unlock icon
@@ -210,29 +274,29 @@ export class ProblemManage {
         if (formPageSize !== this.pageSize()) {
             this.pageSize.set(formPageSize);
         }
-        this.http.get<ApiResponse<ProblemItem[]>>(`${this.problemUrl}?${this.toQueryParams(this.requestData)}`)
-            .subscribe(res => {
-                if (res.isSuccess) {
-                    this.filteredProblems.set(res.data);
-                }
-            });
-        this.http.get<ApiResponse<number>>(`${this.problemUrl}/total?${this.toQueryParams(this.requestData)}`)
-            .subscribe(res => {
-                if (res.isSuccess) {
-                    this.totalElement.set(res.data);
-                    console.log(this.totalElement())
-                }
-            });
         this.currentPage.set(1);
+        this.loadProblem()
+        
     }
     onPageChange(page: number) {
         this.currentPage.set(page);
+        this.loading = true;
+        this.error = '';
         this.http.get<ApiResponse<ProblemItem[]>>(`${this.problemUrl}?${this.toQueryParams(this.requestData)}`)
-            .subscribe(res => {
-                if (res.isSuccess) {
-                    this.filteredProblems.set(res.data);
+            .subscribe({
+                next: (res) => {
+                    if (res.isSuccess && res.data) {
+                        this.filteredProblems.set(res.data);
+                    }
+                    this.loading = false
+                },
+                error: (err) => {
+                    this.error = 'Error loading data: ' + err.message;
+                    this.loading = false;
+                    this.showErrorAlert('Error', this.error);
                 }
             });
+
     }
 
     toQueryParams(obj: any): string {
@@ -252,5 +316,38 @@ export class ProblemManage {
         }
 
         return params.toString();
+    }
+
+    showSuccessAlert(title: string, message: string) {
+        Swal.fire({
+            title: title,
+            text: message,
+            icon: 'success',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#10b981',
+            background: '#ffffff',
+            backdrop: 'rgba(0,0,0,0.4)',
+            timer: 3000,
+            timerProgressBar: true
+        });
+    }
+
+    showErrorAlert(title: string, message: string) {
+        Swal.fire({
+            title: title,
+            text: message,
+            icon: 'error',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#ef4444',
+            background: '#ffffff',
+            backdrop: 'rgba(0,0,0,0.4)'
+        });
+    }
+
+    toggleExpand() {
+        this.isExpanded.update(value => !value);
+    }
+    onAddProblem() {
+        this.router.navigate(['addProblem']);
     }
 }
