@@ -10,7 +10,6 @@ import {
   RequestUpdateNewPassword,
 } from './auth.model';
 import { ApiResponse } from '../features/user/models/api-respone';
-import { jwtDecode } from 'jwt-decode';
 
 interface RefreshResponse {
   accessToken: string;
