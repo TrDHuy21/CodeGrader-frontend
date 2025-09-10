@@ -11,8 +11,7 @@ Frontend application for the CodeGrader system - an automated code grading platf
 
 ## 🎯 Overview
 
-This is the frontend interface for the CodeGrader system, built with **Angular**. It provides a modern web application for students to submit code assignments and for instructors to manage programming courses.
-
+This is the frontend interface for the CodeGrader system, built with **Angular**. It provides a modern web application for students to submit code assignments.
 For detailed system information, architecture, and backend setup, please refer to the [CodeGrader Backend Repository](https://github.com/TrDHuy21/CodeGrader-Backend).
 
 ## 📋 Prerequisites
