@@ -24,7 +24,7 @@ export class ForgotPassword {
   showConfirmPassword = signal(false);
   isLoading = signal(false);
   passwordStrength = signal(0);
-  
+
   private abc = inject(CommonFunc);
 
   private router = inject(Router);
@@ -36,16 +36,14 @@ export class ForgotPassword {
     });
   }
 
-  passwordStrengthText = computed(() =>
-    this.abc.getPasswordStrengthText(this.passwordStrength())
-  );
+  passwordStrengthText = computed(() => this.abc.getPasswordStrengthText(this.passwordStrength()));
 
   isFormValid = computed(() => {
     const hasOtp = this.otp() && this.otp().trim() !== '';
     const hasPassword = this.newPassword() && this.newPassword().length >= 6;
     const hasConfirmPassword = this.confirmPassword() && this.confirmPassword().trim() !== '';
     const passwordsMatch = this.newPassword() === this.confirmPassword();
-    
+
     return hasOtp && hasPassword && hasConfirmPassword && passwordsMatch;
   });
 
@@ -55,16 +53,26 @@ export class ForgotPassword {
       return;
     }
 
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email())) {
+      Swal.fire('Lỗi', 'Vui lòng nhập email hợp lệ', 'error');
+      return;
+    }
+
     this.isLoading.set(true);
     this.authService.forgotPassword(this.email()).subscribe({
-      next: () => {
+      next: (response) => {
         this.isLoading.set(false);
-        this.openOtpModal();
+        if (response.isSuccess) {
+          this.openOtpModal();
+        } else {
+          // Email không tồn tại hoặc lỗi khác
+          Swal.fire('Lỗi', response.message || 'Email không tồn tại trong hệ thống', 'error');
+        }
       },
-      error: () => {
+      error: (error) => {
         this.isLoading.set(false);
-        Swal.fire('Lỗi', 'Không thể gửi OTP, vui lòng thử lại', 'error');
-      }
+        Swal.fire('Lỗi', error.error?.message || 'Không thể gửi OTP, vui lòng thử lại', 'error');
+      },
     });
   }
 
@@ -78,7 +86,7 @@ export class ForgotPassword {
 
   onConfirmOtp() {
     if (!this.otp() || !this.newPassword()) {
-      Swal.fire('Lỗi', 'Vui lòng nhập đầy đủ OTP và mật khẩu mới', 'error');
+      Swal.fire('Error', 'Please enter both OTP and new password', 'error');
       return;
     }
 
@@ -91,15 +99,59 @@ export class ForgotPassword {
     this.authService.updateNewPassword(payload).subscribe({
       next: (res: any) => {
         if (res.isSuccess) {
-          Swal.fire('Thành công', 'Mật khẩu đã được đặt lại. Hãy đăng nhập ngay', 'success');
-          this.router.navigate(['/login']);
+          // Close OTP modal
+          const modalEl = document.getElementById('otpModal');
+          if (modalEl) {
+            const modalInstance = bootstrap.Modal.getInstance(modalEl);
+            if (modalInstance) {
+              modalInstance.hide();
+            }
+          }
+          // Remove leftover backdrop if any
+          document.querySelectorAll('.modal-backdrop').forEach((el) => el.remove());
+          document.body.classList.remove('modal-open');
+
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: res.message || 'Password has been reset successfully',
+            showConfirmButton: true,
+            allowOutsideClick: false,
+            willClose: () => {
+              this.router.navigate(['/login']);
+            },
+          });
         } else {
-          Swal.fire('Lỗi', res.message || 'OTP không hợp lệ', 'error');
+          let errorMessage = 'Validation errors occurred';
+
+          if (res.errorDetail?.errors?.length > 0) {
+            errorMessage = res.errorDetail.errors
+              .map((e: any) => `${e.field}: ${e.errorMessage}`)
+              .join('<br>');
+          }
+
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            html: errorMessage,
+          });
         }
       },
-      error: () => {
-        Swal.fire('Lỗi hệ thống', 'Vui lòng thử lại sau', 'error');
-      }
+      error: (err) => {
+        let errorMessage = 'An unexpected error occurred. Please try again later.';
+
+        if (err.error?.errorDetail?.errors?.length > 0) {
+          errorMessage = err.error.errorDetail.errors
+            .map((e: any) => `${e.field}: ${e.errorMessage}`)
+            .join('<br>');
+        }
+
+        Swal.fire({
+          icon: 'error',
+          title: 'System Error',
+          html: errorMessage,
+        });
+      },
     });
   }
 
@@ -112,6 +164,10 @@ export class ForgotPassword {
     this.router.navigate(['/signup']);
   }
 
-  togglePassword() { this.showPassword.update(v => !v); }
-  toggleConfirmPassword() { this.showConfirmPassword.update(v => !v); }
+  togglePassword() {
+    this.showPassword.update((v) => !v);
+  }
+  toggleConfirmPassword() {
+    this.showConfirmPassword.update((v) => !v);
+  }
 }

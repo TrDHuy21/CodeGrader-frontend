@@ -2,6 +2,7 @@ import { Component, signal, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angu
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { SideBarProblem } from '../features/problem/components/sidebar';
 import { AuthService } from '../auth/auth.service';
+import { CookieService } from '../shared/services/cookie.service';
 import { Subscription } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
 @Component({
@@ -17,7 +18,7 @@ import { isPlatformBrowser } from '@angular/common';
         </div>
         <sidebar-component></sidebar-component>
       </div>
-
+ 
       <!-- Navigation -->
       <ul class="navigation flex gap-6 text-gray-700 font-medium">
         <li class="cursor-pointer hover:text-blue-600" routerLink="/home">Home</li>
@@ -52,9 +53,15 @@ import { isPlatformBrowser } from '@angular/common';
           class="dropdown absolute right-0 top-full bg-white shadow-lg rounded-lg mt-2 p-4 w-48"
           [class.hidden]="!dropdownOpen"
         >
+          @if (username === 'admin') {
+          <li class="py-2 px-4 hover:bg-gray-100 cursor-pointer">
+            <a routerLink="/manageuser">Admin UI</a>
+          </li>
+          } @else {
           <li class="py-2 px-4 hover:bg-gray-100 cursor-pointer">
             <a routerLink="/profile">Profile</a>
           </li>
+          }
           <li class="py-2 px-4 hover:bg-gray-100 cursor-pointer" (click)="logout()">Logout</li>
         </ul>
         }
@@ -69,7 +76,7 @@ export class Header implements OnInit, OnDestroy {
   dropdownOpen = false;
   private authSubscription?: Subscription;
 
-  constructor(private authService: AuthService, @Inject(PLATFORM_ID) private platformId: Object) {}
+  constructor(private authService: AuthService, private cookieService: CookieService, @Inject(PLATFORM_ID) private platformId: Object) {}
 
   ngOnInit(): void {
     this.updateAuthState();
@@ -91,7 +98,8 @@ export class Header implements OnInit, OnDestroy {
     const token = this.authService.getToken();
     if (token) {
       this.isLoggedIn = true;
-      this.username = this.authService.getUsername() || 'User';
+      const cookieUsername = this.cookieService.getCookie('username');
+      this.username = cookieUsername || this.authService.getUsername() || 'User';
       this.avatar = this.authService.getAvatar() || this.avatar;
     } else {
       this.isLoggedIn = false;
@@ -99,6 +107,7 @@ export class Header implements OnInit, OnDestroy {
       this.avatar = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
     }
   }
+
 
   toggleDropdown(): void {
     this.dropdownOpen = !this.dropdownOpen;

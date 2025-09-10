@@ -1,8 +1,10 @@
-import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { Component, Input, Output, EventEmitter, OnInit } from "@angular/core";
 import { AuthService } from "../../../auth/auth.service";
 import { Router } from "@angular/router";
 import Swal from "sweetalert2";
 import { FormsModule } from "@angular/forms";
+import { RouterLink } from "@angular/router";
+import { CookieService } from "../../../shared/services/cookie.service";
 @Component({
   selector: "admin-navbar",
   standalone: true,
@@ -32,7 +34,7 @@ import { FormsModule } from "@angular/forms";
         </button>
         <div class="admin-profile-dropdown" [class.active]="isDropdownActive">
           <div class="admin-profile" (click)="toggleDropdown()">
-            <div class="admin-avatar">A</div>
+            <img [src]="adminAvatar" class="admin-avatar" alt="Admin Avatar" (error)="onAvatarError()" />
             <span>Admin</span>
             <i class="fas fa-chevron-down dropdown-arrow"></i>
           </div>
@@ -41,9 +43,9 @@ import { FormsModule } from "@angular/forms";
               <i class="fas fa-user"></i>
               Profile
             </a>
-            <a href="#" class="dropdown-item" (click)="onDropdownItemClick($event, 'settings')">
-              <i class="fas fa-cog"></i>
-              Settings
+            <a href="#" routerLink="/" class="dropdown-item" (click)="onDropdownItemClick($event, 'settings')">
+              <i class="fas fa-home"></i>
+              User UI
             </a>
             <div class="dropdown-divider"></div>
             <a href="#" class="dropdown-item logout-item" (click)="onDropdownItemClick($event, 'logout')">
@@ -56,9 +58,9 @@ import { FormsModule } from "@angular/forms";
     </nav>
   `,
   styleUrl: "admin-navbar.css",
-  imports: [FormsModule]
+  imports: [FormsModule, RouterLink]
 })
-export class AdminNavbar {
+export class AdminNavbar implements OnInit {
   @Input() searchTerm: string = '';
   @Input() searchPlaceholder: string = "Search...";
   @Input() notificationCount: number = 0;
@@ -68,7 +70,21 @@ export class AdminNavbar {
   @Output() notificationClick = new EventEmitter<void>();
   @Output() dropdownToggle = new EventEmitter<void>();
   @Output() dropdownItemClick = new EventEmitter<string>();
-  constructor(private authService: AuthService, private router: Router) { }
+  adminAvatar: string = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+  constructor(private authService: AuthService, private router: Router, private cookieService: CookieService) { }
+
+  ngOnInit(): void {
+    const cookieAvatar = this.cookieService.getCookie('avatar');
+    const authAvatar = this.authService.getAvatar();
+    const chosen = (cookieAvatar && cookieAvatar.trim().length > 0) ? cookieAvatar : (authAvatar && authAvatar.trim().length > 0 ? authAvatar : null);
+    if (chosen) {
+      this.adminAvatar = chosen;
+    }
+  }
+
+  onAvatarError() {
+    this.adminAvatar = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+  }
   onSearchInput(event: Event) {
     this.searchChange.emit(this.searchTerm.toLowerCase());
   }

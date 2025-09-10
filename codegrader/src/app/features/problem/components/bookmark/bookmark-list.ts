@@ -77,7 +77,5 @@ export class BookmarkedListComponent {
     ev.preventDefault();
     this.sharedBookmark.delete({ ProblemId: id, ProblemName: content });
     console.log('clicked');
-    // persist Set:
-    // localStorage.setItem('bookmarks', JSON.stringify([...next]));
   }
 }

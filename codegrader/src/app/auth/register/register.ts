@@ -69,53 +69,53 @@ export class RegisterApp {
     };
 
   this.authService.signup(request).subscribe({
-  next: async (res: ApiErrorResponse) => {
-    if (res.isSuccess) {
-      // Mở modal OTP
-      await this.verificationUi.open({
-        email: this.email(),
-        title: 'Confirm email',
-        message: 'Vui lòng nhập mã OTP đã gửi tới email của bạn',
-        length: 6,
-        secondsToExpire: 90,
-        onResend: () => {
-          // Gửi lại OTP
-          this.authService.resendOtp(this.email()).subscribe({
-            next: () => {
-              console.log('Đã gửi lại mã OTP thành công');
-            },
-            error: (error) => {
-              console.error('Lỗi gửi lại OTP:', error);
-              Swal.fire('Lỗi', 'Không thể gửi lại mã OTP, vui lòng thử lại', 'error');
-            }
-          });
-        }
-      });
+    next: async (res: ApiErrorResponse) => {
+      if (res.isSuccess) {
+        // Mở modal OTP
+        await this.verificationUi.open({
+          email: this.email(),
+          title: 'Confirm email',
+          message: 'Vui lòng nhập mã OTP đã gửi tới email của bạn',
+          length: 6,
+          secondsToExpire: 90,
+          onResend: () => {
+            // Gửi lại OTP
+            this.authService.resendOtp(this.email()).subscribe({
+              next: () => {
+                console.log('Đã gửi lại mã OTP thành công');
+              },
+              error: (error) => {
+                console.error('Lỗi gửi lại OTP:', error);
+                Swal.fire('Lỗi', 'Không thể gửi lại mã OTP, vui lòng thử lại', 'error');
+              }
+            });
+          }
+        });
 
-      // Xử lý verify OTP với retry
-      await this.verificationUi.handleOtpVerification(async (otp: string) => {
-        return await this.verifyOtp(otp);
-      });
-    } else {
-      let errorMessages = '';
-      if (res.errorDetail?.errors) {
-        errorMessages =
-          '<ul style="text-align:left;">' +
-          res.errorDetail.errors.map((e: FieldError) => `<li>${e.errorMessage}</li>`).join('') +
-          '</ul>';
+        // Xử lý verify OTP với retry
+        await this.verificationUi.handleOtpVerification(async (otp: string) => {
+          return await this.verifyOtp(otp);
+        });
+      } else {
+        let errorMessages = '';
+        if (res.errorDetail?.errors) {
+          errorMessages =
+            '<ul style="text-align:left;">' +
+            res.errorDetail.errors.map((e: FieldError) => `<li>${e.errorMessage}</li>`).join('') +
+            '</ul>';
+        }
+        Swal.fire({
+          icon: 'error',
+          title: 'Signup failed',
+          html: errorMessages || res.message || 'Something went wrong'
+        });
       }
-      Swal.fire({
-        icon: 'error',
-        title: 'Signup failed',
-        html: errorMessages || res.message || 'Something went wrong'
-      });
-    }
-      },
-      error: (err) => {
-        Swal.fire({ icon: 'error', title: 'API error', text: err.message || 'Unable to connect to server' });
-      },
-      complete: () => this.isLoading.set(false),
-    });
+    },
+    error: (err) => {
+      Swal.fire({ icon: 'error', title: 'API error', text: err.message || 'Unable to connect to server' });
+    },
+    complete: () => this.isLoading.set(false),
+  });
   }
 
   togglePassword() { this.showPassword.update(v => !v); }

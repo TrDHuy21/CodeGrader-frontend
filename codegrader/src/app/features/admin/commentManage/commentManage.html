@@ -1,0 +1,185 @@
+<link
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+  rel="stylesheet"
+/>
+<div class="container">
+  <admin-sidebar
+    [activeRoute]="'/commentmanage'"
+    (navItemClick)="onNavItemClick($event)"
+  ></admin-sidebar>
+
+  <div class="section2">
+    <admin-navbar
+      searchPlaceholder="Search comments..."
+      [notificationCount]="notificationCount"
+      [isDropdownActive]="isDropdownActive"
+      (searchChange)="onSearchInput($event)"
+      (notificationClick)="onNotificationClick()"
+      (dropdownToggle)="toggleDropdown()"
+    ></admin-navbar>
+
+    <div class="main-content">
+      <div class="content-header">
+        <h1 class="content-title" style="background-color: black">
+          <i class="fas fa-comments me-3"></i>
+          Comments Management
+        </h1>
+      </div>
+
+      <!-- Loading State -->
+      @if (loading) {
+      <div class="loading-container">
+        <div class="loading-spinner">
+          <i class="fas fa-spinner fa-spin"></i>
+          <p>Loading comments...</p>
+        </div>
+      </div>
+      }
+
+      <!-- Error State -->
+      @if (error) {
+      <div class="error-container">
+        <div class="error-message">
+          <i class="fas fa-exclamation-triangle"></i>
+          <p>{{ error }}</p>
+          <button class="retry-btn" (click)="loadComments()"><i class="fas fa-redo"></i> Retry</button>
+        </div>
+      </div>
+      }
+
+      
+
+      <!-- Comments Table -->
+      @if (!loading && !error) {
+      <div class="table-controls">
+        <div class="sort-group">
+          <label for="sortSelect">Sort by:</label>
+          <select id="sortSelect" [(ngModel)]="sortOption" (change)="onSortChange()">
+            <option value="createdAt_desc">CreatedAt - Newest</option>
+            <option value="createdAt_asc">CreatedAt - Oldest</option>
+            <option value="like_desc">Like - Most</option>
+            <option value="like_asc">Like - Least</option>
+          </select>
+        </div>
+      </div>
+      <div class="comments-table">
+        <div class="table-header">
+          <div>ID</div>
+          <div>User FullName</div>
+          <div>Problem ID</div>
+          <div>Content</div>
+          <div>Likes</div>
+          <div>Replies</div>
+          <div>Date Created</div>
+          <div>Actions</div>
+        </div>
+
+        @if (filteredComments.length > 0) { @for (comment of filteredComments; track comment.id) {
+        <div class="table-row" [class.reply-row]="comment.parentCommentId !== null">
+          <div class="stats-number">
+            #{{ comment.id }}
+            @if (comment.parentCommentId !== null) {
+              <span class="reply-indicator">(Reply)</span>
+            }
+          </div>
+          <div class="user-info">{{ getUserName(comment.userId) }}</div>
+          <div class="user-info">{{ comment.problemId }}</div>
+
+          <div class="comment-content">
+            <div class="content-preview">{{ formatCommentContent(comment.commentText) }}</div>
+            @if (comment.parentCommentId !== null) {
+              <div class="reply-to-info">
+                <small class="text-muted">
+                  <i class="fas fa-reply"></i>
+                  Reply to comment #{{ comment.parentCommentId }}
+                </small>
+              </div>
+            }
+          </div>
+          
+          <div class="stats-number">
+            <i class="fas fa-heart text-danger"></i>
+            {{ comment.like }}
+          </div>
+          
+          <div class="stats-number">
+            <i class="fas fa-reply text-primary"></i>
+            {{ comment.replies?.length || 0 }}
+          </div>
+          
+          <div class="date-text">{{ formatDate(comment.createdAt) }}</div>
+          
+          <div class="action-buttons">
+            <button
+              class="action-btn delete-btn"
+              (click)="onDeleteComment(comment)"
+              [attr.data-bs-toggle]="'tooltip'"
+              title="Delete Comment"
+            >
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+        } } @else {
+        <div class="no-data-row">
+          <div class="no-data-message">
+            <i class="fas fa-comments-slash"></i>
+            <p>No comments found</p>
+            @if (searchTerm) {
+            <small>Try adjusting your search criteria</small>
+            }
+          </div>
+        </div>
+        }
+      </div>
+
+      <!-- Pagination -->
+      @if (totalPages > 1) {
+      <div class="pagination-container">
+        <div class="pagination-info">
+          <span
+            >Showing {{ (currentPage - 1) * pageSize + 1 }} to
+            {{ Math.min(currentPage * pageSize, totalComments) }} of {{ totalComments }} comments</span
+          >
+        </div>
+
+        <div class="pagination-controls">
+          <button
+            class="pagination-btn"
+            [disabled]="currentPage === 1"
+            (click)="previousPage()"
+            title="Previous page"
+          >
+            <i class="fas fa-chevron-left"></i>
+          </button>
+
+          @for (page of getPageNumbers(); track page) {
+          <button
+            class="pagination-btn page-number"
+            [class.active]="page === currentPage"
+            (click)="goToPage(page)"
+          >
+            {{ page }}
+          </button>
+          }
+
+          <button
+            class="pagination-btn"
+            [disabled]="currentPage === totalPages"
+            (click)="nextPage()"
+            title="Next page"
+          >
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+      } }
+    </div>
+
+    <div class="copyright">
+      <i class="fas fa-code me-2"></i>
+      © Copyright By CodeGrader 2025
+      <i class="fas fa-heart text-danger ms-2"></i>
+    </div>
+  </div>
+</div>

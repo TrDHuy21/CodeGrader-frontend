@@ -35,14 +35,6 @@ export class AvatarUpload {
 
   constructor(private el: ElementRef) {
   }
-  // ngAfterViewInit() {
-  //   const imgElement = this.el.nativeElement.querySelector('#img');
-  //   console.log(imgElement); // Output: "myElement"
-  // }
-  // ngOnInit() {
-  //   const imgElement = this.el.nativeElement.querySelector('#img');
-  //   imgElement.src = localStorage.getItem('avatar');
-  // }
 
   onFileChange(event: Event) {
     const input = event.target as HTMLInputElement;

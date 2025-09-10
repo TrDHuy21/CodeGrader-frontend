@@ -1,56 +1,177 @@
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
-
+<link
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+  rel="stylesheet"
+/>
 <div class="container">
-  <admin-sidebar [activeRoute]="'/managetag'" (navItemClick)="onNavItemClick($event)"></admin-sidebar>
+  <admin-sidebar
+    [activeRoute]="'/managetag'"
+    (navItemClick)="onNavItemClick($event)"
+  ></admin-sidebar>
 
-  <!-- Content -->
   <div class="section2">
-    <!-- Top navbar -->
-    <admin-navbar searchPlaceholder="Search tags..." [notificationCount]="notificationCount"
-      [isDropdownActive]="isDropdownActive" (searchChange)="onSearchInput($event)"
-      (notificationClick)="onNotificationClick()" (dropdownToggle)="toggleDropdown()"
-      [searchTerm]="searchTerm || ''"></admin-navbar>
+    <admin-navbar
+      searchPlaceholder="Search tags..."
+      [notificationCount]="notificationCount"
+      [isDropdownActive]="isDropdownActive"
+      (searchChange)="onSearchInput($event)"
+      (notificationClick)="onNotificationClick()"
+      (dropdownToggle)="toggleDropdown()"
+    ></admin-navbar>
 
-    <!-- Main Content -->
     <div class="main-content">
       <div class="content-header">
-        <h1 class="content-title">Tag Management</h1>
+        <h1 class="content-title" style="background-color: black">
+          <i class="fas fa-tags me-3"></i>
+          Tags Management
+        </h1>
       </div>
 
-      <!-- Tag Table -->
+      <!-- Loading State -->
+      @if (loading) {
+      <div class="loading-container">
+        <div class="loading-spinner">
+          <i class="fas fa-spinner fa-spin"></i>
+          <p>Loading tags...</p>
+        </div>
+      </div>
+      }
+
+      <!-- Error State -->
+      @if (error) {
+      <div class="error-container">
+        <div class="error-message">
+          <i class="fas fa-exclamation-triangle"></i>
+          <p>{{ error }}</p>
+          <button class="retry-btn" (click)="loadTags()"><i class="fas fa-redo"></i> Retry</button>
+        </div>
+      </div>
+      }
+
+      <!-- Tags Table -->
+      @if (!loading && !error) {
+      <div class="table-controls">
+        <div class="add-button-group">
+          <button class="add-btn" (click)="onAddTagClick()" style="color: black !important;">
+            <i class="fas fa-plus"></i>
+            Add New Tag
+          </button>
+        </div>
+        <div class="sort-group">
+          <label for="sortSelect">Sort by:</label>
+          <select id="sortSelect" [(ngModel)]="sortOption" (change)="onSortChange()">
+            <option value="name_asc">Name - A to Z</option>
+            <option value="name_desc">Name - Z to A</option>
+            <option value="id_asc">ID - Low to High</option>
+            <option value="id_desc">ID - High to Low</option>
+          </select>
+        </div>
+      </div>
       <div class="tags-table">
-        <div class="table-header">
+        <div class="table-header" style="color: black;">
           <div>ID</div>
           <div>Tag Name</div>
           <div>Status</div>
           <div>Actions</div>
         </div>
 
+        @if (filteredTags.length > 0) { @for (tag of filteredTags; track tag.id) {
         <div class="table-row">
-          @for (tag of filteredTags; track tag.id) {
-          <div>{{ tag.id }}</div>
-          <div>{{ tag.name }}</div>
-          <div>
-            <span [class]="getStatusBadgeClass(tag.isDelete)">
-              {{ getStatusText(tag.isDelete) }}
-            </span>
+          <div class="stats-number">#{{ tag.id }}</div>
+          <div class="tag-name">{{ tag.name }}</div>
+          <div class="status-badge" [class.status-locked]="tag.isDelete" [class.status-active]="!tag.isDelete">
+            <i class="fas" [class.fa-lock]="tag.isDelete" [class.fa-unlock]="!tag.isDelete"></i>
+            {{ tag.isDelete ? 'Locked' : 'Active' }}
           </div>
+          
           <div class="action-buttons">
-            <button class="action-btn edit-btn" (click)="onEditTag(tag)">
+            <button
+              class="action-btn edit-btn"
+              (click)="onEditTag(tag)"
+              [attr.data-bs-toggle]="'tooltip'"
+              title="Edit Tag"
+            >
               <i class="fas fa-edit"></i>
             </button>
-            <button class="action-btn delete-btn" (click)="onDeleteTag(tag)">
-              <i class="fas fa-trash-alt"></i>
+            <button
+              class="action-btn toggle-btn"
+              [class.lock-btn]="!tag.isDelete"
+              [class.unlock-btn]="tag.isDelete"
+              (click)="onToggleTagStatus(tag)"
+              [attr.data-bs-toggle]="'tooltip'"
+              [title]="tag.isDelete ? 'Unlock Tag' : 'Lock Tag'"
+            >
+              <i class="fas" [class.fa-lock]="!tag.isDelete" [class.fa-unlock]="tag.isDelete"></i>
             </button>
-            <button [class]="getColorIconLock(tag.isDelete)" class="action-btn" (click)="onToggleTagStatus(tag)">
-              <i [class]="getLockIcon(tag.isDelete)"></i>
+            <button
+              class="action-btn delete-btn"
+              (click)="onDeleteTag(tag)"
+              [attr.data-bs-toggle]="'tooltip'"
+              title="Delete Tag"
+            >
+              <i class="fas fa-trash"></i>
             </button>
           </div>
+        </div>
+        } } @else {
+        <div class="no-data-row">
+          <div class="no-data-message">
+            <i class="fas fa-tags"></i>
+            <p>No tags found</p>
+            @if (searchTerm) {
+            <small>Try adjusting your search criteria</small>
+            }
+          </div>
+        </div>
+        }
+      </div>
+
+      <!-- Pagination -->
+      @if (totalPages > 1) {
+      <div class="pagination-container">
+        <div class="pagination-info">
+          <span
+            >Showing {{ (currentPage - 1) * pageSize + 1 }} to
+            {{ Math.min(currentPage * pageSize, totalTags) }} of {{ totalTags }} tags</span
+          >
+        </div>
+
+        <div class="pagination-controls">
+          <button
+            class="pagination-btn"
+            [disabled]="currentPage === 1"
+            (click)="previousPage()"
+            title="Previous page"
+          >
+            <i class="fas fa-chevron-left"></i>
+          </button>
+
+          @for (page of getPageNumbers(); track page) {
+          <button
+            class="pagination-btn page-number"
+            [class.active]="page === currentPage"
+            (click)="goToPage(page)"
+          >
+            {{ page }}
+          </button>
           }
+
+          <button
+            class="pagination-btn"
+            [disabled]="currentPage === totalPages"
+            (click)="nextPage()"
+            title="Next page"
+          >
+            <i class="fas fa-chevron-right"></i>
+          </button>
         </div>
       </div>
+      } }
     </div>
 
-    <div class="copyright">©Copyright By CodeGrader 2025</div>
+    <div class="copyright">
+      <i class="fas fa-code me-2"></i>
+      © Copyright By CodeGrader 2025
+      <i class="fas fa-heart text-danger ms-2"></i>
+    </div>
   </div>
 </div>

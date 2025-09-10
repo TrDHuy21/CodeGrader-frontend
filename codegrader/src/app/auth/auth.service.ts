@@ -31,6 +31,7 @@ export class AuthService {
   private usernameKey = 'username';
   private fullnameKey = 'fullname';
   private avatarKey = 'avatar';
+  private userId = 'id';
   private isRefreshingToken = false;
   private authStateSubject = new BehaviorSubject<boolean>(false);
   private refreshToken = new BehaviorSubject<string | null>(null);
@@ -93,7 +94,7 @@ export class AuthService {
         tap((res) => {
           if (res.isSuccess && res.data) {
             console.log(res.data);
-            // Lưu vào cookie thay vì localStorage
+            // Lưu vào cookie
             if (isPlatformBrowser(this.platformId)) {
               // Lưu access token (15 phút)
               this.setCookie(this.tokenKey, res.data.tokenDto.accessToken, 0.01); // 15 phút
@@ -102,6 +103,7 @@ export class AuthService {
               this.setCookie(this.refreshTokenKey, res.data.tokenDto.refreshToken, 7);
               
               // Lưu thông tin user (7 ngày)
+              this.setCookie(this.userId, res.data.userDto.id.toString(), 7);
               this.setCookie(this.usernameKey, res.data.userDto.userName, 7);
               this.setCookie(this.fullnameKey, res.data.userDto.fullName, 7);
               this.setCookie(this.avatarKey, res.data.userDto.avatar ?? '', 7);
@@ -152,7 +154,7 @@ export class AuthService {
 
   // Cập nhật mật khẩu mới
   updateNewPassword(request: RequestUpdateNewPassword): Observable<ApiErrorResponse> {
-    return this.httpClient.post<ApiErrorResponse>(`${this.apiUrl}/update-password`, request, {
+    return this.httpClient.post<ApiErrorResponse>(`${this.apiUrl}/reset-password`, request, {
       headers: { 'Content-Type': 'application/json' },
     });
   }

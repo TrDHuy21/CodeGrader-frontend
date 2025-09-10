@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, ViewContainerRef, AfterViewInit, inject, ViewChild, ElementRef } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Header } from './layout/header';
 import { Footer } from './layout/footer';
@@ -6,6 +6,7 @@ import { Container } from './layout/container';
 import { ProfileUpdate } from './features/user/pages/profile-updates/profile-updates';
 import { ProblemDetailSubmissionComponent } from './features/problem/pages/problems/problem-submissions';
 import { Router } from '@angular/router';
+import { VerificationUiService } from './shared/verification/verification-ui.service';
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, Header, Footer, Container, ProfileUpdate, ProblemDetailSubmissionComponent],
@@ -23,16 +24,25 @@ import { Router } from '@angular/router';
       {
          <footer-component></footer-component>
       }
-   
+    <!-- Verification component host -->
+    <div #verificationHost></div>
   `,
   styleUrl: './app.css',
 })
-export class App {
+export class App implements AfterViewInit {
   protected readonly title = signal('codegrader');
+  private verificationUi = inject(VerificationUiService);
+  @ViewChild('verificationHost', { read: ViewContainerRef }) verificationHost!: ViewContainerRef;
+  
   constructor(private router: Router) { }
 
+  ngAfterViewInit() {
+    // Register the verification host after view init
+    this.verificationUi.registerHost(this.verificationHost);
+  }
+
   isAuthPage(): boolean {
-    const authPages = ['/login', '/signup', '/forgotpassword', '/manageuser', '/managetag','/manageproblem'];
+    const authPages = ['/login', '/signup', '/forgotpassword', '/manageuser', '/managetag', '/manageproblem', '/commentmanage'];
     return authPages.includes(this.router.url);
   }
 }

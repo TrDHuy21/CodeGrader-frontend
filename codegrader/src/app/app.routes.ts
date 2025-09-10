@@ -86,4 +86,9 @@ export const routes: Routes = [
     // component: ForgotPassword,
   },
   { path: 'manageproblem', component: ProblemManage },
+  {
+    path: 'commentmanage',
+    // component: TagManage,
+    loadComponent: () => import('./features/admin/commentManage/commentManage').then((m) => m.CommentManage),
+  },
 ];

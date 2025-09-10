@@ -1,7 +1,6 @@
 import { Component, computed, signal } from "@angular/core";
 import { AdminNavbar, AdminSidebar } from "../layoutAdminPage";
 import { Router } from "@angular/router";
-import { TagItem } from "../tagManage/tagManage";
 import { InOutExampleItem } from "../inOutExampleManage/inOutExample";
 import { ApiResponse } from "../../user/models/api-respone";
 import { response } from "express";
@@ -9,7 +8,7 @@ import { ReactiveFormsModule, FormGroup, FormControl } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { ProblemFilter } from "../../problem/components/probem-search";
 import { HttpClient } from "@angular/common/http";
-
+import { TagForAdminGet } from "../tagManage/tag.model";
 export interface ProblemItem {
     id: number,
     name: string,
@@ -17,7 +16,7 @@ export interface ProblemItem {
     level: number,
     promt: string,
     isDelete: boolean,
-    tags: TagItem[],
+    tags: TagForAdminGet[],
     inOutExamples: InOutExampleItem[],
 }
 

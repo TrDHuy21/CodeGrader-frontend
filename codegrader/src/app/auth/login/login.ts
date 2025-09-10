@@ -56,11 +56,11 @@ export class LoginApp {
             Swal.fire({
               icon: 'success',
               title: 'Login Successful',
-              text: 'Welcome to Admin Page!',
+              text: 'Welcome Admin !',
               confirmButtonText: 'OK',
             }).then((result) => {
               if (result.isConfirmed) {
-                this.router.navigate(['/manageuser']);
+                this.router.navigate(['/']);
               }
             });
           } else {
