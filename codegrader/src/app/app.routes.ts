@@ -34,7 +34,7 @@ export const routes: Routes = [
     //with out lazy loading
     component: ProfileHomepageComponent,
     children: [
-      { path: '', redirectTo: 'update-profile', pathMatch: 'full' }, //default route
+      { path: '', redirectTo: 'general', pathMatch: 'full' }, //default route
       { path: 'update-profile', component: ProfileUpdate },
       { path: 'change-password', component: ChangePasswordComponent },
       { path: 'update-avatar', component: UpdateAvatarComponent },
@@ -91,6 +91,7 @@ export const routes: Routes = [
   {
     path: 'commentmanage',
     // component: TagManage,
-    loadComponent: () => import('./features/admin/commentManage/commentManage').then((m) => m.CommentManage),
+    loadComponent: () =>
+      import('./features/admin/commentManage/commentManage').then((m) => m.CommentManage),
   },
 ];

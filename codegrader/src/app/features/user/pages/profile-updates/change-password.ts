@@ -98,14 +98,8 @@ export class ChangePasswordComponent implements OnInit {
   username = signal<string | null>(null);
   userid = signal<number | null>(null);
   ngOnInit(): void {
-    const uname = this.authService.getUsername();
-    this.username.set(uname);
-    if (uname) {
-      this.userProfileService.getUserProfile(uname).subscribe({
-        next: (res) => this.userid.set(res.id),
-        error: (err) => console.error(err),
-      });
-    }
+    this.username.set(this.authService.getUsername());
+    this.userid.set(Number(this.authService.getUserId()));
   }
 
   formChangePassword = this.fb.nonNullable.group({

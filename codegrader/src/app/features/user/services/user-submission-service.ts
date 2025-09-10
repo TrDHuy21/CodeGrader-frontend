@@ -5,7 +5,7 @@ import { ApiResponse } from '../models/api-respone';
 export interface SubmissionRequest {
   userId: number;
   problemId: number;
-  language: string;
+  programmingLanguage: string;
   point: number;
   evaluationCriteria: {
     algorithm: string;

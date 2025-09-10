@@ -175,6 +175,7 @@ export class AuthService {
     if (isPlatformBrowser(this.platformId)) {
       this.removeCookie(this.tokenKey);
       this.removeCookie(this.refreshTokenKey);
+      this.removeCookie(this.userId);
       this.removeCookie(this.usernameKey);
       this.removeCookie(this.fullnameKey);
       this.removeCookie(this.avatarKey);
@@ -223,6 +224,9 @@ export class AuthService {
   }
 
   // Lấy thông tin user từ cookie
+  getUserId(): string | null {
+    return this.getCookie(this.userId);
+  }
   getUsername(): string | null {
     return this.getCookie(this.usernameKey);
   }

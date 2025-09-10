@@ -9,6 +9,7 @@ import { AuthService } from '../../../../auth/auth.service';
 import { ToastComponent } from '../../../../shared/components/toast';
 import { ToastMessageOptions } from 'primeng/api';
 import { ApiResponse } from '../../models/api-respone';
+import { ShareUserAvatarService } from '../../../../shared/services/share-useravatar-service';
 @Component({
   selector: `avatar-update`,
   standalone: true,
@@ -72,24 +73,34 @@ export class UpdateAvatarComponent implements OnInit {
       life: 3000,
     });
   }
-  constructor(private userProfileService: UserProfileService, private authService: AuthService) {}
+  username = signal<string | null>(null);
+
+  constructor(
+    private userProfileService: UserProfileService,
+    private authService: AuthService,
+    private shareUserAvatar: ShareUserAvatarService
+  ) {}
   ngOnInit(): void {
-    if (this.authService.isLoggedIn()) {
-      this.userProfileService
-        .getUserProfile('user')
-        .pipe(
-          finalize(() => {
-            // this.form.enable({ emitEvent: false });
-          })
-        )
-        .subscribe({
-          next: (data) => {
-            console.log(data);
-            this.imgSrc.set(data.avatar ?? '');
-          },
-          error: (err) => console.error(err),
-        });
-    }
+    if (!this.authService.isLoggedIn()) return;
+    const name = this.authService.getUsername(); // string | null
+    this.username.set(name);
+
+    if (!name) return; // Không có username thì thôi không gọi API
+
+    this.username.set(this.authService.getUsername());
+    this.userProfileService
+      .getUserProfile(name)
+      .pipe(
+        finalize(() => {
+          // this.form.enable({ emitEvent: false });
+        })
+      )
+      .subscribe({
+        next: (data) => {
+          this.imgSrc.set(data.avatar ?? '');
+        },
+        error: (err) => console.error(err),
+      });
   }
 
   handleSubmit(e: Event) {
@@ -107,6 +118,25 @@ export class UpdateAvatarComponent implements OnInit {
       next: (res) => {
         if (res?.isSuccess) {
           this.showInfo('success', 'Success', res.message ?? '');
+          const name = this.authService.getUsername(); // string | null
+          this.username.set(name);
+
+          if (!name) return; // Không có username thì thôi không gọi API
+
+          this.username.set(this.authService.getUsername());
+          this.userProfileService
+            .getUserProfile(name)
+            .pipe(
+              finalize(() => {
+                // this.form.enable({ emitEvent: false });
+              })
+            )
+            .subscribe({
+              next: (data) => {
+                this.shareUserAvatar.updateAvatar(data.avatar ?? '');
+              },
+              error: (err) => console.error(err),
+            });
         } else {
           const msg =
             (res?.errorDetail?.errors ?? []).map((e) => `• ${e.errorMessage}`).join('\n') ||

@@ -189,7 +189,6 @@ export class ProfileUpdate implements OnInit {
 
     const { birthday, ...rest } = this.form.getRawValue();
     const submitValue = { ...rest, birthday: iso, id: 2 };
-    console.log(submitValue);
     this.userProfileService.updateUserProfile(submitValue).subscribe({
       next: (res) => {
         if (res?.isSuccess) {

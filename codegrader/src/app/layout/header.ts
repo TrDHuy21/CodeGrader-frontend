@@ -1,10 +1,11 @@
-import { Component, signal, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, signal, OnInit, OnDestroy, Inject, PLATFORM_ID, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { SideBarProblem } from '../features/problem/components/sidebar';
 import { AuthService } from '../auth/auth.service';
 import { CookieService } from '../shared/services/cookie.service';
 import { Subscription } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
+import { ShareUserAvatarService } from '../shared/services/share-useravatar-service';
 @Component({
   selector: 'header-component',
   standalone: true,
@@ -18,7 +19,7 @@ import { isPlatformBrowser } from '@angular/common';
         </div>
         <sidebar-component></sidebar-component>
       </div>
- 
+
       <!-- Navigation -->
       <ul class="navigation flex gap-6 text-gray-700 font-medium">
         <li class="cursor-pointer hover:text-blue-600" routerLink="/home">Home</li>
@@ -48,14 +49,18 @@ import { isPlatformBrowser } from '@angular/common';
             (click)="toggleDropdown()"
             class="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-2.5 py-1.5 shadow-sm hover:bg-slate-50"
           >
-            <img [src]="avatar" alt="Avatar" class="h-8 w-8 rounded-full object-cover" />
+            <img
+              [src]="shareAvatar.avatar()"
+              alt="Avatar"
+              class="h-8 w-8 rounded-full object-cover"
+            />
             <span class="text-sm text-slate-700 truncate">{{ username }}</span>
             <i class="pi pi-angle-down text-xs text-slate-500"></i>
           </button>
 
           <!-- Dropdown -->
           <ul
-            class="absolute right-0 mt-2 w-48 rounded-md border border-slate-200 bg-white shadow-md"
+            class="absolute right-0 mt-2 w-48 rounded-md border border-slate-200 bg-white shadow-md  "
             [class.hidden]="!dropdownOpen"
           >
             <li>
@@ -74,7 +79,7 @@ import { isPlatformBrowser } from '@angular/common';
 
         <!-- Dropdown -->
         <ul
-          class="dropdown absolute right-0 top-full bg-white shadow-lg rounded-lg mt-2 p-4 w-48"
+          class="dropdown absolute right-0 top-full bg-white shadow-lg rounded-lg mt-2 p-4 w-48 z-[9999]"
           [class.hidden]="!dropdownOpen"
         >
           @if (username === 'admin') {
@@ -99,11 +104,16 @@ export class Header implements OnInit, OnDestroy {
   avatar = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
   dropdownOpen = false;
   private authSubscription?: Subscription;
-
-  constructor(private authService: AuthService, private cookieService: CookieService, @Inject(PLATFORM_ID) private platformId: Object) {}
+  shareAvatar = inject(ShareUserAvatarService);
+  constructor(
+    private authService: AuthService,
+    private cookieService: CookieService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
 
   ngOnInit(): void {
     this.updateAuthState();
+    console.log(this.shareAvatar.avatar());
 
     // Lắng nghe thay đổi trạng thái đăng nhập
     this.authSubscription = this.authService.getAuthState().subscribe(() => {
@@ -131,7 +141,6 @@ export class Header implements OnInit, OnDestroy {
       this.avatar = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
     }
   }
-
 
   toggleDropdown(): void {
     this.dropdownOpen = !this.dropdownOpen;

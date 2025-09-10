@@ -23,6 +23,9 @@ import {
   SubmissionRequest,
   UserSubmissionService,
 } from '../../user/services/user-submission-service';
+import { AuthService } from '../../../auth/auth.service';
+import { ToastMessageOptions } from 'primeng/api';
+import { ToastComponent } from '../../../shared/components/toast';
 
 @Component({
   selector: `problem-description-component`,
@@ -41,9 +44,12 @@ import {
     KnobModule,
     ResultsCardComponent,
     ProgressSpinnerModule,
+    ToastComponent,
   ],
   standalone: true,
-  template: ` <section class="content p-4 bg-white shadow rounded-lg mb-4">
+  template: ` <toast-component [message]="this.message()"></toast-component>
+
+    <section class="content p-4 bg-white shadow rounded-lg mb-4">
       <h3 class="text-lg font-semibold mb-4">{{ problemData()?.prompt }}</h3>
       <p>
         Here is where the full problem statement, examples, and any other relevant information will
@@ -79,6 +85,7 @@ import {
           (uploadHandler)="onUpload($event, problemData()?.content ?? '')"
           [customUpload]="true"
           (onClear)="resetResults()"
+          accept=".c,.cpp,.h,.hpp,.java,.cs,.py,.js,.jsx,.ts,.tsx,.php,.rb,.go,.rs,.kt,.swift,.sql,.json,.xml,.yml,.yaml"
         >
           <ng-template
             pTemplate="content"
@@ -151,7 +158,8 @@ export class ProblemDescriptionComponent implements OnInit {
 
   constructor(
     private gradingService: GradingService,
-    private userSubmissionService: UserSubmissionService
+    private userSubmissionService: UserSubmissionService,
+    private authService: AuthService
   ) {
     const parent = this.route.parent ?? this.route.pathFromRoot.at(-2)!;
     const raw = parent.snapshot.paramMap.get('id');
@@ -181,14 +189,67 @@ export class ProblemDescriptionComponent implements OnInit {
     this.results.set(null);
   }
 
+  // onUpload(e: any, assignment: string) {
+  //   const files = this.file();
+
+  //   if (!files || files.length === 0) {
+  //     console.warn('Chưa chọn file');
+  //     return;
+  //   }
+  //   this.gradingService.post(assignment, files).subscribe({
+  //     next: (res) => {
+  //       e.options?.clear?.(); // reset UI
+  //       const grading: GradingModel = res.data;
+  //       this.results.set(grading);
+  //       console.log('Grading:', grading);
+
+  //       this.file.set(null);
+  //       this.isSuccess.set(true);
+
+  //       const submission: SubmissionRequest = {
+  //         userId: 2, // lấy từ signal hoặc token
+  //         problemId: this.problemId() ?? 0, // lấy từ route param hoặc component state
+  //         language: grading.programmingLanguage,
+  //         point: grading.point,
+  //         evaluationCriteria: grading.evaluationCriteria,
+  //         submissionAt: new Date(Date.now()).toISOString(),
+  //       };
+  //       console.log(submission);
+  //       this.userSubmissionService.postSubmission(submission).subscribe({
+  //         next: (subRes) => {
+  //           console.log('Submission saved:', subRes);
+  //         },
+  //         error: (err) => console.error('Error posting submission:', err),
+  //       });
+  //     },
+  //     error: (err) => console.error(err),
+  //   });
+  // }
+  message = signal<ToastMessageOptions | ToastMessageOptions[] | null>(null);
+  showInfo(severity: string, summary: string, detail: string) {
+    this.message.set({
+      severity: severity,
+      summary: summary,
+      detail: detail,
+      key: 'tr',
+      life: 3000,
+    });
+  }
   onUpload(e: any, assignment: string) {
+    if (!this.authService.isLoggedIn()) {
+      this.showInfo('warn', 'Warning', 'You must loggin first');
+      return;
+    }
     const files = this.file();
 
     if (!files || files.length === 0) {
       console.warn('Chưa chọn file');
       return;
     }
-    this.gradingService.post(assignment, files).subscribe({
+    const pid = this.problemId();
+    if (!pid) return;
+    const userid = this.authService.getUserId();
+    this.gradingService.post2(assignment, pid, files).subscribe({
       next: (res) => {
         e.options?.clear?.(); // reset UI
         const grading: GradingModel = res.data;
@@ -197,11 +258,11 @@ export class ProblemDescriptionComponent implements OnInit {
 
         this.file.set(null);
         this.isSuccess.set(true);
-
+        console.log(userid);
         const submission: SubmissionRequest = {
-          userId: 2, // lấy từ signal hoặc token
-          problemId: this.problemId() ?? 0, // lấy từ route param hoặc component state
-          language: grading.programmingLanguage,
+          userId: Number(userid), // lấy từ signal hoặc token
+          problemId: pid, // lấy từ route param hoặc component state
+          programmingLanguage: grading.programmingLanguage,
           point: grading.point,
           evaluationCriteria: grading.evaluationCriteria,
           submissionAt: new Date(Date.now()).toISOString(),

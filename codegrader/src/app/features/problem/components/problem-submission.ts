@@ -4,9 +4,10 @@ import { CommonModule } from '@angular/common';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ButtonModule } from 'primeng/button';
 import { TextareaModule } from 'primeng/textarea';
+import { CardModule } from 'primeng/card';
 @Component({
   selector: `problem-submission-component`,
-  imports: [FileUploadModule, ButtonModule, TextareaModule, TableModule, CommonModule],
+  imports: [FileUploadModule, ButtonModule, TextareaModule, TableModule, CommonModule, CardModule],
   template: ` <section class="content p-4 bg-white shadow rounded-lg mb-4">
     <h3 class="text-lg font-semibold mb-4">Submission Table</h3>
     <p>
@@ -16,9 +17,7 @@ import { TextareaModule } from 'primeng/textarea';
     <p-table [value]="problems" [tableStyle]="{ width: '100%' }" styleClass="border-0">
       <!-- Header -->
       <ng-template pTemplate="header">
-        <tr class="bg-white">
-         
-        </tr>
+        <tr class="bg-white"></tr>
       </ng-template>
 
       <!-- Body -->

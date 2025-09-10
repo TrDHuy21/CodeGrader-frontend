@@ -12,6 +12,7 @@ import { ToastModule } from 'primeng/toast';
 import { UserProgressService } from '../../services/user-progress-service';
 import { UserSubmissionService } from '../../services/user-submission-service';
 import { CommonFunc } from '../../../../shared/common/common';
+import { AuthService } from '../../../../auth/auth.service';
 
 // Kiểu độ khó
 type Difficulty = 'Easy' | 'Medium' | 'Hard';
@@ -92,20 +93,20 @@ interface BookmarkItem {
             <span class="font-medium text-green-600">Easy ({{ easyCount() }})</span>
             <span class="text-sm opacity-70">{{ easyPct() }}%</span>
           </div>
-          <p-progressbar [value]="easyPct" [showValue]="false" class=" mb-4" />
+          <p-progressbar [value]="easyPct()" [showValue]="false" class=" mb-4" />
 
           <div class="flex items-center justify-between">
             <span class="font-medium text-amber-600">Medium ({{ mediumCount() }})</span>
             <span class="text-sm opacity-70">{{ mediumPct() }}%</span>
           </div>
-          <p-progressbar [value]="mediumPct" [showValue]="false" class=" mb-4" color="#f59e0b" />
+          <p-progressbar [value]="mediumPct()" [showValue]="false" class=" mb-4" color="#f59e0b" />
 
           <div class="flex items-center justify-between">
             <span class="font-medium text-rose-600">Hard ({{ hardCount() }})</span>
             <span class="text-sm opacity-70">{{ hardPct() }}%</span>
           </div>
           <p-progressbar
-            [value]="hardPct"
+            [value]="hardPct()"
             [showValue]="false"
             class=" mb-4"
             color="oklch(58.6% 0.253 17.585)
@@ -140,39 +141,14 @@ interface BookmarkItem {
           <tr>
             <td>{{ row.id }}</td>
             <td>{{ row.problemId }}</td>
-            <td>{{ row.language }}</td>
+            <td>{{ row.programmingLanguage }}</td>
             <td>{{ row.point }}</td>
-            <td>{{ row.submisstionAt | date : 'dd MMM yyyy' }}</td>
+            <td>{{ row.submissionAt | date : 'dd MMM yyyy' }}</td>
           </tr>
         </ng-template>
       </p-table>
       }
     </p-card>
-
-    <!-- Bảng Bookmark -->
-    <!-- <p-card>
-      <ng-template pTemplate="header">Bookmark đã lưu</ng-template>
-      <p-table [value]="bookmarks" [paginator]="true" [rows]="10" [responsiveLayout]="'scroll'">
-        <ng-template pTemplate="header">
-          <tr>
-            <th style="width: 100px">Mã</th>
-            <th>Tên</th>
-            <th style="width: 140px">Độ khó</th>
-            <th style="width: 180px">Ngày lưu</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-row>
-          <tr>
-            <td>{{ row.problemId }}</td>
-            <td>{{ row.problemName }}</td>
-            <td>
-              <p-tag [value]="row.level" [severity]="tagSeverity(row.level)"></p-tag>
-            </td>
-            <td>{{ row.createdAt | date : 'short' }}</td>
-          </tr>
-        </ng-template>
-      </p-table>
-    </p-card> -->
   </div>`,
 })
 export class GeneralComponent implements OnInit {
@@ -182,13 +158,16 @@ export class GeneralComponent implements OnInit {
 
   constructor(
     private userProgressService: UserProgressService,
-    private userSubmissionService: UserSubmissionService
+    private userSubmissionService: UserSubmissionService,
+    private authService: AuthService
   ) {}
+
   ngOnInit(): void {
-    this.userProgressService.getProgress(1).subscribe({
+    const userid = this.authService.getUserId();
+    if (!userid) return;
+    this.userProgressService.getProgress(Number(userid)).subscribe({
       next: (res) => {
         this.userProgressData.set(res.data);
-        console.log(this.userProgressData());
       },
     });
     this.userSubmissionService.getSubmissionByUserId().subscribe({
@@ -217,28 +196,6 @@ export class GeneralComponent implements OnInit {
   hardPct = computed(() =>
     this.total() > 0 ? Math.round((this.hardCount() / this.total()) * 100) : 0
   );
-
-  bookmarks: BookmarkItem[] = [
-    { problemId: 101, problemName: 'Two Sum', level: 'Easy', createdAt: new Date().toISOString() },
-    {
-      problemId: 102,
-      problemName: 'Palindrome Number',
-      level: 'Easy',
-      createdAt: new Date().toISOString(),
-    },
-    {
-      problemId: 103,
-      problemName: 'Add Two Numbers',
-      level: 'Medium',
-      createdAt: new Date().toISOString(),
-    },
-    {
-      problemId: 104,
-      problemName: 'LRU Cache',
-      level: 'Hard',
-      createdAt: new Date().toISOString(),
-    },
-  ];
 
   // === Tính toán thống kê ===
 

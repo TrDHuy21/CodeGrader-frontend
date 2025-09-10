@@ -15,7 +15,7 @@ interface TagName {
       <h2 class="text-base font-semibold mb-3">Trending Problems</h2>
       <!-- List -->
       <div class="flex flex-wrap gap-2 max-h-60  pr-1">
-        @for (item of tagnames(); track item.id) {
+        @for (item of tagnames(); track item.id) { @if (tagCountMap()[item.id] > 0) {
         <div
           class="flex items-center rounded-md bg-gray-50 px-2 py-1 hover:bg-gray-100 cursor-pointer transition"
         >
@@ -26,7 +26,7 @@ interface TagName {
             {{ tagCountMap()[item.id] }}
           </span>
         </div>
-        }
+        } }
       </div>
     </div>
   `,

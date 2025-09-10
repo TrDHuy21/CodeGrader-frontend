@@ -42,9 +42,9 @@ import { BookmarkService } from '../../services/bookmark-service';
     </ul>
     <div class="mt-2 flex items-center justify-between">
       <!-- <button type="button" class="text-xs  text-blue-600 hover:underline">Open all</button> -->
-      <button type="button" class="cursor-pointer text-xs text-gray-500 hover:text-red-500">
+      <!-- <button type="button" class="cursor-pointer text-xs text-gray-500 hover:text-red-500">
         Clear
-      </button>
+      </button> -->
     </div>
     } @else {
     <div class="text-xs text-gray-500 py-4 text-center">You haven't bookmarked anything yet.</div>
