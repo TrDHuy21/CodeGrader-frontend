@@ -96,19 +96,11 @@ export class ProblemTableComponent {
     if (wasBookmarked) {
       this.sharedBookmark.delete(id);
       this.showInfo('success', 'Delete', 'Deleted succeess');
-      this.showInfo('success', 'Delete', 'Deleted succeess');
-
-      this.showInfo('success', 'Delete', 'Deleted succeess');
-
-      this.showInfo('success', 'Delete', 'Deleted succeess');
     } else {
-      // ĐÁNH DẤU lần đầu: thêm vào UI + đảm bảo thêm vào list nếu chưa có
-      next.add(id);
-      this.sharedBookmark.add({ ProblemId: id, ProblemName: content });
-      this.showInfo('Added');
+      this.sharedBookmark.add(id);
+      this.showInfo('success', 'Add', 'Added');
+      this.showInfo('success', 'Add', 'Added');
     }
-
-    this.bookmarkedIds.set(next);
   }
 
   message = signal<ToastMessageOptions | ToastMessageOptions[] | null>(null);
@@ -145,6 +137,10 @@ export class ProblemTableComponent {
       life: 3000,
     });
   }
+  //infinite scroll
+  page = 0;
+  loading = false;
+  loadProblems() {}
 
   bars = Array.from({ length: 8 });
 
