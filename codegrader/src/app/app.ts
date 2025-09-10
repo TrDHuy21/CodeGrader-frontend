@@ -40,8 +40,24 @@ export class App implements AfterViewInit {
   }
 
   isAuthPage(): boolean {
-    const authPages = ['/login', '/signup', '/forgotpassword', '/manageuser', '/managetag', '/manageproblem', '/commentmanage'];
-    return authPages.includes(this.router.url);
+    const authPages = [
+      '/login', '/signup', '/forgotpassword',
+      '/manageuser', '/managetag', '/manageproblem',
+      '/updateproblem', '/addProblem'
+    ];
+
+    // Kiểm tra URL tĩnh
+    if (authPages.includes(this.router.url)) {
+      return true;
+    }
+
+    // Kiểm tra các route động
+    const dynamicRoutes = [
+      /^\/addTag\/\d+$/,
+      /^\/addExample\/\d+$/
+    ];
+
+    return dynamicRoutes.some(route => route.test(this.router.url));
   }
   isProblemPage(): boolean {
     const problemPages = [
