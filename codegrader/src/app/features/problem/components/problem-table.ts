@@ -124,17 +124,11 @@ export class ProblemTableComponent {
     if (wasBookmarked) {
       this.sharedBookmark.delete(id);
       this.showInfo('success', 'Delete', 'Deleted succeess');
-      this.showInfo('success', 'Delete', 'Deleted succeess');
-
-      this.showInfo('success', 'Delete', 'Deleted succeess');
-
-      this.showInfo('success', 'Delete', 'Deleted succeess');
     } else {
       this.sharedBookmark.add(id);
       this.showInfo('success', 'Add', 'Added');
+      this.showInfo('success', 'Add', 'Added');
     }
-    // persist Set:
-    // localStorage.setItem('bookmarks', JSON.stringify([...next]));
   }
 
   message = signal<ToastMessageOptions | ToastMessageOptions[] | null>(null);
@@ -151,21 +145,7 @@ export class ProblemTableComponent {
   //infinite scroll
   page = 0;
   loading = false;
-  loadProblems() {
-    // if (this.loading) return;
-    // this.loading = true;
-    // const req: ProblemFilter = {
-    //   ...this.filters(),
-    //   PageNumber: this.page,
-    // };
-    // this.problemService.getProblems(req).subscribe({
-    //   next: (res) => {
-    //     this.page++;
-    //     // this.loading = false;
-    //   },
-    //   error: (err) => console.log(err),
-    // });
-  }
+  loadProblems() {}
 
   bars = Array.from({ length: 8 });
 
