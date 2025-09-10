@@ -94,10 +94,13 @@ export class ProblemTableComponent {
     const next = new Set(prev);
 
     if (wasBookmarked) {
-      // BỎ đánh dấu: chỉ đổi UI, KHÔNG xóa khỏi danh sách lưu trữ
-      next.delete(id);
-      this.sharedBookmark.delete({ ProblemId: id, ProblemName: content });
-      this.showInfo('Deleted');
+      this.sharedBookmark.delete(id);
+      this.showInfo('success', 'Delete', 'Deleted succeess');
+      this.showInfo('success', 'Delete', 'Deleted succeess');
+
+      this.showInfo('success', 'Delete', 'Deleted succeess');
+
+      this.showInfo('success', 'Delete', 'Deleted succeess');
     } else {
       // ĐÁNH DẤU lần đầu: thêm vào UI + đảm bảo thêm vào list nếu chưa có
       next.add(id);
