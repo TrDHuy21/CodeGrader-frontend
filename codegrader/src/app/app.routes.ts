@@ -17,6 +17,10 @@ import { UpdateAvatarComponent } from './features/user/pages/profile-updates/upd
 import { identity } from 'rxjs';
 import { ProblemManage } from './features/admin/problemManage/problemManage';
 import { NgModule } from '@angular/core';
+import { updateProblem } from './features/admin/problemManage/pages/updateProblem/updateProblem'
+import { addTag } from './features/admin/problemManage/pages/addTag/addTag';
+import { addExample } from './features/admin/problemManage/pages/addExample/addExample';
+import { addProblem } from './features/admin/problemManage/pages/addProblem/addProblem';
 
 export const routes: Routes = [
   {
@@ -86,4 +90,8 @@ export const routes: Routes = [
     // component: ForgotPassword,
   },
   { path: 'manageproblem', component: ProblemManage },
+  { path: 'updateproblem', component: updateProblem },
+  { path: 'addTag/:id', component: addTag },
+  { path: 'addExample/:id', component: addExample },
+  { path: 'addProblem', component: addProblem },
 ];

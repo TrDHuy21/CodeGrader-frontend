@@ -1,0 +1,297 @@
+/* Container tổng */
+.container {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #fefefe;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+
+    /* Animation fade-in khi load */
+    opacity: 0;
+    animation: fadeIn 0.6s ease forwards;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+/* Header */
+.content-header {
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: color 0.3s ease;
+}
+
+.content-header:hover {
+    color: #0057b8;
+}
+
+.content-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #222;
+    transition: transform 0.3s ease;
+}
+
+.content-title:hover {
+    transform: scale(1.05);
+}
+
+/* Form chung */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Label */
+label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: block;
+    color: #333;
+    transition: color 0.3s ease;
+}
+
+label:hover {
+    color: #007bff;
+}
+
+/* Input, textarea */
+input[type="text"],
+input[type="number"],
+input,
+textarea {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 1rem;
+    border: 1.8px solid #ccc;
+    border-radius: 6px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    font-family: inherit;
+    resize: vertical;
+}
+
+input:focus,
+textarea:focus {
+    border-color: #0057b8;
+    outline: none;
+    box-shadow: 0 0 8px rgba(0, 87, 184, 0.5);
+    transform: scale(1.02);
+}
+
+/* Section titles */
+h3 {
+    margin-top: 30px;
+    font-weight: 700;
+    color: #004080;
+    border-bottom: 2px solid #004080;
+    padding-bottom: 4px;
+    transition: color 0.3s ease;
+}
+
+h3:hover {
+    color: #0066cc;
+}
+
+/* Tags & Examples container */
+[formArrayName="tags"],
+[formArrayName="inOutExamples"] {
+    margin-top: 10px;
+    padding-left: 15px;
+    border-left: 3px solid #007bff;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Each tag/example group box */
+[formGroupName] {
+    background-color: #f9faff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 1px 5px rgb(0 0 0 / 0.05);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+
+    /* Hover animation */
+    transition: box-shadow 0.3s ease, transform 0.25s ease;
+}
+
+[formGroupName]:hover {
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+    transform: translateY(-3px);
+}
+
+/* Inputs inside tags/examples */
+[formGroupName] input,
+[formGroupName] textarea {
+    flex: 1 1 250px;
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+[formGroupName] input:focus,
+[formGroupName] textarea:focus {
+    box-shadow: 0 0 6px rgba(0, 123, 255, 0.5);
+    transform: scale(1.02);
+}
+
+/* Buttons inside tag/example */
+[formGroupName] button {
+    flex-shrink: 0;
+    padding: 6px 14px;
+    background-color: #dc3545;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.15s ease;
+}
+
+[formGroupName] button:hover {
+    background-color: #b02a37;
+    transform: scale(1.05);
+}
+
+/* Buttons add + submit */
+button[type="button"],
+button[type="submit"] {
+    align-self: flex-start;
+    padding: 10px 18px;
+    background-color: #007bff;
+    border: none;
+    border-radius: 7px;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.25s ease, transform 0.2s ease;
+    margin-top: 8px;
+    margin-right: 10px;
+}
+
+button[type="button"]:hover,
+button[type="submit"]:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+button[disabled] {
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none !important;
+}
+
+/* Footer copyright */
+.copyright {
+    margin-top: 40px;
+    font-size: 0.9rem;
+    text-align: center;
+    color: #777;
+}
+
+/* Loading State */
+.loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+    background: var(--bg-white);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-light);
+}
+
+.loading-spinner {
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+.loading-spinner i {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 16px;
+}
+
+.loading-spinner p {
+    font-weight: 500;
+    font-size: 16px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-spinner i {
+    font-size: 2rem;
+    color: #000000;
+    animation: spin 1.5s linear infinite;
+    display: block;
+    margin: 0 auto 12px auto;
+}
+
+.loading-spinner p {
+    font-weight: 600;
+    font-size: 17px;
+    color: #000000;
+    text-align: center;
+}
+
+.error-message {
+    text-align: center;
+    color: #ef4444;
+    animation: fadeIn 0.6s ease forwards;
+}
+
+.error-message i {
+    font-size: 3rem;
+    margin-bottom: 12px;
+    color: #ef4444;
+    animation: shake 0.6s ease infinite;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.error-message p {
+    font-weight: 600;
+    font-size: 17px;
+    color: #b91c1c;
+}
+
+/* Responsive nhỏ hơn 600px */
+@media (max-width: 600px) {
+    .container {
+        padding: 12px;
+    }
+
+    [formGroupName] {
+        flex-direction: column;
+    }
+
+    [formGroupName] input,
+    [formGroupName] textarea {
+        flex: 1 1 100%;
+    }
+
+    button[type="button"],
+    button[type="submit"] {
+        width: 100%;
+        margin-right: 0;
+    }
+}

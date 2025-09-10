@@ -1,0 +1,165 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    /* căn giữa theo chiều dọc */
+    background: #f4f6f9;
+    /* màu nền nhẹ */
+}
+
+.tag-form-container {
+    background: #fff;
+    padding: 2rem 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 100%;
+}
+
+.form-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: block;
+    color: #555;
+}
+
+.available-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.tag-option {
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    background: #f1f1f1;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tag-option:hover {
+    background: #e0e0e0;
+}
+
+.tag-option.active {
+    background: #3f51b5;
+    color: #fff;
+    font-weight: 500;
+}
+
+.selected-tags-container {
+    min-height: 50px;
+    border: 1px dashed #ccc;
+    border-radius: 6px;
+    padding: 0.5rem;
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.tag-badge {
+    background: #e8f0fe;
+    border-radius: 16px;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.9rem;
+}
+
+.tag-badge .remove {
+    cursor: pointer;
+    margin-left: 0.5rem;
+    color: #666;
+}
+
+.tag-badge .remove:hover {
+    color: #e53935;
+}
+
+.submit-btn {
+    background: #3f51b5;
+    border: none;
+    border-radius: 8px;
+    padding: 0.6rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background 0.2s ease;
+}
+
+.submit-btn:hover {
+    background: #2c3e9e;
+}
+
+/* Container bao quanh khi loading */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    /* để icon và text xếp dọc */
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid #eee;
+}
+
+/* Spinner quay */
+.loading-spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3f51b5;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 12px;
+}
+
+/* Text loading */
+.loading-text {
+    font-weight: 600;
+    font-size: 16px;
+    color: #333;
+    text-align: center;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+
+.error-message {
+    text-align: center;
+    color: #ef4444;
+    animation: fadeIn 0.6s ease forwards;
+}
+
+.error-message i {
+    font-size: 3rem;
+    margin-bottom: 12px;
+    color: #ef4444;
+    animation: shake 0.6s ease infinite;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.error-message p {
+    font-weight: 600;
+    font-size: 17px;
+    color: #b91c1c;
+}
