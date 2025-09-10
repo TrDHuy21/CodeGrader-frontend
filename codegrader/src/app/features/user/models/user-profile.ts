@@ -20,6 +20,7 @@ export interface UserProfileDto {
   githubLink: string | null;
   linkedinLink: string | null;
   createdAt: string; // ISO date
+  avatar?: string;
 }
 export interface UpadtePasswordDto {
   currentPassword: string;
@@ -37,5 +38,6 @@ export function mapUserProfile(dto: UserProfileDto): UserProfileModel {
     githubLink: dto.githubLink ?? '',
     linkedinLink: dto.linkedinLink ?? '',
     createdAt: new Date(dto.createdAt),
+    avatar: dto.avatar,
   };
 }

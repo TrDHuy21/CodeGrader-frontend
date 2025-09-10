@@ -84,8 +84,8 @@ import { FormsModule } from '@angular/forms';
             [readonly]="true"
             [size]="knobSize()"
             [strokeWidth]="stroke()"
-            valueColor="SlateGray"
-            rangeColor="MediumTurquoise"
+            valueColor="#22c55e"
+            rangeColor="#f59e0b"
             [textColor]="'#CBD5E1'"
           ></p-knob>
           <!-- chấm tròn chạy theo cung -->

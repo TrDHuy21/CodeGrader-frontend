@@ -19,6 +19,10 @@ import { DividerModule } from 'primeng/divider';
 import { KnobModule } from 'primeng/knob';
 import { ResultsCardComponent } from './result-card';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import {
+  SubmissionRequest,
+  UserSubmissionService,
+} from '../../user/services/user-submission-service';
 
 @Component({
   selector: `problem-description-component`,
@@ -72,7 +76,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
           [multiple]="true"
           maxFileSize="1000000"
           (onSelect)="onFileChange($event)"
-          (uploadHandler)="onUpload($event, problemData()?.name ?? '')"
+          (uploadHandler)="onUpload($event, problemData()?.content ?? '')"
           [customUpload]="true"
           (onClear)="resetResults()"
         >
@@ -145,44 +149,70 @@ export class ProblemDescriptionComponent implements OnInit {
   isLoading = signal(true);
   problemId = signal<number | null>(null);
 
-  constructor(private gradingService: GradingService) {
+  constructor(
+    private gradingService: GradingService,
+    private userSubmissionService: UserSubmissionService
+  ) {
     const parent = this.route.parent ?? this.route.pathFromRoot.at(-2)!;
     const raw = parent.snapshot.paramMap.get('id');
     const n = raw != null ? Number(raw) : NaN;
     this.problemId.set(Number.isFinite(n) ? n : null);
   }
 
-  file = signal<File | null>(null);
+  file = signal<File[] | null>(null);
   results = signal<GradingModel | null>(null);
   ngOnInit(): void {}
 
   onFileChange(e: any) {
-    const f: File | undefined = e.files?.[0];
+    const f: File[] | undefined = e.files;
+    console.log(f);
     if (!f) return;
-
-    if (f.size > 2 * 1024 * 1024) {
-      alert('File size exceeds 2MB limit.');
-      // Xóa file đã chọn khỏi UI (PrimeNG cho phép clear qua options)
-      e.options?.clear && e.options.clear();
-      return;
+    const files: File[] = Array.from(f);
+    for (let file of files) {
+      if (file.size > 2 * 1024 * 1024) {
+        alert(`File ${file.name} vượt quá 2MB`);
+        e.options?.clear?.();
+        return;
+      }
     }
 
-    this.file.set(f);
+    this.file.set(files);
     this.isSuccess.set(false);
     this.results.set(null);
   }
+
   onUpload(e: any, assignment: string) {
-    const f = this.file();
-    if (!f) {
+    const files = this.file();
+
+    if (!files || files.length === 0) {
       console.warn('Chưa chọn file');
       return;
     }
-    this.gradingService.post(assignment, f).subscribe({
+    this.gradingService.post(assignment, files).subscribe({
       next: (res) => {
         e.options?.clear?.(); // reset UI
-        this.results.set(res.data);
+        const grading: GradingModel = res.data;
+        this.results.set(grading);
+        console.log('Grading:', grading);
+
         this.file.set(null);
         this.isSuccess.set(true);
+
+        const submission: SubmissionRequest = {
+          userId: 2, // lấy từ signal hoặc token
+          problemId: this.problemId() ?? 0, // lấy từ route param hoặc component state
+          language: grading.programmingLanguage,
+          point: grading.point,
+          evaluationCriteria: grading.evaluationCriteria,
+          submissionAt: new Date(Date.now()).toISOString(),
+        };
+        console.log(submission);
+        this.userSubmissionService.postSubmission(submission).subscribe({
+          next: (subRes) => {
+            console.log('Submission saved:', subRes);
+          },
+          error: (err) => console.error('Error posting submission:', err),
+        });
       },
       error: (err) => console.error(err),
     });

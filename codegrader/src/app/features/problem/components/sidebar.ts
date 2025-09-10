@@ -29,7 +29,13 @@ import { RouterModule } from '@angular/router';
         }
       </ul>
     </p-drawer>
-    <p-button (click)="visible = true" label="Problem List" />
+    <p-button
+      (click)="visible = true"
+      label="Problem List"
+      icon="pi pi-align-justify"
+      severity="secondary"
+      styleClass="!bg-gray-100 !text-black  hover:!bg-gray-200"
+    />
   `,
 })
 export class SideBarProblem implements OnInit {

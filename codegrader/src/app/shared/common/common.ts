@@ -44,4 +44,11 @@ export class CommonFunc {
     const year = d.getFullYear();
     return `${day}/${month}/${year}`; // ví dụ: 8/9/2025
   }
+  //const iso = "2025-09-09T20:22:04.396Z";
+
+  //   formatted = new Date(iso).toLocaleDateString('en-GB', {
+  //   day: '2-digit',
+  //   month: 'short',
+  //   year: 'numeric'
+  // });
 }

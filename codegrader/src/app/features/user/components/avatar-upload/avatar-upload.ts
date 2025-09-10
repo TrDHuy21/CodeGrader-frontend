@@ -1,5 +1,8 @@
-import { Component, Input, ElementRef, signal } from '@angular/core';
+import { Component, Input, ElementRef, signal, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
+import { UserService } from '../../../admin/userManage/user.service';
+import { UserProfileService } from '../../services/user-profile-serive';
+import { finalize } from 'rxjs';
 @Component({
   selector: `avatar-component`,
   imports: [ReactiveFormsModule],
@@ -9,7 +12,7 @@ import { ReactiveFormsModule, FormControl } from '@angular/forms';
         alt="Avatar"
         class="w-full h-full object-cover rounded-full  "
         [id]="'img'"
-        [src]="imgSrc() ?? '#'"
+        [src]="imgSrc"
       />
     </div>
     <div class="flex flex-col gap-2 items-start">
@@ -26,14 +29,18 @@ import { ReactiveFormsModule, FormControl } from '@angular/forms';
   standalone: true,
   styleUrls: ['./upload-file.css'],
 })
-export class AvatarUpload {
+export class AvatarUpload implements OnInit {
   @Input() control!: FormControl<File | null>;
   file = signal<File | null>(null);
   previewUrl = signal<string>('');
   uploadUrl = signal<string>('');
-  imgSrc = signal<string | null>(localStorage.getItem('avatar'));
+  // imgSrc = signal<string | null>(localStorage.getItem('avatar'));
+  @Input() imgSrc: string = '';
 
-  constructor(private el: ElementRef) {
+  constructor(private el: ElementRef) {}
+  ngOnInit() {
+    console.log(this.imgSrc)
+    // this.form.disable({ emitEvent: false });
   }
   // ngAfterViewInit() {
   //   const imgElement = this.el.nativeElement.querySelector('#img');

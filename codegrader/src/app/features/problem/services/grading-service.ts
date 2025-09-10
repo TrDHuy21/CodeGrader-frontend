@@ -7,10 +7,16 @@ import { GradingModel } from '../models/Grading/grading-model';
 export class GradingService {
   private url = 'http://localhost:5000/grading';
   constructor(private http: HttpClient) {}
-  post(assignment: string, file: File): Observable<ApiResponse<GradingModel>> {
-    const params = new HttpParams().set('assignment', assignment);
+  post(assignment: string, files: File[]): Observable<ApiResponse<GradingModel>> {
     const form = new FormData();
-    form.append('formFile', file, file.name);
+
+    for (const f of files) {
+      console.log(f.name);
+      form.append('formFiles', f, f.name); // ✅ phải khớp tên 'formFiles'
+    }
+
+    const params = new HttpParams().set('assignment', assignment);
+
     return this.http.post<ApiResponse<GradingModel>>(`${this.url}`, form, { params });
   }
 }

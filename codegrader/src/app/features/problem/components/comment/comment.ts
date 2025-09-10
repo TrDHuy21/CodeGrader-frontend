@@ -68,11 +68,15 @@ import { CommonFunc } from '../../../../shared/common/common';
 export class CommentComponent implements OnInit {
   @Input() comment!: CommentModel;
   @Input() rootId!: number; // id của comment gốc
-  @Output() replyClicked = new EventEmitter<{ rootId: number; userId: number }>();
+  @Output() replyClicked = new EventEmitter<{ rootId: number; userId: number; userName: string }>();
   @Output() liked = new EventEmitter<{ commentId: number; liked: boolean }>();
   commonFunc = inject(CommonFunc);
   onReply(userId: number) {
-    this.replyClicked.emit({ rootId: this.rootId, userId: userId });
+    this.replyClicked.emit({
+      rootId: this.rootId,
+      userId: userId,
+      userName: this.userCommentProfile()?.username ?? '',
+    });
   }
 
   isLiked = signal(false);
@@ -85,9 +89,11 @@ export class CommentComponent implements OnInit {
     });
   }
   userId: number = 0;
+  userName = signal('');
   userCommentProfile = signal<UserProfileModel | null>(null);
   ngOnInit(): void {
     this.userId = this.comment.userId;
+
     this.userService.getUserProfileById(this.userId).subscribe({
       next: (res) => {
         console.log(res);

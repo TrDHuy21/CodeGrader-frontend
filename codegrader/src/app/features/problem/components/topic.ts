@@ -4,166 +4,20 @@ import { ProblemService } from '../services/problem-service';
 import { SearchService } from '../services/search-service';
 import { EventEmitter } from 'stream';
 import { ProblemFilter } from './probem-search';
+import { sign } from 'crypto';
+import { forkJoin, map, Observable } from 'rxjs';
 interface TagName {
   id: number;
   name: string;
 }
+
 @Component({
   selector: `topic-component`,
   imports: [CommonModule],
   template: `
     <div class="mx-auto">
-      <div class="topic-hastag relative flex flex-wrap gap-x-3 gap-y-2">
-        <div class="topic-item flex items-center gap-2 py-1">
-          <span class="text-sm text-gray-700 font-medium">Array</span>
-          <span
-            class="px-2.5 py-0.5 bg-blue-600 text-white text-xs font-semibold rounded-full shadow"
-          >
-            36
-          </span>
-        </div>
-
-        <div class="topic-item flex items-center gap-2 py-1">
-          <span class="text-sm text-gray-700 font-medium">siuuuuuu</span>
-          <span
-            class="px-2.5 py-0.5 bg-blue-600 text-white text-xs font-semibold rounded-full shadow"
-          >
-            36
-          </span>
-        </div>
-
-        <div class="topic-item flex items-center gap-2 py-1">
-          <span class="text-sm text-gray-700 font-medium">Array</span>
-          <span
-            class="px-2.5 py-0.5 bg-blue-600 text-white text-xs font-semibold rounded-full shadow"
-          >
-            36
-          </span>
-        </div>
-        <div class="topic-item flex items-center gap-2 py-1">
-          <span class="text-sm text-gray-700 font-medium">Array</span>
-          <span
-            class="px-2.5 py-0.5 bg-blue-600 text-white text-xs font-semibold rounded-full shadow"
-          >
-            36
-          </span>
-        </div>
-        <div class="topic-item flex items-center gap-2 py-1">
-          <span class="text-sm text-gray-700 font-medium">Array</span>
-          <span
-            class="px-2.5 py-0.5 bg-blue-600 text-white text-xs font-semibold rounded-full shadow"
-          >
-            36
-          </span>
-        </div>
-        <div class="topic-item flex items-center gap-2 py-1">
-          <span class="text-sm text-gray-700 font-medium">Array</span>
-          <span
-            class="px-2.5 py-0.5 bg-blue-600 text-white text-xs font-semibold rounded-full shadow"
-          >
-            36
-          </span>
-        </div>
-        <div class="topic-item flex items-center gap-2 py-1">
-          <span class="text-sm text-gray-700 font-medium">Array</span>
-          <span
-            class="px-2.5 py-0.5 bg-blue-600 text-white text-xs font-semibold rounded-full shadow"
-          >
-            36
-          </span>
-        </div>
-        <div class="topic-item flex items-center gap-2 py-1">
-          <span class="text-sm text-gray-700 font-medium">Array</span>
-          <span
-            class="px-2.5 py-0.5 bg-blue-600 text-white text-xs font-semibold rounded-full shadow"
-          >
-            36
-          </span>
-        </div>
-        <div class="topic-item flex items-center gap-2 py-1">
-          <span class="text-sm text-gray-700 font-medium">Array</span>
-          <span
-            class="px-2.5 py-0.5 bg-blue-600 text-white text-xs font-semibold rounded-full shadow"
-          >
-            36
-          </span>
-        </div>
-        <div class="topic-item flex items-center gap-2 py-1">
-          <span class="text-sm text-gray-700 font-medium">Array</span>
-          <span
-            class="px-2.5 py-0.5 bg-blue-600 text-white text-xs font-semibold rounded-full shadow"
-          >
-            36
-          </span>
-        </div>
-        <div class="topic-item flex items-center gap-2 py-1">
-          <span class="text-sm text-gray-700 font-medium">Array</span>
-          <span
-            class="px-2.5 py-0.5 bg-blue-600 text-white text-xs font-semibold rounded-full shadow"
-          >
-            36
-          </span>
-        </div>
-        <div class="topic-item flex items-center gap-2 py-1">
-          <span class="text-sm text-gray-700 font-medium">Array</span>
-          <span
-            class="px-2.5 py-0.5 bg-blue-600 text-white text-xs font-semibold rounded-full shadow"
-          >
-            36
-          </span>
-        </div>
-        <div class="topic-item flex items-center gap-2 py-1">
-          <span class="text-sm text-gray-700 font-medium">Array</span>
-          <span
-            class="px-2.5 py-0.5 bg-blue-600 text-white text-xs font-semibold rounded-full shadow"
-          >
-            36
-          </span>
-        </div>
-        <div class="topic-item flex items-center gap-2 py-1">
-          <span class="text-sm text-gray-700 font-medium">Array</span>
-          <span
-            class="px-2.5 py-0.5 bg-blue-600 text-white text-xs font-semibold rounded-full shadow"
-          >
-            36
-          </span>
-        </div>
-        <div class="topic-item flex items-center gap-2 py-1">
-          <span class="text-sm text-gray-700 font-medium">Array</span>
-          <span
-            class="px-2.5 py-0.5 bg-blue-600 text-white text-xs font-semibold rounded-full shadow"
-          >
-            36
-          </span>
-        </div>
-        <div class="topic-item flex items-center gap-2 py-1">
-          <span class="text-sm text-gray-700 font-medium">Array</span>
-          <span
-            class="px-2.5 py-0.5 bg-blue-600 text-white text-xs font-semibold rounded-full shadow"
-          >
-            36
-          </span>
-        </div>
-        <div class="topic-item flex items-center gap-2 py-1">
-          <span class="text-sm text-gray-700 font-medium">Array</span>
-          <span
-            class="px-2.5 py-0.5 bg-blue-600 text-white text-xs font-semibold rounded-full shadow"
-          >
-            36
-          </span>
-        </div>
-        <div class="topic-item flex items-center gap-2 py-1">
-          <span class="text-sm text-gray-700 font-medium">Array</span>
-          <span
-            class="px-2.5 py-0.5 bg-blue-600 text-white text-xs font-semibold rounded-full shadow"
-          >
-            36
-          </span>
-        </div>
-      </div>
-
       <!-- BUTTON ROW (SCROLLABLE) -->
-      <div class="topic-button mt-6 flex w-full gap-2 overflow-x-auto pb-2 scrollbar-hide">
+      <div class="topic-button mt-6 flex w-full gap-2 flex-wrap  pb-2 ">
         <button
           class="whitespace-nowrap rounded-full   px-3.5 py-1.5 text-sm font-medium text-white transition
           cursor-pointer
@@ -196,8 +50,8 @@ interface TagName {
 })
 export class TopicComponent implements OnInit {
   activeTab = 'All';
-  tagnames = signal<TagName[]>([]);
   filter = output<ProblemFilter>();
+  tagnames = signal<TagName[]>([]);
   constructor(private searchService: SearchService) {}
   ngOnInit(): void {
     this.searchService.getTagname().subscribe({
@@ -221,4 +75,5 @@ export class TopicComponent implements OnInit {
       // thêm các field khác nếu cần
     });
   }
+  tagCountMap = signal<Record<number, number>>({});
 }

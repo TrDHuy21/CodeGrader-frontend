@@ -215,12 +215,13 @@ export class CommentListComponent implements OnInit {
 
   isReply = false;
   replyForId: number | null = null;
-  onReplyFromChild(e: { userId: number; rootId: number }) {
+  onReplyFromChild(e: { userId: number; rootId: number; userName: string }) {
     this.isReply = true;
     this.replyForId = e.rootId;
+
     const control = this.formReply.get('parentCommentId');
     const current = (control?.value as string) ?? '';
-    const mention = `@${e.userId} `;
+    const mention = `@${e.userName} `;
 
     // Nếu chưa có prefix mention, thêm vào đầu; nếu đã có, giữ nguyên
     const next = current.startsWith(mention) ? current : mention + current.replace(/^\s+/, '');
