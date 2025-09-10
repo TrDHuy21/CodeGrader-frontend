@@ -1,13 +1,28 @@
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, Input, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FloatLabel } from 'primeng/floatlabel';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
 import { TextareaModule } from 'primeng/textarea';
 import { SelectModule } from 'primeng/select';
 import { EditorModule } from 'primeng/editor';
 import { ProblemSignalStore } from '../services/problem-signal-store';
-import { CommentListComponent } from './comment-list';
+import { CommentListComponent } from './comment/comment-list';
+import { GradingService } from '../services/grading-service';
+import { error } from 'console';
+import { GradingModel } from '../models/Grading/grading-model';
+import { BadgeModule } from 'primeng/badge';
+import { OverlayBadgeModule } from 'primeng/overlaybadge';
+import { ActivatedRoute } from '@angular/router';
+import { DividerModule } from 'primeng/divider';
+import { KnobModule } from 'primeng/knob';
+import { ResultsCardComponent } from './result-card';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import {
+  SubmissionRequest,
+  UserSubmissionService,
+} from '../../user/services/user-submission-service';
 
 @Component({
   selector: `problem-description-component`,
@@ -19,6 +34,13 @@ import { CommentListComponent } from './comment-list';
     SelectModule,
     EditorModule,
     CommentListComponent,
+    CardModule,
+    BadgeModule,
+    OverlayBadgeModule,
+    DividerModule,
+    KnobModule,
+    ResultsCardComponent,
+    ProgressSpinnerModule,
   ],
   standalone: true,
   template: ` <section class="content p-4 bg-white shadow rounded-lg mb-4">
@@ -44,85 +66,169 @@ import { CommentListComponent } from './comment-list';
           </div>
         </div>
         }
-
-        <!-- <div class="constraint-content mb-4">
-          <h4 class="text-md font-semibold mb-2">Constraints:</h4>
-          <ul class="list-disc list-inside p-4 bg-white shadow rounded-lg">
-            <li>1 <= nums.length <= 10^4</li>
-            <li>-10^4 <= nums[i] <= 10^4</li>
-          </ul>
-        </div> -->
       </div>
     </section>
     <section class="content p-4 bg-white shadow rounded-lg">
       <h3 class="text-lg font-semibold mb-4">Submit Solution</h3>
-      <div class="mt-4">
+      <form class="mt-4">
         <p-fileupload
           name="demo[]"
-          url="https://www.primefaces.org/cdn/api/upload.php"
           [multiple]="true"
-          accept="image/*"
           maxFileSize="1000000"
-          mode="advanced"
+          (onSelect)="onFileChange($event)"
+          (uploadHandler)="onUpload($event, problemData()?.content ?? '')"
+          [customUpload]="true"
+          (onClear)="resetResults()"
         >
-          <ng-template #empty>
-            <div>Drag and drop files to here to upload.</div>
+          <ng-template
+            pTemplate="content"
+            let-files
+            let-uploadedFiles="uploadedFiles"
+            let-removeFileCallback="removeFileCallback"
+            let-removeUploadedFileCallback="removeUploadedFileCallback"
+          >
+            <div class="flex flex-col gap-4 pt-4">
+              @if(!isSuccess()) {
+              <div class="flex flex-wrap gap-3">
+                <div
+                  *ngFor="let file of files; let i = index"
+                  class="p-3  rounded flex items-center gap-3"
+                >
+                  <span class="font-medium">{{ file.name }}</span>
+                  <span class="text-sm opacity-70">({{ file.size }} bytes)</span>
+                  <p-badge value="Pending" severity="warn" />
+                  <p-button
+                    icon="pi pi-times"
+                    [outlined]="true"
+                    [rounded]="true"
+                    severity="danger"
+                    (onClick)="removeAndReset(i, removeFileCallback)"
+                  />
+                </div>
+              </div>
+              } @else {
+              <div class="flex flex-wrap gap-3">
+                <div
+                  *ngFor="let file of files; let i = index"
+                  class="p-3 rounded flex items-center gap-3"
+                >
+                  <span class="font-medium">{{ file.name }}</span>
+                  <span class="text-sm opacity-70">({{ file.size }} bytes)</span>
+                  <p-badge value="Success" severity="success" />
+                  <p-button
+                    icon="pi pi-times"
+                    [outlined]="true"
+                    [rounded]="true"
+                    severity="danger"
+                    (onClick)="removeAndReset(i, removeFileCallback)"
+                  />
+                </div>
+              </div>
+              }
+            </div>
           </ng-template>
         </p-fileupload>
-      </div>
+        @if(isSuccess()) {
+        <results-card [results]="results()" />
+        }
+      </form>
     </section>
     <section class="comment p-4 bg-white shadow rounded-lg my-6">
-      
-      <!-- <div class="comment-list mt-4 space-y-4">
-        <p-floatlabel class="w-full md:w-56" variant="on">
-          <p-select inputId="on_label" optionLabel="name" class="w-full" />
-          <label for="on_label">Sort</label>
-        </p-floatlabel>
-        <div class="comment-item flex items-start gap-4 p-4 bg-white shadow rounded-lg relative">
-          <img
-            src="https://i.pravatar.cc/40"
-            alt="User Avatar"
-            class="h-10 w-10 rounded-full object-cover"
-          />
-
-          <div class="flex-1">
-            <div class="flex items-center justify-between mb-1">
-              <p class="font-semibold text-gray-800">User123</p>
-              <p class="text-sm text-gray-400">August 29, 2025</p>
-            </div>
-
-            <p class="text-gray-700 mb-3">
-              This is a sample comment on the problem. Great problem!
-            </p>
-
-            <div class="flex gap-3">
-              <button
-                pButton
-                type="button"
-                label="Like"
-                icon="pi pi-thumbs-up"
-                class="p-button-sm p-button-text"
-              >
-                <span>(3)</span>
-              </button>
-              <button
-                pButton
-                type="button"
-                label="Reply"
-                icon="pi pi-reply"
-                class="p-button-sm p-button-text"
-              ></button>
-            </div>
-            
-          </div>
-        </div>
-      </div> -->
-      <comment-list-component></comment-list-component>
+      @if (problemId() !== null) {
+      <comment-list-component [problemId]="problemId()!"></comment-list-component>
+      } @else {
+      <p>Loading…</p>
+      }
     </section>`,
 })
-export class ProblemDescriptionComponent {
+export class ProblemDescriptionComponent implements OnInit {
+  private route = inject(ActivatedRoute); // phải inject thế này
   private store = inject(ProblemSignalStore);
   problemData = this.store.problem;
-  constructor() {
+  isSuccess = signal(false);
+  isLoading = signal(true);
+  problemId = signal<number | null>(null);
+
+  constructor(
+    private gradingService: GradingService,
+    private userSubmissionService: UserSubmissionService
+  ) {
+    const parent = this.route.parent ?? this.route.pathFromRoot.at(-2)!;
+    const raw = parent.snapshot.paramMap.get('id');
+    const n = raw != null ? Number(raw) : NaN;
+    this.problemId.set(Number.isFinite(n) ? n : null);
+  }
+
+  file = signal<File[] | null>(null);
+  results = signal<GradingModel | null>(null);
+  ngOnInit(): void {}
+
+  onFileChange(e: any) {
+    const f: File[] | undefined = e.files;
+    console.log(f);
+    if (!f) return;
+    const files: File[] = Array.from(f);
+    for (let file of files) {
+      if (file.size > 2 * 1024 * 1024) {
+        alert(`File ${file.name} vượt quá 2MB`);
+        e.options?.clear?.();
+        return;
+      }
+    }
+
+    this.file.set(files);
+    this.isSuccess.set(false);
+    this.results.set(null);
+  }
+
+  onUpload(e: any, assignment: string) {
+    const files = this.file();
+
+    if (!files || files.length === 0) {
+      console.warn('Chưa chọn file');
+      return;
+    }
+    this.gradingService.post(assignment, files).subscribe({
+      next: (res) => {
+        e.options?.clear?.(); // reset UI
+        const grading: GradingModel = res.data;
+        this.results.set(grading);
+        console.log('Grading:', grading);
+
+        this.file.set(null);
+        this.isSuccess.set(true);
+
+        const submission: SubmissionRequest = {
+          userId: 2, // lấy từ signal hoặc token
+          problemId: this.problemId() ?? 0, // lấy từ route param hoặc component state
+          language: grading.programmingLanguage,
+          point: grading.point,
+          evaluationCriteria: grading.evaluationCriteria,
+          submissionAt: new Date(Date.now()).toISOString(),
+        };
+        console.log(submission);
+        this.userSubmissionService.postSubmission(submission).subscribe({
+          next: (subRes) => {
+            console.log('Submission saved:', subRes);
+          },
+          error: (err) => console.error('Error posting submission:', err),
+        });
+      },
+      error: (err) => console.error(err),
+    });
+  }
+  resetResults() {
+    this.isSuccess.set(false);
+    this.results.set(null);
+  }
+
+  removeAndReset(i: number, removeCb: (index: number) => void) {
+    removeCb(i); // xoá file
+    this.resetResults(); // ẩn results-card
+  }
+
+  removeUploadedAndReset(i: number, removeUploadedCb: (index: number) => void) {
+    removeUploadedCb(i);
+    this.resetResults();
   }
 }

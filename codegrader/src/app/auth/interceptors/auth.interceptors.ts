@@ -15,31 +15,74 @@ export class AuthInterceptor implements HttpInterceptor {
   private refreshTokenSubject = new BehaviorSubject<string | null>(null); //một Subject/BehaviorSubject phát ra access token mới cho các request khác đang chờ (đã bị 401) để retry
   constructor(private authService: AuthService) {}
 
+  // Những URL KHÔNG gắn Authorization (public)
+  private readonly PUBLIC_URLS = ['/auth/login', '/auth/register', '/auth/refresh-token'];
+  private readonly AUTH_URLS = [
+    '/auth/login',
+    '/auth/refresh-token',
+    'http://localhost:5000/bookmark',
+  ];
+
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    // const token = this.authService.getToken();
+    // let authReq = req;
+
+    // if (this.AUTH_URLS.some((u) => req.url.includes(u))) {
+    //   return next.handle(req);
+    // }
+    // const shouldAttachAuth = !this.PUBLIC_URLS.some((u) => req.url.includes(u)); // public thì không gắn token
+
+    // if (token && shouldAttachAuth) {
+    //   authReq = this.addToken(req, token);
+    // }
+    // return next.handle(authReq).pipe(
+    //   catchError((err) => {
+    //     // if (err instanceof HttpErrorResponse && err.status === 401) {
+    //     //   return this.handle401Error(authReq, next);
+    //     // }
+    //     // return throwError(() => err);
+    //     const hadAuthHeader = authReq.headers.has('Authorization');
+    //     const isAuthEndpoint = this.AUTH_URLS.some((u) => authReq.url.includes(u));
+
+    //     if (
+    //       err instanceof HttpErrorResponse &&
+    //       err.status === 401 &&
+    //       hadAuthHeader &&
+    //       !isAuthEndpoint
+    //     ) {
+    //       return this.handle401Error(authReq, next);
+    //     }
+
+    //     return throwError(() => err);
+    //   })
+    // );
     const token = this.authService.getToken();
-    let authReq = req;
-    if (token) {
-      authReq = this.addToken(req, token);
-    }
+    const isPublic = this.PUBLIC_URLS.some((u) => req.url.includes(u));
+
+    // Gắn token cho mọi endpoint không-public (nếu có token)
+    const authReq = !isPublic && token ? this.addToken(req, token) : req;
+
     return next.handle(authReq).pipe(
       catchError((err) => {
-        if (err instanceof HttpErrorResponse && err.status === 401) {
+        // Không refresh cho endpoint public (tránh vòng lặp ở /auth/refresh-token)
+        if (
+          err.status === 401 &&
+          !this.authService.hasLoggedOut() &&
+          this.authService.getRefreshToken() !== null
+        ) {
           return this.handle401Error(authReq, next);
         }
+        if (!(err instanceof HttpErrorResponse)) return throwError(() => err);
+
+        const isUnauthorized = err.status === 401;
+
+        // if (isUnauthorized && !isPublic) {
+        //   return this.handle401Error(authReq, next);
+        // }
+
         return throwError(() => err);
       })
     );
-    // if (token)
-    //   if (token) {
-    //     // clone request gốc, thêm Authorization header
-    //     const cloned = req.clone({
-    //       setHeaders: {
-    //         Authorization: `Bearer ${token}`,
-    //       },
-    //     });
-    //     return next.handle(cloned);
-    //   }
-
     // // nếu không có token => gửi request gốc
     // return next.handle(req);
   }
@@ -55,7 +98,8 @@ export class AuthInterceptor implements HttpInterceptor {
 
       const rToken = this.authService.getRefreshToken();
       if (!rToken) {
-        this.authService.logout();
+        // this.authService.logout();
+        this.isRefreshing = false;
         return throwError(() => new Error('No refresh token'));
       }
 
@@ -75,7 +119,7 @@ export class AuthInterceptor implements HttpInterceptor {
         }),
         catchError((err) => {
           this.isRefreshing = false;
-          this.authService.logout();
+          // this.authService.logout();
           return throwError(() => err);
         })
       );

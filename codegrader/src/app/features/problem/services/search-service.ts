@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../../user/models/api-respone';
 import { HttpParams } from '@angular/common/http';
@@ -13,53 +13,24 @@ export interface SearchQuery {
   SortBy: string;
   IsDecending: boolean;
 }
+const token =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjIiLCJVc2VybmFtZSI6InVzZXIiLCJyb2xlIjoiVXNlciIsIm5iZiI6MTc1Njk5OTMxNSwiZXhwIjoxNzU3MDAyOTE1LCJpYXQiOjE3NTY5OTkzMTUsImlzcyI6Iklzc3VlciIsImF1ZCI6Ik15QXVkaWVuY2UifQ.OeySX3nbyr_U9IfGsCraqmi-IR0Zli5YPY2jJ1Ird9c';
 @Injectable({ providedIn: 'root' })
 export class SearchService {
   private apiUrl = 'http://localhost:5000/problem';
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
   header = new HttpParams();
+  headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  });
   getTagname(): Observable<ApiResponse> {
     return this.http.get<ApiResponse>(`${this.apiUrl}/Tag`);
   }
   searchWithParams(params: HttpParams) {
     return this.http.get<ApiResponse>(this.apiUrl, { params });
   }
-
   search(searchQuery: SearchQuery): Observable<ApiResponse> {
-    // let params = new HttpParams();
-    // // for (let key in searchQuery) {
-    // //   if (searchQuery[key] !== null) {
-    // //     params = params.set(key, searchQuery[key]);
-    // //   }
-    // // }
-
-    // if (searchQuery.NameSearch) {
-    //   params = params.set('NameSearch', searchQuery.NameSearch);
-    // }
-    // if (searchQuery.PageNumber != null) {
-    //   params = params.set('PageNumber', searchQuery.PageNumber.toString());
-    // }
-    // if (searchQuery.PageSize != null) {
-    //   params = params.set('PageSize', searchQuery.PageSize.toString());
-    // }
-    // if (searchQuery.SortBy) {
-    //   params = params.set('SortBy', searchQuery.SortBy);
-    // }
-    // if (searchQuery.IsDecending != null) {
-    //   params = params.set('IsDecending', String(searchQuery.IsDecending));
-    // }
-
-    // if (searchQuery.Levels?.length) {
-    //   searchQuery.Levels.forEach((lv) => {
-    //     params = params.append('Levels', lv.toString());
-    //   });
-    // }
-
-    // if (searchQuery.Tagnames?.length) {
-    //   searchQuery.Tagnames.forEach((tag) => {
-    //     params = params.append('Tagnames', tag);
-    //   });
-    // }  // lọc các key-value đơn giản (không phải array) và bỏ qua null/undefined
     const baseQuery = Object.fromEntries(
       Object.entries(searchQuery)
         .filter(
@@ -81,5 +52,8 @@ export class SearchService {
     });
 
     return this.http.get<ApiResponse>(this.apiUrl, { params });
+  }
+  statisticTag(tagId: number): Observable<ApiResponse> {
+    return this.http.get<ApiResponse>(`${this.apiUrl}/ProblemTag/Statistics/${tagId}`);
   }
 }

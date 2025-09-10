@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, effect, inject, input, signal } from '@angular/core';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ButtonModule } from 'primeng/button';
 import { TextareaModule } from 'primeng/textarea';
@@ -14,6 +14,7 @@ import { ProblemSignalStore } from '../../services/problem-signal-store';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 @Component({
   selector: `problem-detail-component`,
   imports: [
@@ -24,16 +25,20 @@ import { filter } from 'rxjs/operators';
     RouterOutlet,
     RouterModule,
     SelectModule,
+    ProgressSpinnerModule,
   ],
   standalone: true,
   template: `
     <div class="container w-[1400px] mx-auto">
+      @if (isLoading()) {
+      <p-progress-spinner ariaLabel="loading" />
+      } @else {
       <section
         class="header flex items-center justify-between mb-6 p-4 bg-white shadow rounded-lg mt-6"
       >
         <div class="header-text">
-          <h2 class="text-xl font-semibold mb-2">{{ problemData()?.content }}</h2>
-          <p class="text-gray-600 mb-4">Problem description and details go here.</p>
+          <h2 class="text-xl font-semibold mb-2">{{ problemData()?.name }}</h2>
+          <p class="text-gray-600 mb-4">{{ problemData()?.content }}</p>
           <section class="problem-tabs">
             <ul class="flex gap-2 px-2 py-3  bg-gray-100 rounded-full w-fit font-medium text-sm">
               <a
@@ -71,6 +76,8 @@ import { filter } from 'rxjs/operators';
           </span>
         </div>
       </section>
+      }
+
       <router-outlet></router-outlet>
     </div>
   `,
@@ -80,26 +87,41 @@ export class ProblemDetailComponent {
   activeTab = 'description';
   setActive(tab: string) {
     this.activeTab = tab;
-    console.log('Active tab:', this.activeTab);
   }
+
   readonly LevelEnum = ProblemLevelEnum;
   problemData = signal<Problem | null>(null);
+  idFromRouter = input.required<number>({ alias: 'id' });
+
+  isLoading = signal(true);
 
   constructor(
     private problemService: ProblemService,
     private store: ProblemSignalStore,
     private route: ActivatedRoute,
     private router: Router
-  ) {}
-  ngOnInit() {
-    this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
-      this.id = Number(this.route.snapshot.paramMap.get('id') ?? 0);
-    });
-    this.id = Number(this.route.snapshot.paramMap.get('id') ?? 0);
-    this.problemService.getProblemById(this.id).subscribe((res) => {
-      console.log('h2h2' + res);
-      this.problemData.set(res.data);
-      this.store.setProblem(res.data);
+  ) {
+    effect(() => {
+      const pid = this.idFromRouter();
+      this.isLoading.set(true);
+      this.problemService.getProblemById(pid).subscribe((res) => {
+        this.problemData.set(res.data);
+        this.store.setProblem(res.data);
+        this.isLoading.set(false);
+      });
     });
   }
+
+  // ngOnInit(): void {
+  //   this.isLoading.set(true);
+  //   this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
+  //     this.id = Number(this.route.snapshot.paramMap.get('id') ?? 0);
+  //   });
+  //   this.id = Number(this.route.snapshot.paramMap.get('id') ?? 0);
+  //   this.problemService.getProblemById(this.id).subscribe((res) => {
+  //     this.problemData.set(res.data);
+  //     this.store.setProblem(res.data);
+  //     this.isLoading.set(false);
+  //   });
+  // }
 }

@@ -17,11 +17,7 @@ import { TextareaModule } from 'primeng/textarea';
       <!-- Header -->
       <ng-template pTemplate="header">
         <tr class="bg-white">
-          <th class="text-left py-3 px-4">#</th>
-          <th class="text-left py-3 px-4">Score</th>
-          <th class="text-right py-3 px-4">Language</th>
-          <th class="text-right py-3 px-4">Runtime</th>
-          <th class="text-right py-3 px-4">Memory</th>
+         
         </tr>
       </ng-template>
 

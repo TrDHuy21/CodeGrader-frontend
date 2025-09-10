@@ -64,7 +64,7 @@ export class LoginApp {
               }
             });
           } else {
-             Swal.fire({
+            Swal.fire({
               icon: 'success',
               title: 'Login Successful',
               text: 'Welcome Back!',
@@ -79,16 +79,14 @@ export class LoginApp {
           if (
             res.isSuccess == false &&
             res.message == 'Please confirm your email before logging in'
-          ) 
-          {
+          ) {
             Swal.fire({
               icon: 'error',
               title: 'Login failed',
               text: res.message || 'Invalid credentials',
               confirmButtonText: 'Confirm Email',
             }).then(async (result) => {
-              if (result.isConfirmed) 
-              {
+              if (result.isConfirmed) {
                 this.authService.resendOtp(this.email()).subscribe({
                   next: () => console.log('OTP đầu tiên đã gửi thành công'),
                   error: (err) => console.error('Lỗi gửi OTP lần đầu:', err),
@@ -118,16 +116,12 @@ export class LoginApp {
                 await this.verificationUi.handleOtpVerification(async (otp: string) => {
                   return await this.verifyOtp(otp);
                 });
-              } 
-              else if (result.isDismissed) 
-              {
+              } else if (result.isDismissed) {
                 // ❌ Người dùng bấm Cancel hoặc đóng modal
                 console.log('Đã hủy');
               }
             });
-          }
-          else
-          {
+          } else {
             Swal.fire({
               icon: 'error',
               title: 'Login failed',
@@ -152,7 +146,9 @@ export class LoginApp {
   onGoogleLogin(): void {
     this.router.navigate(['/manageuser']);
   }
-  onSkipSignIn(): void {this.router.navigate(['/']);}
+  onSkipSignIn(): void {
+    this.router.navigate(['/']);
+  }
   onForgotPassword(e: Event): void {
     e.preventDefault();
     this.router.navigate(['/forgotpassword']);

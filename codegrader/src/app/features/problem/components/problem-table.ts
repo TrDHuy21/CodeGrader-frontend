@@ -106,8 +106,6 @@ export class ProblemTableComponent {
     }
 
     this.bookmarkedIds.set(next);
-    // persist Set:
-    // localStorage.setItem('bookmarks', JSON.stringify([...next]));
   }
 
   message = signal<ToastMessageOptions | ToastMessageOptions[] | null>(null);

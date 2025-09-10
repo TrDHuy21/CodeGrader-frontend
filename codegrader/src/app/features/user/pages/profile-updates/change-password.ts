@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FloatLabel } from 'primeng/floatlabel';
 import { ButtonModule } from 'primeng/button';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
@@ -7,12 +7,16 @@ import { CommonModule } from '@angular/common';
 import { Password } from 'primeng/password';
 import { finalize } from 'rxjs';
 import { ApiResponse } from '../../models/api-respone';
-
+import { ToastComponent } from '../../../../shared/components/toast';
+import { ToastMessageOptions } from 'primeng/api';
+import { AuthService } from '../../../../auth/auth.service';
 @Component({
   selector: 'change-password',
   standalone: true,
-  imports: [FloatLabel, ButtonModule, ReactiveFormsModule, CommonModule, Password],
+  imports: [FloatLabel, ButtonModule, ReactiveFormsModule, CommonModule, Password, ToastComponent],
   template: `
+    <toast-component [message]="this.message()"></toast-component>
+
     <form
       class="container w-full max-w-2xl mx-auto"
       (submit)="handleSubmit($event)"
@@ -75,11 +79,34 @@ import { ApiResponse } from '../../models/api-respone';
     </form>
   `,
 })
-export class ChangePasswordComponent {
+export class ChangePasswordComponent implements OnInit {
   private fb = inject(FormBuilder);
   //   private common = inject(CommonFunc);
   isLoading = true;
-  constructor(private userProfileService: UserProfileService) {}
+  message = signal<ToastMessageOptions | ToastMessageOptions[] | null>(null);
+  showInfo(severity: string, summary: string, detail: string) {
+    this.message.set({
+      severity: severity,
+      summary: summary,
+      detail: detail,
+      key: 'tr',
+      life: 3000,
+    });
+  }
+  constructor(private userProfileService: UserProfileService, private authService: AuthService) {}
+
+  username = signal<string | null>(null);
+  userid = signal<number | null>(null);
+  ngOnInit(): void {
+    const uname = this.authService.getUsername();
+    this.username.set(uname);
+    if (uname) {
+      this.userProfileService.getUserProfile(uname).subscribe({
+        next: (res) => this.userid.set(res.id),
+        error: (err) => console.error(err),
+      });
+    }
+  }
 
   formChangePassword = this.fb.nonNullable.group({
     currentPassword: ['', [Validators.required, Validators.minLength(6)]],
@@ -89,46 +116,54 @@ export class ChangePasswordComponent {
 
   handleSubmit(e: Event) {
     e.preventDefault();
-
-    if (this.formChangePassword.invalid) {
-      this.formChangePassword.markAllAsTouched();
+    if (!this.authService.isLoggedIn()) {
+      this.showInfo('warn', 'Warning', 'You must loggin first');
       return;
-    }
+    } else {
+      if (this.formChangePassword.invalid) {
+        this.formChangePassword.markAllAsTouched();
+        this.showInfo('warn', 'Warning', 'All inputs must have content');
+        return;
+      }
 
-    const { currentPassword, newPassword, confirmPassword } = this.formChangePassword.getRawValue();
-    if (newPassword !== confirmPassword) {
-      alert('New password and confirm password do not match.');
-      return;
-    }
+      const { currentPassword, newPassword, confirmPassword } =
+        this.formChangePassword.getRawValue();
+      if (newPassword !== confirmPassword) {
+        this.showInfo('warn', 'Warning', 'New password and confirm password do not match');
+        return;
+      }
 
-    this.isLoading = true;
-
-    this.userProfileService
-      .updatePassword(2, currentPassword, newPassword)
-      .pipe(finalize(() => (this.isLoading = false)))
-      .subscribe({
-        next: (res) => {
-          if (res?.isSuccess) {
-            alert('Change password successfully!');
-            this.formChangePassword.reset();
-          } else {
+      this.isLoading = true;
+      const userId = this.userid();
+      if (!userId) {
+        console.warn('UserId chưa sẵn sàng. Vui lòng thử lại sau.');
+        return;
+      }
+      this.userProfileService
+        .updatePassword(userId, currentPassword, newPassword)
+        .pipe(finalize(() => (this.isLoading = false)))
+        .subscribe({
+          next: (res) => {
+            if (res?.isSuccess) {
+              this.showInfo('success', 'Success', res.message ?? '');
+              this.formChangePassword.reset();
+            } else {
+              const msg =
+                (res?.errorDetail?.errors ?? []).map((e) => `• ${e.errorMessage}`).join('\n') ||
+                res?.message ||
+                'Change password failed!';
+              this.showInfo('warn', 'Warning', msg);
+            }
+          },
+          error: (err) => {
+            const body = err?.error as ApiResponse | undefined;
             const msg =
-              (res?.errorDetail?.errors ?? []).map((e) => `• ${e.errorMessage}`).join('\n') ||
-              res?.message ||
-              'Change password failed!';
-            alert(msg);
-          }
-          console.log(res);
-        },
-        error: (err) => {
-          const body = err?.error as ApiResponse | undefined;
-          const msg =
-            (body?.errorDetail?.errors ?? []).map((e) => `• ${e.errorMessage}`).join('\n') ||
-            body?.message ||
-            'Change password failed! Please try again.';
-          alert(msg);
-          console.error(err);
-        },
-      });
+              (body?.errorDetail?.errors ?? []).map((e) => `• ${e.errorMessage}`).join('\n') ||
+              body?.message ||
+              'Change password failed! Please try again.';
+            this.showInfo('warn', 'Warning', msg);
+          },
+        });
+    }
   }
 }

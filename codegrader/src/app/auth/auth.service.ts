@@ -1,11 +1,6 @@
-import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
-import { HttpClient, HttpHandlerFn, HttpRequest } from '@angular/common/http';
-import {
-  Observable,
-  tap,
-  BehaviorSubject,
-  map,
-} from 'rxjs';
+import { Injectable, Inject, PLATFORM_ID, signal } from '@angular/core';
+import { HttpClient, HttpHandlerFn, HttpParams, HttpRequest } from '@angular/common/http';
+import { Observable, tap, BehaviorSubject, map } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
 import {
   LoginRequest,
@@ -15,12 +10,23 @@ import {
   RequestUpdateNewPassword,
 } from './auth.model';
 import { ApiResponse } from '../features/user/models/api-respone';
+import { jwtDecode } from 'jwt-decode';
 
 interface RefreshResponse {
   accessToken: string;
   refreshToken: string;
 }
 
+interface JwtPayload {
+  Id: string;
+  Username: string;
+  role: string;
+  nbf: number;
+  exp: number;
+  iat: number;
+  iss: string;
+  aud: string;
+}
 @Injectable({
   providedIn: 'root',
 })
@@ -50,11 +56,13 @@ export class AuthService {
     }
 
     const expires = new Date();
-    expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
-    
+    expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+
     const secure = window.location.protocol === 'https:';
-    const cookieString = `${name}=${encodeURIComponent(value)}; expires=${expires.toUTCString()}; path=/; samesite=strict${secure ? '; secure' : ''}`;
-    
+    const cookieString = `${name}=${encodeURIComponent(
+      value
+    )}; expires=${expires.toUTCString()}; path=/; samesite=strict${secure ? '; secure' : ''}`;
+
     document.cookie = cookieString;
   }
 
@@ -63,9 +71,9 @@ export class AuthService {
       return null;
     }
 
-    const nameEQ = name + "=";
+    const nameEQ = name + '=';
     const ca = document.cookie.split(';');
-    
+
     for (let i = 0; i < ca.length; i++) {
       let c = ca[i];
       while (c.charAt(0) === ' ') c = c.substring(1, c.length);
@@ -98,10 +106,10 @@ export class AuthService {
             if (isPlatformBrowser(this.platformId)) {
               // Lưu access token (15 phút)
               this.setCookie(this.tokenKey, res.data.tokenDto.accessToken, 0.01); // 15 phút
-              
+
               // Lưu refresh token (7 ngày)
               this.setCookie(this.refreshTokenKey, res.data.tokenDto.refreshToken, 7);
-              
+
               // Lưu thông tin user (7 ngày)
               this.setCookie(this.userId, res.data.userDto.id.toString(), 7);
               this.setCookie(this.usernameKey, res.data.userDto.userName, 7);
@@ -158,7 +166,10 @@ export class AuthService {
       headers: { 'Content-Type': 'application/json' },
     });
   }
-
+  private loggedOut = signal(false);
+  hasLoggedOut() {
+    return this.loggedOut();
+  }
   // Đăng xuất
   logout() {
     if (isPlatformBrowser(this.platformId)) {
@@ -197,11 +208,11 @@ export class AuthService {
   getRefreshToken(): string | null {
     return this.getCookie(this.refreshTokenKey);
   }
-  
+
   setAccessToken(accessToken: string) {
     this.setCookie(this.tokenKey, accessToken, 0.01); // 15 phút
   }
-  
+
   setRefreshToken(refreshToken: string) {
     this.setCookie(this.refreshTokenKey, refreshToken, 7); // 7 ngày
   }

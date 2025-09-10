@@ -21,8 +21,11 @@ export class UserProfileService {
   updateUserProfile(userProfile: UserProfileDto) {
     return this.http.put<ApiResponse<UserProfileDto>>(
       `${this.apiUrl}/profile/update-info`,
-      userProfile, // <-- gửi dữ liệu form
+      userProfile // <-- gửi dữ liệu form
     );
+  }
+  getUserProfileById(id: number): Observable<ApiResponse> {
+    return this.http.get<ApiResponse>(`${this.apiUrl}/${id}`);
   }
 
   updatePassword(
@@ -33,7 +36,7 @@ export class UserProfileService {
     const params = new HttpParams().set('userId', String(userId));
     return this.http.put<ApiResponse>(
       `${this.apiUrl}/change-password`,
-      { currentPassword, newPassword },
+      { currentPassword, newPassword }
       // { headers: this.headers, params }
     );
   }
