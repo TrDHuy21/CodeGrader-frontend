@@ -10,13 +10,7 @@ import { ProblemFilter } from "../../problem/components/probem-search";
 import { HttpClient } from "@angular/common/http";
 import Swal from 'sweetalert2';
 import { forkJoin } from "rxjs";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
-import { MatSelectModule } from "@angular/material/select";
-import { MatCheckboxModule } from "@angular/material/checkbox";
-import { MatButtonModule } from "@angular/material/button";
-import { MatIconModule } from "@angular/material/icon";
-
+import { TagForAdminGet } from "../tagManage/tag.model";
 export interface ProblemItem {
     id: number,
     name: string,
@@ -32,12 +26,7 @@ export interface ProblemItem {
     selector: "problemmanagepage",
     templateUrl: "problemManage.html",
     styleUrl: "problemManage.css",
-    imports: [AdminNavbar, AdminSidebar, ReactiveFormsModule, CommonModule, MatFormFieldModule,
-        MatInputModule,
-        MatSelectModule,
-        MatCheckboxModule,
-        MatButtonModule,
-        MatIconModule,],
+    imports: [AdminNavbar, AdminSidebar, ReactiveFormsModule, CommonModule,],
     standalone: true
 })
 export class ProblemManage {
@@ -133,7 +122,7 @@ export class ProblemManage {
         forkJoin({
             problems: this.http.get<ApiResponse<ProblemItem[]>>(`${this.problemUrl}?${this.toQueryParams(this.requestData)}`),
             total: this.http.get<ApiResponse<number>>(`${this.problemUrl}/total?${this.toQueryParams(this.requestData)}`),
-            tags: this.http.get<ApiResponse<TagItem[]>>(`${this.problemUrl}/Tag`)
+            tags: this.http.get<ApiResponse<TagForAdminGet[]>>(`${this.problemUrl}/Tag`)
         }).subscribe({
             next: ({ problems, total, tags }) => {
                 if (problems.isSuccess && problems.data) {
