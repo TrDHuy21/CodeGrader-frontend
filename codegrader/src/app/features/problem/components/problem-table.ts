@@ -124,6 +124,11 @@ export class ProblemTableComponent {
     if (wasBookmarked) {
       this.sharedBookmark.delete(id);
       this.showInfo('success', 'Delete', 'Deleted succeess');
+      this.showInfo('success', 'Delete', 'Deleted succeess');
+
+      this.showInfo('success', 'Delete', 'Deleted succeess');
+
+      this.showInfo('success', 'Delete', 'Deleted succeess');
     } else {
       this.sharedBookmark.add(id);
       this.showInfo('success', 'Add', 'Added');
