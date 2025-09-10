@@ -1,19 +1,72 @@
-# Hướng dẫn chạy Angular Project bằng VS Code
+# CodeGrader Frontend
 
-## Yêu cầu
-1. Cài [Node.js LTS](https://nodejs.org/) (khuyến nghị Node 20).
-2. Cài Angular CLI (Dùng Command Prompt / PowerShell / Git Bash (ở ngoài VS Code))
-   Chạy lệnh: npm install -g @angular/cli
+Frontend application for the CodeGrader system - an automated code grading platform for programming education built with Angular.
 
-Các bước chạy
+## 📋 Table of Contents
 
-1. Clone project từ GitHub
+- [Overview](#overview)
+- [Prerequisites](#prerequisites)
+- [Installation & Setup](#installation--setup)
+- [Running the Application](#running-the-application)
 
-2. Mở project trong VS Code
+## 🎯 Overview
 
-3. Mở terminal trong VS Code
-  - Vào menu Terminal → New Terminal
-  - Cài dependencies: chạy lệnh: npm install (chỉ lần đầu)
-  - Chạy ứng dụng: chạy lệnh: ng serve -o (-o sẽ tự mở trình duyệt tại http://localhost:4200)
+This is the frontend interface for the CodeGrader system, built with **Angular**. It provides a modern web application for students to submit code assignments and for instructors to manage programming courses.
 
-* Lưu ý: Chạy hướng dẫn bên Backend trước, sau khi hoàn thành khởi động Docker sau đó mới chạy Frontend để đảm bảo có đủ các đầu API.
+For detailed system information, architecture, and backend setup, please refer to the [CodeGrader Backend Repository](https://github.com/TrDHuy21/CodeGrader-Backend).
+
+## 📋 Prerequisites
+
+Before running this application, make sure you have the following installed:
+
+- **Node.js LTS** (recommended: Node 20 or higher)
+- **Angular CLI** globally installed
+- **VS Code** (recommended IDE)
+- **Git**
+
+## 🚀 Installation & Setup
+
+### 1. Install Node.js
+Download and install Node.js LTS from [nodejs.org](https://nodejs.org/)
+
+### 2. Install Angular CLI
+Open Command Prompt / PowerShell / Git Bash and run:
+```bash
+npm install -g @angular/cli
+```
+
+### 3. Clone the Repository
+```bash
+git clone https://github.com/TrDHuy21/CodeGrader-frontend.git
+cd CodeGrader-frontend
+```
+
+### 4. Open in VS Code
+```bash
+code .
+```
+
+## 🏃‍♂️ Running the Application
+
+### Important: Start Backend First
+⚠️ **Make sure to follow the backend setup instructions first!** 
+1. Go to [CodeGrader Backend Repository](https://github.com/TrDHuy21/CodeGrader-Backend)
+2. Complete the backend setup and start Docker
+3. Ensure all API endpoints are available before running the frontend
+
+### Start Frontend Development Server
+
+1. **Open Terminal in VS Code**
+   - Go to menu: `Terminal → New Terminal`
+
+2. **Install Dependencies** (first time only)
+   ```bash
+   npm install
+   ```
+
+3. **Run the Application**
+   ```bash
+   ng serve -o
+   ```
+   
+   The `-o` flag will automatically open your browser at `http://localhost:4200`
