@@ -43,7 +43,7 @@ export class ProblemManage {
 
     filterForm = new FormGroup({
         name: new FormControl(''),
-        level: new FormControl(['Easy', 'Medium', 'Hard']),
+        level: new FormControl([] as string[]),
         sortBy: new FormControl(''),
         isDescending: new FormControl(''),
         pageSize: new FormControl(2),
@@ -66,7 +66,7 @@ export class ProblemManage {
 
         return {
             NameSearch: formValue.name || '',
-            Levels: formValue.level?.map(level => this.levelOptions.indexOf(level)) || [],
+            Levels: formValue.level?.map(level => this.levelOptions.indexOf(level)+1) || [],
             Tagnames: formValue.tagName || [],
             PageNumber: this.currentPage(),
             PageSize: formValue.pageSize || 1,
@@ -173,9 +173,10 @@ export class ProblemManage {
             .subscribe({
                 next: (res) => {
                     if (res.isSuccess && res.data) {
+                        this.currentPage.set(1);
                         this.filteredProblems.set(this.filteredProblems().filter(t => t.id !== problem.id));
                         this.totalElement.set(this.totalElement() - 1);
-                        this.currentPage.set(1);
+                        
                         this.showSuccessAlert('Deleted!', 'The problem has been deleted.');
                     }
                 },
@@ -273,8 +274,9 @@ export class ProblemManage {
         if (formPageSize !== this.pageSize()) {
             this.pageSize.set(formPageSize);
         }
-        this.loadProblem()
         this.currentPage.set(1);
+        this.loadProblem()
+        
     }
     onPageChange(page: number) {
         this.currentPage.set(page);

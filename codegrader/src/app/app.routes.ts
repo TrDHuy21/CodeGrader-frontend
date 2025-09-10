@@ -95,4 +95,9 @@ export const routes: Routes = [
   { path: 'addTag/:id', component: addTag },
   { path: 'addExample/:id', component: addExample },
   { path: 'addProblem', component: addProblem },
+    {
+    path: 'commentmanage',
+    // component: CommentManage,
+    loadComponent: () => import('./features/admin/commentManage/commentManage').then((m) => m.CommentManage),
+  },
 ];

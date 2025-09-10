@@ -545,7 +545,7 @@ body {
 
 .pagination-btn:hover:not(:disabled) {
   background: var(--primary-color);
-  color: white;
+  color: red;
   border-color: var(--primary-color);
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
@@ -558,7 +558,7 @@ body {
 
 .pagination-btn.active {
   background: var(--primary-color);
-  color: white;
+  color: red;
   border-color: var(--primary-color);
   font-weight: 600;
 }

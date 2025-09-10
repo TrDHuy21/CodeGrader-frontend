@@ -43,7 +43,7 @@ export class App implements AfterViewInit {
     const authPages = [
       '/login', '/signup', '/forgotpassword',
       '/manageuser', '/managetag', '/manageproblem',
-      '/updateproblem', '/addProblem'
+      '/updateproblem', '/addProblem', '/commentmanage'
     ];
 
     // Kiểm tra URL tĩnh

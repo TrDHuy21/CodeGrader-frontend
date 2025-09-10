@@ -2,7 +2,6 @@ import { Component, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute } from "@angular/router";
-import { TagItem } from "../../../tagManage/tagManage";
 import { ApiResponse } from "../../../../user/models/api-respone";
 import { HttpClient } from "@angular/common/http";
 import Swal from "sweetalert2";
@@ -10,6 +9,7 @@ import { ProblemTagItem } from "../updateProblem/updateProblem";
 import { forkJoin } from "rxjs";
 import { Router } from "@angular/router";
 import { ProblemItem } from "../../problemManage";
+import { TagForAdminGet } from "../../../tagManage/tag.model";
 @Component({
     selector: "addTag",
     templateUrl: "addTag.html",
@@ -19,8 +19,8 @@ import { ProblemItem } from "../../problemManage";
 })
 export class addTag {
     problemId = signal(0);
-    availableTags = signal([] as TagItem[])
-    selectedTags: TagItem[] = [];
+    availableTags = signal([] as TagForAdminGet[])
+    selectedTags: TagForAdminGet[] = [];
     private problemUrl = 'http://localhost:5000/Problem';
     loading = false;
     error = '';
@@ -47,7 +47,7 @@ export class addTag {
         this.loading = true;
         this.error = '';
         this.problemId.set(this.route.snapshot.paramMap.get("id") ? Number(this.route.snapshot.paramMap.get("id")) : 0);
-        this.http.get<ApiResponse<TagItem[]>>(`${this.problemUrl}/Tag/GetTagsNotInProblem/${this.problemId()}`)
+        this.http.get<ApiResponse<TagForAdminGet[]>>(`${this.problemUrl}/Tag/GetTagsNotInProblem/${this.problemId()}`)
             .subscribe({
                 next: (res) => {
                     if (res.isSuccess && res.data) {
@@ -67,11 +67,11 @@ export class addTag {
 
 
 
-    isSelected(tag: TagItem): boolean {
+    isSelected(tag: TagForAdminGet): boolean {
         return this.selectedTags.includes(tag);
     }
 
-    toggleTag(tag: TagItem) {
+    toggleTag(tag: TagForAdminGet) {
         if (this.isSelected(tag)) {
             this.selectedTags = this.selectedTags.filter(t => t !== tag);
         } else {
@@ -79,7 +79,7 @@ export class addTag {
         }
     }
 
-    removeTag(tag: TagItem) {
+    removeTag(tag: TagForAdminGet) {
         this.selectedTags = this.selectedTags.filter(t => t !== tag);
     }
 
